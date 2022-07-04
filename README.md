@@ -138,7 +138,7 @@ Distributed under the MIT License. _See [LICENSE.md](https://github.com/nhsx/au-
 
 ## About
 
-Project contact email: [data@nhsx.nhs.uk](data@nhsx.nhs.uk)
+Project contact email: [nhsx.data@england.nhs.uk](nhsx.data@england.nhs.uk)
 
 To find out more about the [Analytics Unit](https://www.nhsx.nhs.uk/key-tools-and-info/nhsx-analytics-unit/) visit our [project website](https://nhsx.github.io/AnalyticsUnit/projects.html) or get in touch at [analytics-unit@nhsx.nhs.uk](mailto:data@nhsx.nhs.uk)
 
