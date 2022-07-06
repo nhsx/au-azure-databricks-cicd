@@ -1,0 +1,63 @@
+{
+	"metadata": {
+		"products": [
+		{
+		"product_name": "Digitise, Connect, Transform (DCT) Dashboard",
+		"Granularity": "National level",
+		"topic": "NHS App",
+		"metrics": [
+			{
+            "id": "M047",
+            "full_name": "% adult population with an NHS App registration",
+			"short_name":"nhs_app_registered_population_week_prop"
+        	}
+		]
+	}]},
+	"pipeline": {
+		"name": "trigger_nhs_app",
+    	"folder": "nhsx-au-analytics/nhsdigital/nhs_app/",
+		"source_adl_file_system": "digitallandcontainer",
+		"adl_file_system": "nhsxdatalakesagen2fsprod",
+		"ingestion": {
+			"sink_path": "land/nhsdigital/nhs_app/timestamp/snapshot/",
+			"source_path": "Prod/nhs_app/land/",
+			"databricks_notebook": "/Repos/prod/au-azure-databricks/ingestion/dbrks_nhs_app/dbrks_nhs_app_usage_raw"
+		},
+		"raw": {
+			"snapshot_source_path": "land/nhsdigital/nhs_app/timestamp/snapshot/",
+			"appended_path": "raw/nhsdigital/adf_v2/parquet/nhs_app/historical/",
+			"appended_file": "nhs_app_historical.parquet"
+		},
+		"proc": {
+			"source_path": "raw/nhsdigital/adf_v2/parquet/nhs_app/historical/",
+			"source_file": "nhs_app_historical.parquet",
+			"sink_path": "proc/sources/nhsdigital/adf_v2/parquet/nhs_app/historical/",
+			"sink_file": "nhs_app_historical.parquet"
+		},
+		"project": {
+			"source_path": "proc/sources/nhsdigital/adf_v2/parquet/nhs_app/historical/",
+			"source_file": "nhs_app_historical.parquet",
+			"reference_source_path": "proc/sources/ncdr_etp/adf_v2/table/ons_population_demography/historical/",
+			"reference_source_file": "table_ons_population_demography_historical.parquet",
+			"databricks_orchestrator_notebook": "/Repos/prod/au-azure-databricks/orchestration/dbrks_nhs_app_orchestrator",
+			"databricks":[
+				{
+				"metric": "nhs_app_registered_population_week_prop",
+				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_registered_population_week_prop/",
+				"sink_file": "nhs_app_registered_population_week_prop.csv",
+				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_registered_population_week_prop"
+				}
+			]
+		},
+		"staging": [ 
+			{
+				"metric":"nhs_app_registered_population_week_prop",
+				"stored_procedure":"[dbo].[stored_proc_nhs_app_registered_population_week_prop]",
+				"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_registered_population_week_prop/",
+				"source_file":"nhs_app_registered_population_week_prop.csv",
+				"sink_table":"nhs_app_registered_population_week_prop"
+			}
+		]
+
+		}
+	}
