@@ -76,11 +76,11 @@ _**Note:** No data, public or private are shared in this repository._
 
 | Name                   | Link                                                                                    | Description                                                     |
 | ---------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| Orchestrator Notebooks | [[Link](https://github.com/nhsx/au-azure-databricks/tree/main/orchestration)] | Azure Data Factory notebooks for running ephemeral job clusters |
-| Function Notebooks     | [[Link](https://github.com/nhsx/au-azure-databricks/tree/main/functions)]               | Helper functions used across all notebooks                      |
-| Analytics Notebooks    | [[Link](https://github.com/nhsx/au-azure-databricks/tree/main/analytics)]               | Analytical pipeline specific code                               |
-| Ingestion Notebooks    | [[Link](https://github.com/nhsx/au-azure-databricks/tree/main/ingestion)]               | Data ingestion pipeline specific code                           |
-| Debug Notebooks        | [[Link](https://github.com/nhsx/au-azure-databricks/tree/main/debug)]                   | For testing new code and reference                              |
+| Orchestrator Notebooks | [[Link](https://github.com/nhsx/au-azure-databricks-cicd/tree/main/orchestration)] | Azure Data Factory notebooks for running ephemeral job clusters |
+| Function Notebooks     | [[Link](https://github.com/nhsx/au-azure-databricks-cicd/tree/main/functions)]               | Helper functions used across all notebooks                      |
+| Analytics Notebooks    | [[Link](https://github.com/nhsx/au-azure-databricks-cicd/tree/main/analytics)]               | Analytical pipeline specific code                               |
+| Ingestion Notebooks    | [[Link](https://github.com/nhsx/au-azure-databricks-cicd/tree/main/ingestion)]               | Data ingestion pipeline specific code                           |
+| Debug Notebooks        | [[Link](https://github.com/nhsx/au-azure-databricks-cicd/tree/main/debug)]                   | For testing new code and reference                              |
 
 ### Built With
 
@@ -132,7 +132,7 @@ _See [CONTRIBUTING.md](https://github.com/nhsx/au-azure-databricks/blob/main/CON
 
 ## License
 
-Distributed under the MIT License. _See [LICENSE.md](https://github.com/nhsx/au-azure-databricks/blob/main/LICENSE) for more information._
+Distributed under the MIT License. _See [LICENSE.md](https://github.com/nhsx/au-azure-databricks-cicd/blob/main/LICENSE) for more information._
 
 <!-- CONTACT -->
 
@@ -152,15 +152,15 @@ To find out more about the [Analytics Unit](https://www.nhsx.nhs.uk/key-tools-an
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[contributors-shield]: https://img.shields.io/github/contributors/nhsx/au-azure-databricks.svg?color=blue&style=for-the-badge
-[contributors-url]: https://github.com/nhsx/au-azure-databricks/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/nhsx/au-azure-databricks.svg?color=blue&style=for-the-badge
-[forks-url]: https://github.com/nhsx/au-azure-databricks/network/members
-[stars-shield]: https://img.shields.io/github/stars/nhsx/au-azure-databricks.svg?color=blue&style=for-the-badge
-[stars-url]: https://github.com/nhsx/au-azure-databricks/stargazers
-[issues-shield]: https://img.shields.io/github/issues/nhsx/au-azure-databricks.svg?color=blue&style=for-the-badge
-[issues-url]: https://github.com/nhsx/au-azure-databricks/issues
-[license-shield]: https://img.shields.io/github/license/nhsx/au-azure-databricks.svg?color=blue&style=for-the-badge
-[license-url]: https://github.com/nhsx/au-azure-databricks/blob/main/LICENSE
-[code-lines]: https://img.shields.io/tokei/lines/github/nhsx/au-azure-databricks?color=blue&label=Code%20Lines&style=for-the-badge
-[code-lines-url]: https://github.com/nhsx/au-azure-databricks
+[contributors-shield]: https://img.shields.io/github/contributors/nhsx/au-azure-databricks-cicd.svg?color=blue&style=for-the-badge
+[contributors-url]: https://github.com/nhsx/au-azure-databricks-cicd/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/nhsx/au-azure-databricks-cicd.svg?color=blue&style=for-the-badge
+[forks-url]: https://github.com/nhsx/au-azure-databricks-cicd/network/members
+[stars-shield]: https://img.shields.io/github/stars/nhsx/au-azure-databricks-cicd.svg?color=blue&style=for-the-badge
+[stars-url]: https://github.com/nhsx/au-azure-databricks-cicd/stargazers
+[issues-shield]: https://img.shields.io/github/issues/nhsx/au-azure-databricks-cicd.svg?color=blue&style=for-the-badge
+[issues-url]: https://github.com/nhsx/au-azure-databricks-cicd/issues
+[license-shield]: https://img.shields.io/github/license/nhsx/au-azure-databricks-cicd.svg?color=blue&style=for-the-badge
+[license-url]: https://github.com/nhsx/au-azure-databricks-cicd/blob/main/LICENSE
+[code-lines]: https://img.shields.io/tokei/lines/github/nhsx/au-azure-databricks-cicd?color=blue&label=Code%20Lines&style=for-the-badge
+[code-lines-url]: https://github.com/nhsx/au-azure-databricks-cicd
