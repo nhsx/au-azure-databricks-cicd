@@ -1,0 +1,28 @@
+name: config-workflows
+
+on:
+  # Trigger the workflow on push, but only for
+  # the main branch and config folder
+  push:
+    branches:
+      - main
+    paths:
+      - config/**
+
+jobs:
+  azure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo content
+        uses: actions/checkout@v2 # checkout the repository content to github runner
+
+      - name: push config changes to azure
+        # source: https://github.com/marketplace/actions/azure-blob-storage-upload
+        uses: bacongobbler/azure-blob-storage-upload@v2.0.0
+        with:
+          source_dir: config/
+          container_name: ${{ secrets.AZURE_BLOB_CONTAINER }}
+          connection_string: ${{ secrets.AZURE_BLOB_CONNECTION_STRING }}
+          extra_args: "--destination-path config/"
+          overwrite: 'true'
+          
