@@ -22,12 +22,8 @@ steps:
 
 - script: |
     git diff --name-only --diff-filter=AMR HEAD^1 HEAD | xargs -I '{}' cp --parents -r '{}' $(Build.BinariesDirectory)
-
-    cp -r $(Build.Repository.LocalPath)/nhsx/au-azure-databricks-cicd/analytics/ $(Build.BinariesDirectory)
-    cp -r $(Build.Repository.LocalPath)/nhsx/au-azure-databricks-cicd/analytics/dbrks_nhs_app/ $(Build.BinariesDirectory)
-    cp -r $(Build.Repository.LocalPath)/nhsx/au-azure-databricks-cicd/orchestration/ $(Build.BinariesDirectory)
-
-
+    cp -r $(Build.Repository.LocalPath)/*.* $(Build.BinariesDirectory)
+    
 - task: ArchiveFiles@2
   inputs:
     rootFolderOrFile: '$(Build.BinariesDirectory)'
