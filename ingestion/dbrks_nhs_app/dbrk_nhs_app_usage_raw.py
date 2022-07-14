@@ -44,15 +44,16 @@ import numpy as np
 from pathlib import Path
 from azure.storage.filedatalake import DataLakeServiceClient
 
+
 # Connect to Azure datalake
 # -------------------------------------------------------------------------
 # !env from databricks secrets
-CONNECTION_STRING = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONNECTION_STRING") 
+CONNECTION_STRING = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONNECTION_STRING")   
 
 
 # COMMAND ----------
 
-#%run Repos/abdurrahman.nuhu1@udal.nhs.uk/au-azure-functionapps-cicd/functions/dbrks_helper_functions.py
+#%run /Repos/abdurrahman.nuhu1@udal.nhs.uk/au-azure-databricks-cicd/functions/dbrks_helper_functions
 
 
 # COMMAND ----------
