@@ -23,8 +23,9 @@ steps:
 - script: |
     git diff --name-only --diff-filter=AMR HEAD^1 HEAD | xargs -I '{}' cp --parents -r '{}' $(Build.BinariesDirectory)
     cp -r $(Build.Repository.LocalPath)/analytics/ $(Build.BinariesDirectory)
-    cp -r $(Build.Repository.LocalPath)/analytics/dbrks_nhs_app/ $(Build.BinariesDirectory)
+    cp -r $(Build.Repository.LocalPath)/ingestion/ $(Build.BinariesDirectory)
     cp -r $(Build.Repository.LocalPath)/orchestration/ $(Build.BinariesDirectory)
+    cp -r $(Build.Repository.LocalPath)/functions/ $(Build.BinariesDirectory)
     
 - task: ArchiveFiles@2
   inputs:
