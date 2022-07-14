@@ -21,6 +21,7 @@ steps:
   displayName: 'Get Latest Branch'
 
 - script: |
+    pip install wheel
     cd $(Build.Repository.LocalPath)/functions
     python3 setup.py sdist bdist_wheel
 
