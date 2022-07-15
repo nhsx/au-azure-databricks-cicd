@@ -1,0 +1,99 @@
+{
+	"metadata": {
+		"products": [
+		{
+			"product_name": "Digitise, Connect, Transform (DCT) Dashboard",
+			"Granularity": "National",
+			"topic": "Shared Care Record",
+			"metrics": [
+				{
+				"id": "M034",
+				"full_name": "Number of user views of Shared Care Records per 1,000 England population (GP registered population)",
+				"short_name":"records_views_month_rate"
+				},
+				{
+				"id": "M035",
+				"full_name": "Number of ICS/STPs with 50% of its PCN partners connected to a Shared Care Record System",
+				"short_name":"partners_connected_half_month_count_prop"
+				},
+				{
+				"id": "M044",
+				"full_name": "Number of ICS/STPs with all of its PCN partners connected to a Shared Care Record System",
+				"short_name":"partners_connected_all_month_count_prop"
+				},
+				{
+				"id": "M045",
+				"full_name": "Number of ICS/STPs with 50% or more of its PCN partners connected to a Shared Care Record System, expressed as % population covered by those ICSs",
+				"short_name":"partners_connected_half_month_population_prop"
+				}
+			]
+		}
+	]},
+	"pipeline": {
+		"name": "trigger_shcr",
+    	"folder": "nhsx-au-analytics/sharepoint/shared_care_record/",
+		"adl_file_system": "nhsxdatalakesagen2fsprod",
+		"ingestion": {
+			"source_path": "Shared Documents/nhsx_au_ingestion/shcr/",
+			"logic_app_url": "https://prod-01.uksouth.logic.azure.com:443/workflows/40829876f4544e9882599f2b4586085e/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=zSd4BV6-rkSTlJ041DL5zLbcCHsIAGkgn62izkDghUg",
+			"databricks_notebook": "/Repos/prod/au-azure-databricks/ingestion/dbrks_shared_care_record/dbrks_shared_care_record_raw"
+		},
+		"raw": {
+			"source_path": "land/sharepoint/Shared Documents/nhsx_au_ingestion/shcr/timestamp/xlsx/all_tables/",
+			"sink_path": "raw/sharepoint/timestamp/csv/shcr/snapshot/"
+		},
+		"proc": {
+			"source_path": "raw/sharepoint/timestamp/csv/shcr/snapshot/",
+			"sink_path": "proc/sources/shcr/sharepoint/csv/all_tables/snapshot/",
+			"files": [
+				{
+				"file_name":"shcr_partners_stp_data_month_count.csv"
+				},
+				{
+				"file_name":"shcr_partners_trust_data_month_count.csv"
+				},
+				{
+				"file_name":"shcr_partners_pcn_data_month_count.csv"
+				}
+			]
+		},
+		"project": {
+			"source_path": "proc/sources/shcr/sharepoint/csv/all_tables/snapshot/",
+			"sink_path": "proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
+			"files": [
+				{
+				"file_name":"shcr_partners_stp_data_month_count.csv"
+				},
+				{
+				"file_name":"shcr_partners_trust_data_month_count.csv"
+				},
+				{
+				"file_name":"shcr_partners_pcn_data_month_count.csv"
+				}
+			]
+		},
+		"staging":[    
+    			{
+					"metric":"shcr_partners_stp_data_month_count",
+					"stored_procedure":"[dbo].[stored_proc_shcr_partners_stp_data_month_count]",
+					"source_path":"proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
+					"source_file":"shcr_partners_stp_data_month_count.parquet",
+					"sink_table":"shcr_partners_stp_data_month_count"
+				},    
+    			{
+					"metric":"shcr_partners_trust_data_month_count",
+					"stored_procedure":"[dbo].[stored_proc_shcr_partners_trust_data_month_count]",
+					"source_path":"proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
+					"source_file":"shcr_partners_trust_data_month_count.parquet",
+					"sink_table":"shcr_partners_trust_data_month_count"
+				},     
+    			{
+					"metric":"shcr_partners_pcn_data_month_count",
+					"stored_procedure":"[dbo].[stored_proc_shcr_partners_pcn_data_month_count]",
+					"source_path":"proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
+					"source_file":"shcr_partners_pcn_data_month_count.parquet",
+					"sink_table":"shcr_partners_pcn_data_month_count"
+				}   
+			]
+	}
+}

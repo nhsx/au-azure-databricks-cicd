@@ -1,0 +1,37 @@
+{
+	"metadata":  {
+		"products": [
+			{
+			"product_name": "Reference Data",
+			"topic": "Patient discharges",
+			"metrics": [
+				{
+            			"id": "R013",
+            			"full_name": "Reference table with the number of mental health related discharges (sourced from the public MHDS table)",
+	 			"short_name":"mental_health_related_discharges"
+        			}
+				]
+			}
+		]
+	},
+	"pipeline": {
+		"name": "trigger_mental_health_related_discharges",
+    	"folder": "reference_tables/mental_health_related_discharges/",
+		"adl_file_system": "nhsxdatalakesagen2fsprod",
+		"ingestion": {
+		},
+		"raw": {
+				"source_dbo": "dbo",
+				"source_table": "vw_mental_health_monthly_MHSDS_data1",
+				"source_query": "SELECT* FROM dbo.vw_mental_health_monthly_MHSDS_data1;",	
+				"sink_path": "raw/ncdr_etp/adf_v2/table/mental_health_related_discharges/full/",
+				"sink_file": "mental_health_related_discharges_full.parquet"
+			},
+		"proc": {
+				"source_path":"raw/ncdr_etp/adf_v2/table/mental_health_related_discharges/full/",
+				"source_file": "mental_health_related_discharges_full.parquet",
+				"sink_path": "proc/sources/ncdr_etp/adf_v2/table/mental_health_related_discharges/full/",
+				"sink_file": "mental_health_related_discharges_full.parquet"
+        }
+	}
+}

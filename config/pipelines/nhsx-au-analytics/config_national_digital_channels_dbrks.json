@@ -1,0 +1,810 @@
+{
+	"metadata": {
+		"products": [
+		{
+		"product_name": "Natioanl Digitial Channels (NDC) Dashboard",
+		"Granularity": "National",
+		"topic": "National Digital Channels report ",
+		"metrics": [
+			{
+            "id": "M220",
+            "full_name": "% English adult population registered for NHS App",
+			"short_name":"ndc_dashboard_nhsapp_registered_population_month_prop"
+        	},
+			{
+			"id": "M221",
+			"full_name": "% user base logging in this month",
+			"short_name":"ndc_dashboard_user_base_loggingin_month_prop"
+			},
+			{
+			"id": "M223",
+			"full_name": "% primary care appts managed online",
+			"short_name":"ndc_dashboard_primary_care_appts_managed_online_month_prop"
+			},
+			{
+			"id": "M246",
+			"full_name": "Population registered with other POL service",
+			"short_name":"ndc_channel_shift_population_registered_other_pol_service_month_count"
+			},
+			{
+			"id": "M247",
+			"full_name": "Adult population offline",
+			"short_name":"ndc_channel_shift_adult_population_offline_month_count"
+			},
+			{
+			"id": "M224",
+			"full_name": "No. repeat prescriptions ordered via NHS App",
+			"short_name":"ndc_dashboard_nhsapp_repeat_prescriptions_ordered_month_count"
+			},
+			{
+			"id": "M227",
+			"full_name": "Primary care appointments managed via NHS App",
+			"short_name":"ndc_dashboard_nhsapp_primary_appointments_managed_month_count"
+			},
+			{
+			"id": "M228",
+			"full_name": "Views of conditions information on NHS.uk",
+			"short_name":"ndc_dashboard_nhsuk_view_of_conditions_month_count"
+			},
+			{
+			"id": "M230",
+			"full_name": "GP Record Views",
+			"short_name":"ndc_dashboard_gp_record_view_month_count"
+			},
+			{
+			"id": "M244",
+			"full_name": "Covid Vaccine Record Views",
+			"short_name":"ndc_transactions_covid_vaccine_record_views_month_count"
+			},
+			{
+			"id": "M245",
+			"full_name": "Population registered with NHS App",
+			"short_name":"ndc_channel_shift_population_registered_with_nhs_app_month_count"
+			},
+			{
+			"id": "M253",
+			"full_name": "Total App Logins",
+			"short_name":"ndc_access_total_app_logins_month_count"
+			},
+			{
+			"id": "M255",
+			"full_name": "NHS Login confirmed accounts",
+			"short_name":"ndc_access_nhslogin_confirmed_accounts_month_count"
+			},
+			{
+			"id": "M257",
+			"full_name": "Detail Coded Record Views as a % of all Record Views",
+			"short_name":"ndc_transactions_detail_coded_record_views_month_prop"
+			},
+			{
+			"id": "M258",
+			"full_name": "NHS App Organ Donation Registrations",
+			"short_name":"ndc_transaction_nhsapp_organ_donation_registration_month_count"
+			},
+			{
+			"id": "M262",
+			"full_name": "NHS.UK All Time Covid Vaccination Appointments Booked",
+			"short_name":"ndc_vaccine_nhsuk_covid_vaccination_appointments_booked_month_count"
+			},
+			{
+			"id": "M264",
+			"full_name": "NHS.UK Vaccination Bookings 1st dose",
+			"short_name":"ndc_vaccine_nhsuk_covid_vaccination_booking_first_dose_month_count"
+			},
+			{
+			"id": "M265",
+			"full_name": "NHS.UK Vaccination Bookings 2nd dose",
+			"short_name":"ndc_vaccine_nhsuk_covid_vaccination_booking_second_dose_month_count"
+			},
+			{
+			"id": "M266",
+			"full_name": "NHS.UK Vaccination Bookings booster",
+			"short_name":"ndc_vaccine_nhsuk_covid_vaccination_booking_booster_month_count"
+			},
+			{
+			"id": "M267",
+			"full_name": "NHS.UK Vaccination Bookings 3rd dose",
+			"short_name":"ndc_vaccine_nhsuk_covid_vaccination_booking_third_dose_month_count"
+			},
+			{
+			"id": "M225",
+			"full_name": "Referrals managed via NHS App",
+			"short_name":"ndc_dashboard_nhsapp_refferrals_managed_month_count"
+			},
+			{
+			"id": "M226",
+			"full_name": "Secondary care appointments via NHS App",
+			"short_name":"ndc_dashboard_nhsapp_secondary_care_appointments_month_count"
+			},
+			{
+			"id": "M229",
+			"full_name": "Uses of find a service on NHS.uk",
+			"short_name":"ndc_dashboard_nhsuk_findservice_uses_month_count"
+			},
+			{
+			"id": "M231",
+			"full_name": "Views of test results via NHS App",
+			"short_name":"ndc_dashboard_nhsapp_test_result_views_month_count"
+			},
+			{
+			"id": "M232",
+			"full_name": "Covid pass",
+			"short_name":"ndc_transactions_covid_pass_usage_month_count"
+			},
+			{
+			"id": "M233",
+			"full_name": "Records, Information and Results",
+			"short_name":"ndc_transactions_nhsapp_records_information_results_month_count"
+			},
+			{
+			"id": "M256",
+			"full_name": "NHS.UK Estimated Visits",
+			"short_name":"ndc_access_nhsuk_estimated_visits_month_count"
+			},
+			{
+			"id": "M235",
+			"full_name": "Appointment Management",
+			"short_name":"ndc_transactions_nhsapp_appointment_management_month_count"
+			},
+			{
+			"id": "M236",
+			"full_name": "Messaging and Consultations",
+			"short_name":"ndc_transactions_nhsapp_messaging_consultations_month_count"
+			},
+			{
+			"id": "M222",
+			"full_name": "% repeat prescriptions ordered online (NHS App & other PFS)",
+			"short_name":"ndc_dashboard_repeat_prescriptions_online_month_prop"
+			},
+			{
+			"id": "M234",
+			"full_name": "Prescriptions and Medicine",
+			"short_name":"ndc_transactions_nhsapp_prescriptions_medicine_month_count"
+			},
+			{
+			"id": "M238",
+			"full_name": "NHSUK site section views: Other",
+			"short_name":"ndc_transactions_nhsuk_view_of_other_month_count"
+			},
+			{
+			"id": "M239",
+			"full_name": "NHSUK site section views: Live Well",
+			"short_name":"ndc_transactions_nhsuk_view_of_live_well_month_count"
+			},
+			{
+			"id": "M241",
+			"full_name": "NHSUK site section views: Book a Covid 19 Vaccination",
+			"short_name":"ndc_transactions_nhsuk_view_of_book_covid_vaccine_month_count"
+			},
+			{
+			"id": "M242",
+			"full_name": "NHSUK site section views: Medicines",
+			"short_name":"ndc_transactions_nhsuk_view_of_medicines_month_count"
+			},
+			{
+			"id": "M243",
+			"full_name": "NHSUK site section views: NHS App Online",
+			"short_name":"ndc_transactions_nhsuk_view_of_nhs_app_online_month_count"
+			},
+			{
+			"id": "M249",
+			"full_name": "Repeat Prescriptions through other POL service",
+			"short_name":"ndc_channel_shift_repeat_prescriptions_other_pol_month_count"
+			},
+			{
+			"id": "M250",
+			"full_name": "Repeat prescriptions offline",
+			"short_name":"ndc_channel_shift_repeat_prescriptions_offline_month_count"
+			},
+			{
+			"id": "M251",
+			"full_name": "DCR views through NHS",
+			"short_name":"ndc_channel_shift_dcr_views_nhs_month_count"
+			},
+			{
+			"id": "M252",
+			"full_name": "DCR views through other POL service",
+			"short_name":"ndc_channel_shift_dcr_views_other_pol_nhs_month_count"
+			},
+			{
+			"id": "M260",
+			"full_name": "Secondary Care Messages via NHS App",
+			"short_name":"ndc_transactions_secondary_care_messages_month_count"
+			}
+		]
+	}]},
+	"pipeline": {
+		"name": "trigger_national_digital_channels",
+    	"folder": "nhsx-au-analytics/nhsdigital/national_digital_channels/",
+		"adl_file_system": "nhsxdatalakesagen2fsprod",
+		"ingestion": {
+			"source_path": "Shared Documents/nhsx_au_ingestion/national_digital_channels/",
+			"logic_app_url": "https://prod-01.uksouth.logic.azure.com:443/workflows/c27ffc275044425097b94b69c6792d77/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=dVUKugfOw1WJj8a_zZmkohGQH_TtvTt937zY6DqhsAY",
+			"databricks_notebook": "/Repos/prod/au-azure-databricks/ingestion/dbrks_national_digital_channels/dbrks_national_digital_channels_raw"
+		},
+		"raw": {
+			"source_path": "land/sharepoint/Shared Documents/nhsx_au_ingestion/national_digital_channels/",
+			"appended_path": "raw/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
+			"appended_file_daily": "national_digital_channels_historical_daily.parquet",
+			"appended_file_monthly": "national_digital_channels_historical_monthly.parquet",
+			"appended_file_daily_notification": "national_digital_channels_historical_daily_notification.parquet",
+			"appended_file_daily_ods": "national_digital_channels_historical_daily_ods.parquet"
+		},
+		"proc": [
+			{
+			"source_path": "raw/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
+			"source_file": "national_digital_channels_historical_daily.parquet",
+			"sink_path": "proc/sources/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
+			"sink_file": "national_digital_channels_historical_daily.parquet"
+			},
+			{
+			"source_path": "raw/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
+			"source_file": "national_digital_channels_historical_monthly.parquet",
+			"sink_path": "proc/sources/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
+			"sink_file": "national_digital_channels_historical_monthly.parquet"
+			},
+			{
+			"source_path": "raw/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
+			"source_file": "national_digital_channels_historical_daily_notification.parquet",
+			"sink_path": "proc/sources/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
+			"sink_file": "national_digital_channels_historical_daily_notification.parquet"
+			},
+			{
+			"source_path": "raw/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
+			"source_file": "national_digital_channels_historical_daily_ods.parquet",
+			"sink_path": "proc/sources/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
+			"sink_file": "national_digital_channels_historical_daily_ods.parquet"
+			}
+		],
+		"project": {
+			"source_path": "proc/sources/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
+			"source_file_daily": "national_digital_channels_historical_daily.parquet",
+			"source_file_monthly": "national_digital_channels_historical_monthly.parquet",
+			"source_file_notification": "national_digital_channels_historical_daily_notification.parquet",
+			"source_file_ods": "national_digital_channels_historical_daily_ods.parquet",
+			"reference_source_path": "proc/sources/ncdr_etp/adf_v2/table/ons_population_demography/historical/",
+			"reference_source_file": "table_ons_population_demography_historical.parquet",
+			"reference_source_path_pomi": "proc/sources/factsanddim/adf_v2/table/pomi_table/full/",
+			"reference_source_file_pomi": "pomi_table_full.parquet",
+			"databricks_orchestrator_notebook": "/Repos/prod/au-azure-databricks/orchestration/dbrks_national_digital_channels_orchestrator",
+			"databricks":[
+				{
+					"metric": "ndc_dashboard_nhsapp_registered_population_month_prop",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_nhsapp_registered_population_month_prop/",
+					"sink_file": "ndc_dashboard_nhsapp_registered_population_month_prop.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_dashboard_nhsapp_registered_population_month_prop"
+				},
+				{
+					"metric": "ndc_dashboard_user_base_loggingin_month_prop",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_user_base_loggingin_month_prop/",
+					"sink_file": "ndc_dashboard_user_base_loggingin_month_prop.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_dashboard_user_base_loggingin_month_prop"
+				},
+				{
+					"metric": "ndc_dashboard_primary_care_appts_managed_online_month_prop",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_primary_care_appts_managed_online_month_prop/",
+					"sink_file": "ndc_dashboard_primary_care_appts_managed_online_month_prop.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_dashboard_primary_care_appts_managed_online_month_prop"
+				},
+				{
+					"metric": "ndc_channel_shift_population_registered_other_pol_service_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_channel_shift_population_registered_other_pol_service_month_count/",
+					"sink_file": "ndc_channel_shift_population_registered_other_pol_service_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_channel_shift_population_registered_other_pol_service_month_count"
+				},
+				{
+					"metric": "ndc_channel_shift_adult_population_offline_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_channel_shift_adult_population_offline_month_count/",
+					"sink_file": "ndc_channel_shift_adult_population_offline_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_channel_shift_adult_population_offline_month_count"
+				},
+				{
+					"metric": "ndc_dashboard_nhsapp_repeat_prescriptions_ordered_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_nhsapp_repeat_prescriptions_ordered_month_count/",
+					"sink_file": "ndc_dashboard_nhsapp_repeat_prescriptions_ordered_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_dashboard_nhsapp_repeat_prescriptions_ordered_month_count"
+				},
+				{
+					"metric": "ndc_dashboard_nhsapp_primary_appointments_managed_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_nhsapp_primary_appointments_managed_month_count/",
+					"sink_file": "ndc_dashboard_nhsapp_primary_appointments_managed_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_dashboard_nhsapp_primary_appointments_managed_month_count"
+				},
+				{
+					"metric": "ndc_dashboard_nhsuk_view_of_conditions_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_nhsuk_view_of_conditions_month_count/",
+					"sink_file": "ndc_dashboard_nhsuk_view_of_conditions_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_dashboard_nhsuk_view_of_conditions_month_count"
+				},
+				{
+					"metric": "ndc_dashboard_gp_record_view_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_gp_record_view_month_count/",
+					"sink_file": "ndc_dashboard_gp_record_view_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_dashboard_gp_record_view_month_count"
+				},
+				{
+					"metric": "ndc_transactions_covid_vaccine_record_views_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_covid_vaccine_record_views_month_count/",
+					"sink_file": "ndc_transactions_covid_vaccine_record_views_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_covid_vaccine_record_views_month_count"
+				},
+				{
+					"metric": "ndc_channel_shift_population_registered_with_nhs_app_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_channel_shift_population_registered_with_nhs_app_month_count/",
+					"sink_file": "ndc_channel_shift_population_registered_with_nhs_app_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_channel_shift_population_registered_with_nhs_app_month_count"
+				},
+				{
+					"metric": "ndc_access_total_app_logins_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_access_total_app_logins_month_count/",
+					"sink_file": "ndc_access_total_app_logins_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_access_total_app_logins_month_count"
+				},
+				{
+					"metric": "ndc_access_nhslogin_confirmed_accounts_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_access_nhslogin_confirmed_accounts_month_count/",
+					"sink_file": "ndc_access_nhslogin_confirmed_accounts_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_access_nhslogin_confirmed_accounts_month_count"
+				},
+				{
+					"metric": "ndc_transactions_detail_coded_record_views_month_prop",
+					"sink_path":  "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_detail_coded_record_views_month_prop/",
+					"sink_file": "ndc_transactions_detail_coded_record_views_month_prop.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_detail_coded_record_views_month_prop"
+				},
+				{
+					"metric": "ndc_transaction_nhsapp_organ_donation_registration_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transaction_nhsapp_organ_donation_registration_month_count/",
+					"sink_file": "ndc_transaction_nhsapp_organ_donation_registration_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_transaction_nhsapp_organ_donation_registration_month_count"
+				},
+				{
+					"metric": "ndc_vaccine_nhsuk_covid_vaccination_appointments_booked_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_vaccine_nhsuk_covid_vaccination_appointments_booked_month_count/",
+					"sink_file": "ndc_vaccine_nhsuk_covid_vaccination_appointments_booked_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_vaccine_nhsuk_covid_vaccination_appointments_booked_month_count"
+				},
+				{
+					"metric": "ndc_vaccine_nhsuk_covid_vaccination_booking_first_dose_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_vaccine_nhsuk_covid_vaccination_booking_first_dose_month_count/",
+					"sink_file": "ndc_vaccine_nhsuk_covid_vaccination_booking_first_dose_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_vaccine_nhsuk_covid_vaccination_booking_first_dose_month_count"
+				},
+				{
+					"metric": "ndc_vaccine_nhsuk_covid_vaccination_booking_second_dose_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_vaccine_nhsuk_covid_vaccination_booking_second_dose_month_count/",
+					"sink_file": "ndc_vaccine_nhsuk_covid_vaccination_booking_second_dose_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_vaccine_nhsuk_covid_vaccination_booking_second_dose_month_count"
+				},
+				{
+					"metric": "ndc_vaccine_nhsuk_covid_vaccination_booking_booster_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_vaccine_nhsuk_covid_vaccination_booking_booster_month_count/",
+					"sink_file": "ndc_vaccine_nhsuk_covid_vaccination_booking_booster_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_vaccine_nhsuk_covid_vaccination_booking_booster_month_count"
+				},
+				{
+					"metric": "ndc_vaccine_nhsuk_covid_vaccination_booking_third_dose_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_vaccine_nhsuk_covid_vaccination_booking_third_dose_month_count/",
+					"sink_file": "ndc_vaccine_nhsuk_covid_vaccination_booking_third_dose_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_vaccine_nhsuk_covid_vaccination_booking_third_dose_month_count"
+				},
+				{
+					"metric": "ndc_dashboard_nhsapp_refferrals_managed_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_nhsapp_refferrals_managed_month_count/",
+					"sink_file": "ndc_dashboard_nhsapp_refferrals_managed_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_dashboard_nhsapp_refferrals_managed_month_count"
+				},
+				{
+					"metric": "ndc_dashboard_nhsapp_secondary_care_appointments_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_nhsapp_secondary_care_appointments_month_count/",
+					"sink_file": "ndc_dashboard_nhsapp_secondary_care_appointments_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_dashboard_nhsapp_secondary_care_appointments_month_count"
+				},
+				{
+					"metric": "ndc_dashboard_nhsuk_findservice_uses_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_nhsuk_findservice_uses_month_count/",
+					"sink_file": "ndc_dashboard_nhsuk_findservice_uses_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_dashboard_nhsuk_findservice_uses_month_count"
+				},
+				{
+					"metric": "ndc_dashboard_nhsapp_test_result_views_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_nhsapp_test_result_views_month_count/",
+					"sink_file": "ndc_dashboard_nhsapp_test_result_views_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_dashboard_nhsapp_test_result_views_month_count"
+				},
+				{
+					"metric": "ndc_transactions_covid_pass_usage_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_covid_pass_usage_month_count/",
+					"sink_file": "ndc_transactions_covid_pass_usage_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_covid_pass_usage_month_count"
+				},
+				{
+					"metric": "ndc_transactions_nhsapp_records_information_results_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_nhsapp_records_information_results_month_count/",
+					"sink_file": "ndc_transactions_nhsapp_records_information_results_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_nhsapp_records_information_results_month_count"
+				},
+				{
+					"metric": "ndc_access_nhsuk_estimated_visits_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_access_nhsuk_estimated_visits_month_count/",
+					"sink_file": "ndc_access_nhsuk_estimated_visits_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_access_nhsuk_estimated_visits_month_count"
+				},
+				{
+					"metric": "ndc_transactions_nhsapp_appointment_management_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_nhsapp_appointment_management_month_count/",
+					"sink_file": "ndc_transactions_nhsapp_appointment_management_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_nhsapp_appointment_management_month_count"
+				},
+				{
+					"metric": "ndc_transactions_nhsapp_messaging_consultations_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_nhsapp_messaging_consultations_month_count/",
+					"sink_file": "ndc_transactions_nhsapp_messaging_consultations_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_nhsapp_messaging_consultations_month_count"
+				},
+				{
+					"metric": "ndc_dashboard_repeat_prescriptions_online_month_prop",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_repeat_prescriptions_online_month_prop/",
+					"sink_file": "ndc_dashboard_repeat_prescriptions_online_month_prop.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_dashboard_repeat_prescriptions_online_month_prop"
+				},
+				{
+					"metric": "ndc_transactions_nhsapp_prescriptions_medicine_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_nhsapp_prescriptions_medicine_month_count/",
+					"sink_file": "ndc_transactions_nhsapp_prescriptions_medicine_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_nhsapp_prescriptions_medicine_month_count"
+				},
+				{
+					"metric": "ndc_transactions_nhsuk_view_of_other_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_nhsuk_view_of_other_month_count/",
+					"sink_file": "ndc_transactions_nhsuk_view_of_other_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_nhsuk_view_of_other_month_count"
+				},
+				{
+					"metric": "ndc_transactions_nhsuk_view_of_live_well_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_nhsuk_view_of_live_well_month_count/",
+					"sink_file": "ndc_transactions_nhsuk_view_of_live_well_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_nhsuk_view_of_live_well_month_count"
+				},
+				{
+					"metric": "ndc_transactions_nhsuk_view_of_book_covid_vaccine_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_nhsuk_view_of_book_covid_vaccine_month_count/",
+					"sink_file": "ndc_transactions_nhsuk_view_of_book_covid_vaccine_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_nhsuk_view_of_book_covid_vaccine_month_count"
+				},
+				{
+					"metric": "ndc_transactions_nhsuk_view_of_medicines_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_nhsuk_view_of_medicines_month_count/",
+					"sink_file": "ndc_transactions_nhsuk_view_of_medicines_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_nhsuk_view_of_medicines_month_count"
+				},
+				{
+					"metric": "ndc_transactions_nhsuk_view_of_nhs_app_online_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_nhsuk_view_of_nhs_app_online_month_count/",
+					"sink_file": "ndc_transactions_nhsuk_view_of_nhs_app_online_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_nhsuk_view_of_nhs_app_online_month_count"
+				},
+				{
+					"metric": "ndc_channel_shift_repeat_prescriptions_other_pol_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_channel_shift_repeat_prescriptions_other_pol_month_count/",
+					"sink_file": "ndc_channel_shift_repeat_prescriptions_other_pol_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_channel_shift_repeat_prescriptions_other_pol_month_count"
+				},
+				{
+					"metric": "ndc_channel_shift_repeat_prescriptions_offline_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_channel_shift_repeat_prescriptions_offline_month_count/",
+					"sink_file": "ndc_channel_shift_repeat_prescriptions_offline_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_channel_shift_repeat_prescriptions_offline_month_count"
+				},
+				{
+					"metric": "ndc_channel_shift_dcr_views_nhs_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_channel_shift_dcr_views_nhs_month_count/",
+					"sink_file": "ndc_channel_shift_dcr_views_nhs_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_channel_shift_dcr_views_nhs_month_count"
+				},
+				{
+					"metric": "ndc_channel_shift_dcr_views_other_pol_nhs_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_channel_shift_dcr_views_other_pol_nhs_month_count/",
+					"sink_file": "ndc_channel_shift_dcr_views_other_pol_nhs_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_channel_shift_dcr_views_other_pol_nhs_month_count"
+				},
+				{
+					"metric": "ndc_transactions_secondary_care_messages_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_secondary_care_messages_month_count/",
+					"sink_file": "ndc_transactions_secondary_care_messages_month_count.csv",
+					"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_secondary_care_messages_month_count"
+				}
+			]
+		},
+		"staging":[
+			{
+			"metric":"ndc_dashboard_nhsapp_registered_population_month_prop",
+			"stored_procedure":"[dbo].[stored_proc_ndc_dashboard_nhsapp_registered_population_month_prop]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_nhsapp_registered_population_month_prop/",
+			"source_file":"ndc_dashboard_nhsapp_registered_population_month_prop.csv",
+			"sink_table":"ndc_dashboard_nhsapp_registered_population_month_prop"
+			},
+			{
+			"metric":"ndc_dashboard_user_base_loggingin_month_prop",
+			"stored_procedure":"[dbo].[stored_proc_ndc_dashboard_user_base_loggingin_month_prop]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_user_base_loggingin_month_prop/",
+			"source_file":"ndc_dashboard_user_base_loggingin_month_prop.csv",
+			"sink_table":"ndc_dashboard_user_base_loggingin_month_prop"
+			},
+			{
+			"metric":"ndc_dashboard_primary_care_appts_managed_online_month_prop",
+			"stored_procedure":"[dbo].[stored_proc_ndc_dashboard_primary_care_appts_managed_online_month_prop]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_primary_care_appts_managed_online_month_prop/",
+			"source_file":"ndc_dashboard_primary_care_appts_managed_online_month_prop.csv",
+			"sink_table":"ndc_dashboard_primary_care_appts_managed_online_month_prop"
+			},
+			{
+			"metric":"ndc_channel_shift_population_registered_other_pol_service_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_channel_shift_population_registered_other_pol_service_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_channel_shift_population_registered_other_pol_service_month_count/",
+			"source_file":"ndc_channel_shift_population_registered_other_pol_service_month_count.csv",
+			"sink_table":"ndc_channel_shift_population_registered_other_pol_service_month_count"
+			},
+			{
+			"metric":"ndc_channel_shift_adult_population_offline_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_channel_shift_adult_population_offline_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_channel_shift_adult_population_offline_month_count/",
+			"source_file":"ndc_channel_shift_adult_population_offline_month_count.csv",
+			"sink_table":"ndc_channel_shift_adult_population_offline_month_count"
+			},
+			{
+			"metric":"ndc_dashboard_nhsapp_repeat_prescriptions_ordered_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_dashboard_nhsapp_repeat_prescriptions_ordered_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_nhsapp_repeat_prescriptions_ordered_month_count/",
+			"source_file":"ndc_dashboard_nhsapp_repeat_prescriptions_ordered_month_count.csv",
+			"sink_table":"ndc_dashboard_nhsapp_repeat_prescriptions_ordered_month_count"
+			},
+			{
+			"metric":"ndc_dashboard_nhsapp_primary_appointments_managed_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_dashboard_nhsapp_primary_appointments_managed_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_nhsapp_primary_appointments_managed_month_count/",
+			"source_file":"ndc_dashboard_nhsapp_primary_appointments_managed_month_count.csv",
+			"sink_table":"ndc_dashboard_nhsapp_primary_appointments_managed_month_count"
+			},
+			{
+			"metric":"ndc_dashboard_nhsuk_view_of_conditions_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_dashboard_nhsuk_view_of_conditions_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_nhsuk_view_of_conditions_month_count/",
+			"source_file":"ndc_dashboard_nhsuk_view_of_conditions_month_count.csv",
+			"sink_table":"ndc_dashboard_nhsuk_view_of_conditions_month_count"
+			},
+			{
+			"metric":"ndc_dashboard_gp_record_view_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_dashboard_gp_record_view_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_gp_record_view_month_count/",
+			"source_file":"ndc_dashboard_gp_record_view_month_count.csv",
+			"sink_table":"ndc_dashboard_gp_record_view_month_count"
+			},
+			{
+			"metric":"ndc_transactions_covid_vaccine_record_views_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_transactions_covid_vaccine_record_views_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_covid_vaccine_record_views_month_count/",
+			"source_file":"ndc_transactions_covid_vaccine_record_views_month_count.csv",
+			"sink_table":"ndc_transactions_covid_vaccine_record_views_month_count"
+			},
+			{
+			"metric":"ndc_channel_shift_population_registered_with_nhs_app_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_channel_shift_population_registered_with_nhs_app_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_channel_shift_population_registered_with_nhs_app_month_count/",
+			"source_file":"ndc_channel_shift_population_registered_with_nhs_app_month_count.csv",
+			"sink_table":"ndc_channel_shift_population_registered_with_nhs_app_month_count"
+			},
+			{
+			"metric":"ndc_access_total_app_logins_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_access_total_app_logins_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_access_total_app_logins_month_count/",
+			"source_file":"ndc_access_total_app_logins_month_count.csv",
+			"sink_table":"ndc_access_total_app_logins_month_count"
+			},
+			{
+			"metric":"ndc_access_nhslogin_confirmed_accounts_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_access_nhslogin_confirmed_accounts_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_access_nhslogin_confirmed_accounts_month_count/",
+			"source_file":"ndc_access_nhslogin_confirmed_accounts_month_count.csv",
+			"sink_table":"ndc_access_nhslogin_confirmed_accounts_month_count"
+			},
+			{
+			"metric":"ndc_transactions_detail_coded_record_views_month_prop",
+			"stored_procedure":"[dbo].[stored_proc_ndc_transactions_detail_coded_record_views_month_prop]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_detail_coded_record_views_month_prop/",
+			"source_file":"ndc_transactions_detail_coded_record_views_month_prop.csv",
+			"sink_table":"ndc_transactions_detail_coded_record_views_month_prop"
+			},
+			{
+			"metric":"ndc_transaction_nhsapp_organ_donation_registration_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_transaction_nhsapp_organ_donation_registration_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transaction_nhsapp_organ_donation_registration_month_count/",
+			"source_file":"ndc_transaction_nhsapp_organ_donation_registration_month_count.csv",
+			"sink_table":"ndc_transaction_nhsapp_organ_donation_registration_month_count"
+			},
+			{
+			"metric":"ndc_vaccine_nhsuk_covid_vaccination_appointments_booked_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_vaccine_nhsuk_covid_vaccination_appointments_booked_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_vaccine_nhsuk_covid_vaccination_appointments_booked_month_count/",
+			"source_file":"ndc_vaccine_nhsuk_covid_vaccination_appointments_booked_month_count.csv",
+			"sink_table":"ndc_vaccine_nhsuk_covid_vaccination_appointments_booked_month_count"
+			},
+			{
+			"metric":"ndc_vaccine_nhsuk_covid_vaccination_booking_first_dose_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_vaccine_nhsuk_covid_vaccination_booking_first_dose_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_vaccine_nhsuk_covid_vaccination_booking_first_dose_month_count/",	
+			"source_file":"ndc_vaccine_nhsuk_covid_vaccination_booking_first_dose_month_count.csv",
+			"sink_table":"ndc_vaccine_nhsuk_covid_vaccination_booking_first_dose_month_count"
+			},
+			{
+			"metric":"ndc_vaccine_nhsuk_covid_vaccination_booking_second_dose_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_vaccine_nhsuk_covid_vaccination_booking_second_dose_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_vaccine_nhsuk_covid_vaccination_booking_second_dose_month_count/",
+			"source_file":"ndc_vaccine_nhsuk_covid_vaccination_booking_second_dose_month_count.csv",
+			"sink_table":"ndc_vaccine_nhsuk_covid_vaccination_booking_second_dose_month_count"
+			},
+			{
+			"metric":"ndc_vaccine_nhsuk_covid_vaccination_booking_booster_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_vaccine_nhsuk_covid_vaccination_booking_booster_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_vaccine_nhsuk_covid_vaccination_booking_booster_month_count/",
+			"source_file":"ndc_vaccine_nhsuk_covid_vaccination_booking_booster_month_count.csv",
+			"sink_table":"ndc_vaccine_nhsuk_covid_vaccination_booking_booster_month_count"
+			},
+			{
+			"metric":"ndc_vaccine_nhsuk_covid_vaccination_booking_third_dose_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_vaccine_nhsuk_covid_vaccination_booking_third_dose_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_vaccine_nhsuk_covid_vaccination_booking_third_dose_month_count/",
+			"source_file":"ndc_vaccine_nhsuk_covid_vaccination_booking_third_dose_month_count.csv",
+			"sink_table":"ndc_vaccine_nhsuk_covid_vaccination_booking_third_dose_month_count"
+			},
+			{
+			"metric":"ndc_dashboard_nhsapp_refferrals_managed_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_dashboard_nhsapp_refferrals_managed_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_nhsapp_refferrals_managed_month_count/",
+			"source_file":"ndc_dashboard_nhsapp_refferrals_managed_month_count.csv",
+			"sink_table":"ndc_dashboard_nhsapp_refferrals_managed_month_count"
+			},
+			{
+			"metric":"ndc_dashboard_nhsapp_secondary_care_appointments_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_dashboard_nhsapp_secondary_care_appointments_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_nhsapp_secondary_care_appointments_month_count/",
+			"source_file":"ndc_dashboard_nhsapp_secondary_care_appointments_month_count.csv",
+			"sink_table":"ndc_dashboard_nhsapp_secondary_care_appointments_month_count"
+			},
+			{
+			"metric":"ndc_dashboard_nhsuk_findservice_uses_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_dashboard_nhsuk_findservice_uses_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_nhsuk_findservice_uses_month_count/",
+			"source_file":"ndc_dashboard_nhsuk_findservice_uses_month_count.csv",
+			"sink_table":"ndc_dashboard_nhsuk_findservice_uses_month_count"
+			},
+			{
+			"metric":"ndc_dashboard_nhsapp_test_result_views_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_dashboard_nhsapp_test_result_views_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_nhsapp_test_result_views_month_count/",
+			"source_file":"ndc_dashboard_nhsapp_test_result_views_month_count.csv",
+			"sink_table":"ndc_dashboard_nhsapp_test_result_views_month_count"
+			},
+			{
+			"metric":"ndc_transactions_covid_pass_usage_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_transactions_covid_pass_usage_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_covid_pass_usage_month_count/",
+			"source_file":"ndc_transactions_covid_pass_usage_month_count.csv",
+			"sink_table":"ndc_transactions_covid_pass_usage_month_count"
+			},
+			{
+			"metric":"ndc_transactions_nhsapp_records_information_results_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_transactions_nhsapp_records_information_results_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_nhsapp_records_information_results_month_count/",
+			"source_file":"ndc_transactions_nhsapp_records_information_results_month_count.csv",
+			"sink_table":"ndc_transactions_nhsapp_records_information_results_month_count"
+			},
+			{
+			"metric":"ndc_access_nhsuk_estimated_visits_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_access_nhsuk_estimated_visits_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_access_nhsuk_estimated_visits_month_count/",
+			"source_file":"ndc_access_nhsuk_estimated_visits_month_count.csv",
+			"sink_table":"ndc_access_nhsuk_estimated_visits_month_count"
+			},
+			{
+			"metric":"ndc_transactions_nhsapp_appointment_management_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_transactions_nhsapp_appointment_management_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_nhsapp_appointment_management_month_count/",
+			"source_file":"ndc_transactions_nhsapp_appointment_management_month_count.csv",
+			"sink_table":"ndc_transactions_nhsapp_appointment_management_month_count"
+			},
+			{
+			"metric":"ndc_transactions_nhsapp_messaging_consultations_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_transactions_nhsapp_messaging_consultations_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_nhsapp_messaging_consultations_month_count/",
+			"source_file":"ndc_transactions_nhsapp_messaging_consultations_month_count.csv",
+			"sink_table":"ndc_transactions_nhsapp_messaging_consultations_month_count"
+			},
+			{
+			"metric":"ndc_dashboard_repeat_prescriptions_online_month_prop",
+			"stored_procedure":"[dbo].[stored_proc_ndc_dashboard_repeat_prescriptions_online_month_prop]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_repeat_prescriptions_online_month_prop/",
+			"source_file":"ndc_dashboard_repeat_prescriptions_online_month_prop.csv",
+			"sink_table":"ndc_dashboard_repeat_prescriptions_online_month_prop"
+			},
+			{
+			"metric":"ndc_transactions_nhsapp_prescriptions_medicine_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_transactions_nhsapp_prescriptions_medicine_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_nhsapp_prescriptions_medicine_month_count/",
+			"source_file":"ndc_transactions_nhsapp_prescriptions_medicine_month_count.csv",
+			"sink_table":"ndc_transactions_nhsapp_prescriptions_medicine_month_count"
+			},
+			{
+			"metric":"ndc_transactions_nhsuk_view_of_other_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_transactions_nhsuk_view_of_other_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_nhsuk_view_of_other_month_count/",
+			"source_file":"ndc_transactions_nhsuk_view_of_other_month_count.csv",
+			"sink_table":"ndc_transactions_nhsuk_view_of_other_month_count"
+			},
+			{
+			"metric":"ndc_transactions_nhsuk_view_of_live_well_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_transactions_nhsuk_view_of_live_well_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_nhsuk_view_of_live_well_month_count/",
+			"source_file":"ndc_transactions_nhsuk_view_of_live_well_month_count.csv",
+			"sink_table":"ndc_transactions_nhsuk_view_of_live_well_month_count"
+			},
+			{
+			"metric":"ndc_transactions_nhsuk_view_of_book_covid_vaccine_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_transactions_nhsuk_view_of_book_covid_vaccine_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_nhsuk_view_of_book_covid_vaccine_month_count/",
+			"source_file":"ndc_transactions_nhsuk_view_of_book_covid_vaccine_month_count.csv",
+			"sink_table":"ndc_transactions_nhsuk_view_of_book_covid_vaccine_month_count"
+			},
+			{
+			"metric":"ndc_transactions_nhsuk_view_of_medicines_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_transactions_nhsuk_view_of_medicines_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_nhsuk_view_of_medicines_month_count/",
+			"source_file":"ndc_transactions_nhsuk_view_of_medicines_month_count.csv",
+			"sink_table":"ndc_transactions_nhsuk_view_of_medicines_month_count"
+			},
+			{
+			"metric":"ndc_transactions_nhsuk_view_of_nhs_app_online_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_transactions_nhsuk_view_of_nhs_app_online_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_nhsuk_view_of_nhs_app_online_month_count/",
+			"source_file":"ndc_transactions_nhsuk_view_of_nhs_app_online_month_count.csv",
+			"sink_table":"ndc_transactions_nhsuk_view_of_nhs_app_online_month_count"
+			},
+			{
+			"metric":"ndc_channel_shift_repeat_prescriptions_other_pol_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_channel_shift_repeat_prescriptions_other_pol_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_channel_shift_repeat_prescriptions_other_pol_month_count/",
+			"source_file":"ndc_channel_shift_repeat_prescriptions_other_pol_month_count.csv",
+			"sink_table":"ndc_channel_shift_repeat_prescriptions_other_pol_month_count"
+			},
+			{
+			"metric":"ndc_channel_shift_repeat_prescriptions_offline_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_channel_shift_repeat_prescriptions_offline_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_channel_shift_repeat_prescriptions_offline_month_count/",
+			"source_file":"ndc_channel_shift_repeat_prescriptions_offline_month_count.csv",
+			"sink_table":"ndc_channel_shift_repeat_prescriptions_offline_month_count"
+			},
+			{
+			"metric":"ndc_channel_shift_dcr_views_nhs_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_channel_shift_dcr_views_nhs_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_channel_shift_dcr_views_nhs_month_count/",
+			"source_file":"ndc_channel_shift_dcr_views_nhs_month_count.csv",
+			"sink_table":"ndc_channel_shift_dcr_views_nhs_month_count"
+			},
+			{
+			"metric":"ndc_channel_shift_dcr_views_other_pol_nhs_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_channel_shift_dcr_views_other_pol_nhs_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_channel_shift_dcr_views_other_pol_nhs_month_count/",
+			"source_file":"ndc_channel_shift_dcr_views_other_pol_nhs_month_count.csv",
+			"sink_table":"ndc_channel_shift_dcr_views_other_pol_nhs_month_count"
+			},
+			{
+			"metric":"ndc_transactions_secondary_care_messages_month_count",
+			"stored_procedure":"[dbo].[stored_proc_ndc_transactions_secondary_care_messages_month_count]",
+			"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_secondary_care_messages_month_count/",
+			"source_file":"ndc_transactions_secondary_care_messages_month_count.csv",
+			"sink_table":"ndc_transactions_secondary_care_messages_month_count"
+			}
+		]
+	}
+	}
+

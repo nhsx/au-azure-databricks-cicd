@@ -1,0 +1,93 @@
+{
+	"metadata": {
+		"products": [
+		{
+		"product_name": "General Practice Digital Maturity and Capability (GPDMC) Dashboard",
+		"Granularity": "GP practice",
+		"topic": "Cyber Security",
+		"metrics": [
+			{
+            "id": "M076B",
+            "full_name": "No. and % of GP practices that are compliant with (meet or exceed) the 20/21 DSPT standard (monthly snapshot)",
+			"short_name":"dspt_gp_practices_standards_meet_exceed_month_count_prop"
+        	},
+			{
+			"id": "M077B",
+			"full_name": "No. and % of GP practices that exceed the 20/21 DSPT standard (monthly snapshot)",
+			"short_name":"dspt_gp_practices_standards_exceed_month_count_prop"
+			},
+			{
+			"id": "M078B",
+			"full_name": "No. and % of GP practices that have not submitted 20/21 DSPT assessment (monthly snapshot)",
+			"short_name":"dspt_gp_practices_standards_nosubmission_month_count_prop"
+			}
+		]
+	}]},
+	"pipeline": {
+		"name": "trigger_dspt_gp_practices_snapshot",
+    	"folder": "nhsx-au-analytics/nhsdigital/dspt_gp_practices/",
+		"adl_file_system": "nhsxdatalakesagen2fsprod",
+		"raw": {
+			"source_url": "https://www.dsptoolkit.nhs.uk/OrganisationSearch/ExportSearchResults?searchValue=&selectedSectors=10",	
+			"sink_path": "raw/nhsdigital/adf_v2/csv/dspt_gp_practice/snapshot/",
+			"sink_file": "dspt_gp_practice_snapshot.csv"
+		},
+		"proc": {
+			"source_path": "raw/nhsdigital/adf_v2/csv/dspt_gp_practice/snapshot/",
+			"source_file": "dspt_gp_practice_snapshot.csv",
+			"sink_path": "proc/sources/nhsdigital/adf_v2/csv/dspt_gp_practice/snapshot/",
+			"sink_file": "dspt_gp_practice_snapshot.csv"
+		},
+		"project": {
+			"source_path": "proc/sources/nhsdigital/adf_v2/csv/dspt_gp_practice/snapshot/",
+			"source_file": "dspt_gp_practice_snapshot.csv",
+			"reference_source_path": "proc/sources/nhsdigital/manual_upload/parquet/registered_gp_practices/historical/",
+			"reference_source_file": "registered_gp_practices_historical.parquet",
+			"databricks_orchestrator_notebook": "/Repos/prod/au-azure-databricks/orchestration/dbrks_dspt_gp_practices_snapshot_orchestrator",
+			"databricks":[
+				{
+				"metric": "dspt_gp_practices_standards_meet_exceed_month_count_prop",
+				"sink_path": "proc/projects/nhsx_dfpc_analytics/cybersecurity/dspt_gp_practices/standards_meet_exceed_month_count_prop/",
+				"sink_file": "dspt_gp_practices_standards_meet_exceed_month_count_prop.csv",
+				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_dspt_gp_practices/dbrks_cybersecurity_dspt_gp_practices_standards_meet_exceed_month_count_prop"
+				},
+				{
+				"metric": "dspt_gp_practices_standards_exceed_month_count_prop",
+				"sink_path": "proc/projects/nhsx_dfpc_analytics/cybersecurity/dspt_gp_practices/standards_exceed_month_count_prop/",
+				"sink_file": "dspt_gp_practices_standards_exceed_month_count_prop.csv",
+				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_dspt_gp_practices/dbrks_cybersecurity_dspt_gp_practices_standards_exceed_month_count_prop"
+				},
+				{
+				"metric": "dspt_gp_practices_standards_nosubmission_month_count_prop",
+				"sink_path": "proc/projects/nhsx_dfpc_analytics/cybersecurity/dspt_gp_practices/standards_nosubmission_month_count_prop/",
+				"sink_file": "dspt_gp_practices_standards_nosubmission_month_count_prop.csv",
+				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_dspt_gp_practices/dbrks_cybersecurity_dspt_gp_practices_standards_nosubmission_month_count_prop"
+				}
+			]
+		},
+		"staging": [ 
+			{
+				"metric":"dspt_gp_practices_standards_meet_exceed_month_count_prop",
+				"stored_procedure":"[dbo].[stored_proc_dspt_gp_practices_standards_meet_exceed_month_count_prop]",
+				"source_path":"proc/projects/nhsx_dfpc_analytics/cybersecurity/dspt_gp_practices/standards_meet_exceed_month_count_prop/",
+				"source_file":"dspt_gp_practices_standards_meet_exceed_month_count_prop.csv",
+				"sink_table":"dspt_gp_practices_standards_meet_exceed_month_count_prop"
+			},
+			{
+				"metric":"dspt_gp_practices_standards_exceed_month_count_prop",
+				"stored_procedure":"[dbo].[stored_proc_dspt_gp_practices_standards_exceed_month_count_prop]",
+				"source_path":"proc/projects/nhsx_dfpc_analytics/cybersecurity/dspt_gp_practices/standards_exceed_month_count_prop/",
+				"source_file":"dspt_gp_practices_standards_exceed_month_count_prop.csv",
+				"sink_table":"dspt_gp_practices_standards_exceed_month_count_prop"
+			},
+			{
+				"metric":"dspt_gp_practices_standards_nosubmission_month_count_prop",
+				"stored_procedure":"[dbo].[stored_proc_dspt_gp_practices_standards_nosubmission_month_count_prop]",
+				"source_path":"proc/projects/nhsx_dfpc_analytics/cybersecurity/dspt_gp_practices/standards_nosubmission_month_count_prop/",
+				"source_file":"dspt_gp_practices_standards_nosubmission_month_count_prop.csv",
+				"sink_table":"dspt_gp_practices_standards_nosubmission_month_count_prop"
+			}
+		]
+
+		}
+	}

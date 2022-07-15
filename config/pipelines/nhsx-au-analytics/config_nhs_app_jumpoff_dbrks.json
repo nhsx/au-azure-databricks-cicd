@@ -1,0 +1,60 @@
+{
+	"metadata": {
+		"products": [
+		{
+		"product_name": "NHS App Dashboard",
+		"Granularity": "GP Practice Level",
+		"topic": "NHS App",
+		"metrics": [
+			{
+            "id": "",
+            "full_name": "Number of NHS app jumpoffs",
+			"short_name":"nhs_app_jumpoff"
+        	}
+		]
+	}]},
+	"pipeline": {
+		"name": "nhs_app_jumpoff",
+    	"folder": "nhsx-au-analytics/nhsdigital/nhs_app/",
+		"adl_file_system": "nhsxdatalakesagen2fsprod",
+		"ingestion": {
+			"databricks_notebook": "/Repos/prod/au-azure-databricks/ingestion/dbrks_nhs_app/dbrks_nhs_app_jumpoff_raw"
+		},
+		"raw": {
+			"snapshot_source_path": "land/nhsdigital/nhs_app/timestamp/snapshot/",
+			"appended_path": "raw/nhsdigital/adf_v2/parquet/nhs_app_jumpoff/historical/",
+			"appended_file": "nhs_app_jumpoff_historical.parquet"
+		},
+		"proc": {
+			"source_path": "",
+			"source_file": "",
+			"sink_path": "",
+			"sink_file": ""
+		},
+		"project": {
+			"source_path": "",
+			"source_file": "",
+			"reference_source_path": "",
+			"reference_source_file": "",
+			"databricks_orchestrator_notebook": "",
+			"databricks":[
+				{
+				"metric": "",
+				"sink_path": "",
+				"sink_file": "",
+				"databricks_notebook": ""
+				}
+			]
+		},
+		"staging": [ 
+			{
+				"metric":"",
+				"stored_procedure":"",
+				"source_path":"",
+				"source_file":"",
+				"sink_table":""
+			}
+		]
+
+		}
+	}
