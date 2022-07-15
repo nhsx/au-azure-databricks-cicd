@@ -1,0 +1,51 @@
+{
+	"metadata": {
+		"products": [
+		{
+		"product_name": "Digitise, Connect, Transform (DCT) Dashboard",
+		"Granularity": "National",
+		"topic": "Social Care",
+		"metrics": [
+			{
+            "id": "M013",
+            "full_name": "Proportion of CQC registered social care providers that have adopted a digital social care record",
+			"short_name":"socialcare_digitalrecord_month_count_prop"
+        	}
+		]
+	}]},
+	"pipeline": {
+		"name": "trigger_socialcare_digitalrecord",
+    	"folder": "nhsx-au-analytics/nhsx/socialcare_digitalrecord/",
+		"adl_file_system": "nhsxdatalakesagen2fsprod",
+		"ingestion": {
+			"databricks_notebook": "/Repos/prod/au-azure-databricks/ingestion/dbrks_socialcare_digitalrecord/dbrks_socialcare_digitalrecord_raw"
+		},
+		"raw": {
+			"snapshot_source_path": "land/nhsx/manual_upload/timestamp/excel/socialcare_digitalrecord/",
+			"appended_path": "raw/nhsx/manual_upload/parquet/socialcare_digitalrecord_results/historical/",
+			"appended_file": "socialcare_digitalrecord_results_historical.parquet"
+		},
+		"proc": {
+			"source_path": "raw/nhsx/manual_upload/parquet/socialcare_digitalrecord_results/historical/",
+			"source_file": "socialcare_digitalrecord_results_historical.parquet",
+			"sink_path": "proc/sources/nhsx/manual_upload/parquet/socialcare_digitalrecord_results/historical/",
+			"sink_file": "socialcare_digitalrecord_results_historical.parquet"
+		},
+		"project": {
+			"source_path": "proc/sources/nhsx/manual_upload/parquet/socialcare_digitalrecord_results/historical/",
+			"source_file": "socialcare_digitalrecord_results_historical.parquet",
+			"reference_source_path":"proc/sources/digital_socialcare/email_attachment/parquet/dspt_socialcare/historical/",
+			"reference_source_file":"socialcare_dspt_results_full.parquet",
+			"sink_path": "proc/projects/nhsx_slt_analytics/socialcare/digitalrecord/month_count_prop/",
+			"sink_file": "socialcare_digitalrecord_month_count_prop.csv",
+			"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_socialcare_digitalrecord/dbrks_socialcare_digitalrecord_month_count_prop"
+		},
+		"staging": {
+					"metric":"socialcare_digitalrecord_month_count_prop",
+					"stored_procedure":"[dbo].[stored_proc_socialcare_digitalrecord_month_count_prop]",
+					"source_path":"proc/projects/nhsx_slt_analytics/socialcare/digitalrecord/month_count_prop/",
+					"source_file":"socialcare_digitalrecord_month_count_prop.csv",
+					"sink_table":"socialcare_digitalrecord_month_count_prop"
+		}
+	}
+}

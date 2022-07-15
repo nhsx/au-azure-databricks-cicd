@@ -1,0 +1,59 @@
+{
+	"metadata":  {
+		"products": [
+			{
+			"product_name": "Reference Data",
+			"topic": "Demographics",
+			"metrics": [
+				{
+            			"id": "R008",
+            			"full_name": "Reference table with patients by age band for GP practices",
+	 			"short_name":"gp_patient_age_band"
+        			}
+				]
+			}
+		]
+	},
+	"pipeline": {
+		"name": "trigger_gp_patient_age_band",
+    	"folder": "reference_tables/gp_patient_age_band/",
+		"adl_file_system": "nhsxdatalakesagen2fsprod",
+		"ingestion": {
+		},
+		"raw": {
+				"source_dbo": "dbo",
+				"source_table": "vw_no_of_patients_regd_at_gp_practice_by_age_band",
+				"source_query": "SELECT * FROM vw_no_of_patients_regd_at_gp_practice_by_age_band;",	
+				"sink_path": "raw/ncdr_etp/adf_v2/table/patients_age_band_demography/snapshot/",
+				"sink_file": "table_patients_age_band_demography_snapshot.parquet"
+			},
+		"proc": {
+				"source_path":"raw/ncdr_etp/adf_v2/table/patients_age_band_demography/snapshot/",
+				"source_file": "table_patients_age_band_demography_snapshot.parquet",
+				"source_schema": [
+					{"name": "GP_Practice_Code", "type": "String"},
+					{"name": "Age_band", "type": "String"},
+					{"name": "Size", "type": "int"},					
+					{"name": "Effective_Snapshot_Date", "type": "datetime"},                
+					{"name": "DataSourceFileForThisSnapshot_Version", "type": "int"}
+				],
+				"sink_path": "proc/sources/ncdr_etp/adf_v2/table/patients_age_band_demography/snapshot/",
+				"sink_file": "table_patients_age_band_demography_snapshot.parquet"
+        },
+		"project": {
+				"source_path": "proc/sources/ncdr_etp/adf_v2/table/patients_age_band_demography/snapshot/",
+				"source_file": "table_patients_age_band_demography_snapshot.parquet",
+				"sink_path": "proc/projects/reference_tables/demographies/patients_age_band_table/",
+				"sink_file": "table_patients_age_band_demography_snapshot.parquet"
+		},
+		"staging":[    
+    			{
+				"metric": "gp_patient_age_band",
+				"stored_procedure": "[dbo].[stored_proc_patients_age_band_demography_snapshot]",
+				"source_path": "proc/projects/reference_tables/demographies/patients_age_band_table/",
+				"source_file": "table_patients_age_band_demography_snapshot.parquet",
+				"sink_table": "patients_age_band_demography_snapshot"
+				}
+			]
+	}
+}

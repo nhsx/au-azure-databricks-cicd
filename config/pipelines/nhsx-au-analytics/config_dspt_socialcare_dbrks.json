@@ -1,0 +1,49 @@
+{
+	"metadata": {
+		"products": [
+		{
+		"product_name": "Digitise, Connect, Transform (DCT) Dashboard",
+		"Granularity": "National",
+		"topic": "Cyber Security",
+		"metrics": [
+			{
+            "id": "M011_M012",
+            "full_name": "Number and percent of adult social care organisations that meet or exceed the DSPT standard",
+			"short_name":"dspt_care_standards_year_count_prop"
+        	}
+		]
+	}]},
+	"pipeline": {
+		"name": "trigger_dspt_socialcare",
+    	"folder": "nhsx-au-analytics/digital_socialcare/dspt_socialcare/",
+		"adl_file_system": "nhsxdatalakesagen2fsprod",
+		"ingestion": {
+			"databricks_notebook": "/Repos/prod/au-azure-databricks/ingestion/dbrks_dspt_socialcare/dbrks_dspt_socialcare_raw"
+		},
+		"raw": {
+			"snapshot_source_path": "land/datainbox/email_attachment/theresa.chilton@digitalsocialcare.co.uk/[data] DSPT Data/",
+			"appended_path": "raw/digital_socialcare/email_attachment/parquet/dspt_socialcare/historical/",
+			"appended_file": "socialcare_dspt_results_full.parquet"
+		},
+		"proc": {
+			"source_path": "raw/digital_socialcare/email_attachment/parquet/dspt_socialcare/historical/",
+			"source_file": "socialcare_dspt_results_full.parquet",
+			"sink_path": "proc/sources/digital_socialcare/email_attachment/parquet/dspt_socialcare/historical/",
+			"sink_file": "socialcare_dspt_results_full.parquet"
+		},
+		"project": {
+			"source_path": "proc/sources/digital_socialcare/email_attachment/parquet/dspt_socialcare/historical/",
+			"source_file": "socialcare_dspt_results_full.parquet",
+			"sink_path": "proc/projects/nhsx_slt_analytics/cybersecurity/dspt_care/standards_year_count_prop/",
+			"sink_file": "dspt_care_standards_year_count_prop.csv",
+			"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_dspt_socialcare/dbrks_cybersecurity_dspt_care_standards_year_count_prop"
+		},
+		"staging": {
+					"metric":"dspt_care_standards_year_count_prop",
+					"stored_procedure":"[dbo].[stored_proc_dspt_care_standards_year_count_prop]",
+					"source_path":"proc/projects/nhsx_slt_analytics/cybersecurity/dspt_care/standards_year_count_prop/",
+					"source_file":"dspt_care_standards_year_count_prop.csv",
+					"sink_table":"dspt_care_standards_year_count_prop"
+		}
+	}
+}
