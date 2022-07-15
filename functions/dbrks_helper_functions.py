@@ -19,11 +19,7 @@ CREATED:        01 Sept 2021
 VERSION:        0.0.1
 """
 
-from datetime import datetime
 
-# 3rd party:
-from pathlib import Path
-from azure.storage.filedatalake import DataLakeServiceClient
 # COMMAND ----------
 
 # Helper functions
