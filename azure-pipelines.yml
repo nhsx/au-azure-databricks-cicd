@@ -32,7 +32,7 @@ steps:
     cp -r $(Build.Repository.LocalPath)/analytics/ $(Build.BinariesDirectory)
     cp -r $(Build.Repository.LocalPath)/ingestion/ $(Build.BinariesDirectory)
     cp -r $(Build.Repository.LocalPath)/orchestration/ $(Build.BinariesDirectory)
-    cp    $(Build.Repository.LocalPath)/functions/dist/*.whl $(Build.BinariesDirectory)
+    cp -r $(Build.Repository.LocalPath)/functions/ $(Build.BinariesDirectory)
     cp -r $(Build.Repository.LocalPath)/config/ $(Build.BinariesDirectory)
     
 - task: ArchiveFiles@2
