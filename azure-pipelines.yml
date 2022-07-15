@@ -21,13 +21,6 @@ steps:
   displayName: 'Get Latest Branch'
 
 - script: |
-    pip install wheel
-    cd $(Build.Repository.LocalPath)/functions
-    python3 setup.py sdist bdist_wheel
-
-  displayName: 'Build Python Wheel for Libs'
-
-- script: |
     git diff --name-only --diff-filter=AMR HEAD^1 HEAD | xargs -I '{}' cp --parents -r '{}' $(Build.BinariesDirectory)
     cp -r $(Build.Repository.LocalPath)/analytics/ $(Build.BinariesDirectory)
     cp -r $(Build.Repository.LocalPath)/ingestion/ $(Build.BinariesDirectory)
