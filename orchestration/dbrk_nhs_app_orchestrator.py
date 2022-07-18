@@ -49,7 +49,7 @@ CONNECTION_STRING = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CON
 
 # COMMAND ----------
 
-# MAGIC %run /Repos/prod/au-azure-databricks/functions/dbrks_helper_functions
+# MAGIC %run  /Shared/functions/au-azure-databricks/functions/dbrks_helper_functions
 
 # COMMAND ----------
 
