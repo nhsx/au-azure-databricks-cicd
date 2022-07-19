@@ -66,8 +66,12 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 #---------------------------------
 path_start = dbutils.secrets.get(scope='DatabricksNotebookPath', key="DATABRICKS_PATH")
 
-#Run metric notebooks in parallel 
+#Squentially run metric notebooks
 #---------------------------------
-notebook_list = [NotebookData(path_start + notebook['databricks_notebook'], 1200) for notebook in config_JSON['pipeline']['project']['databricks']]
-notebook_run= parallelNotebooks(notebook_list, len(config_JSON['pipeline']['project']['databricks']))
-notebook_run_result = [notebook.result(timeout=3600) for notebook in notebook_run]
+for index, item in enumerate(config_JSON['pipeline']['project']['databricks']): # get index of objects in JSON array
+    try:
+        notebook = config_JSON['pipeline']['project']['databricks'][index]['databricks_notebook']
+        dbutils.notebook.run(path_start+notebook, 1000) # is 120 sec long enough for timeout?
+    except Exception as e:
+        print(e)
+        raise Exception()
