@@ -59,6 +59,27 @@ def datalake_latestFolder(CONNECTION_STRING, file_system, source_path):
 
 # COMMAND ----------
 
+# Functions for orchestrator 
+# -------------------------------------------------------------------------
+class NotebookData:
+    def __init__(self, path, timeout):
+        self.path = path
+        self.timeout = timeout
+        
+def submitNotebook(notebook):
+    print("Running notebook %s" % notebook.path)
+    try:
+        return dbutils.notebook.run(notebook.path, notebook.timeout)
+    except Exception as e:
+        print(e)
+        raise Exception()
+            
+def parallelNotebooks(notebooks, numInParallel):
+    with ThreadPoolExecutor(max_workers=numInParallel) as ec:
+        return [ec.submit(submitNotebook, notebook) for notebook in notebook_list]
+
+# COMMAND ----------
+
 # Helper functions
 # -------------------------------------------------------------------------
 def datalake_download(CONNECTION_STRING, file_system, source_path, source_file):
