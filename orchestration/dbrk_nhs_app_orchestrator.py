@@ -49,26 +49,25 @@ CONNECTION_STRING = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CON
 
 # COMMAND ----------
 
-# MAGIC %run  /Shared/functions/au-azure-databricks/functions/dbrks_helper_functions
+# MAGIC %run /Shared/functions/dbrks_helper_functions
 
 # COMMAND ----------
 
 #Download JSON config from Azure datalake
 file_path_config = "/config/pipelines/nhsx-au-analytics/"
 file_name_config = "config_nhs_app_dbrks.json"
-
 file_system_config = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
-
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
 # COMMAND ----------
 
-#Squentially run metric notebooks
-for index, item in enumerate(config_JSON['pipeline']['project']['databricks']): # get index of objects in JSON array
-  try:
-    notebook = config_JSON['pipeline']['project']['databricks'][index]['databricks_notebook']
-    dbutils.notebook.run(notebook, 1000) #1000 sec timeout
-  except Exception as e:
-    print(e)
-    raise Exception()
+#Get databricksworkspace specfic path
+#---------------------------------
+path_start = dbutils.secrets.get(scope='DatabricksNotebookPath', key="DATABRICKS_PATH")
+
+#Run metric notebooks in parallel 
+#---------------------------------
+notebook_list = [NotebookData(path_start + notebook['databricks_notebook'], 1200) for notebook in config_JSON['pipeline']['project']['databricks']]
+notebook_run= parallelNotebooks(notebook_list, len(config_JSON['pipeline']['project']['databricks']))
+notebook_run_result = [notebook.result(timeout=3600) for notebook in notebook_run]
