@@ -44,16 +44,14 @@ import numpy as np
 from pathlib import Path
 from azure.storage.filedatalake import DataLakeServiceClient
 
-
 # Connect to Azure datalake
 # -------------------------------------------------------------------------
 # !env from databricks secrets
-CONNECTION_STRING = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONNECTION_STRING")   
-
+CONNECTION_STRING = dbutils.secrets.get(scope="datalakefs", key="CONNECTION_STRING")
 
 # COMMAND ----------
 
-# MAGIC %run /Shared/functions/au-azure-databricks/functions/dbrks_helper_functions
+# MAGIC %run /Repos/prod/au-azure-databricks/functions/dbrks_helper_functions
 
 # COMMAND ----------
 
@@ -61,25 +59,20 @@ CONNECTION_STRING = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CON
 # -------------------------------------------------------------------------
 file_path_config = "/config/pipelines/nhsx-au-analytics/"
 file_name_config = "config_nhs_app_dbrks.json"
-
-file_system_config = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
-
+file_system_config = "nhsxdatalakesagen2fsprod"
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
-
 
 # COMMAND ----------
 
 # Read parameters from JSON config
 # -------------------------------------------------------------------------
-file_system = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
-
+file_system = config_JSON['pipeline']['adl_file_system']
 new_source_path = config_JSON['pipeline']['raw']['snapshot_source_path']
 historical_source_path = config_JSON['pipeline']['raw']['appended_path']
 historical_source_file = config_JSON['pipeline']['raw']['appended_file']
 sink_path = config_JSON['pipeline']['raw']['appended_path']
 sink_file = config_JSON['pipeline']['raw']['appended_file']
-print(sink_path)
 
 # COMMAND ----------
 
@@ -92,7 +85,6 @@ for new_source_file in file_name_list:
   new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, new_source_file)
   new_dataframe = pd.read_csv(io.BytesIO(new_dataset))
   new_dataframe['Date'] = pd.to_datetime(new_dataframe['Date']).dt.strftime("%Y-%m-%d")
-
 
 # COMMAND ----------
 
