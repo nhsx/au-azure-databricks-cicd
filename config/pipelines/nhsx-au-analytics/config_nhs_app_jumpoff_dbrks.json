@@ -17,7 +17,7 @@
 		"name": "nhs_app_jumpoff",
     	"folder": "nhsx-au-analytics/nhsdigital/nhs_app/",
 		"ingestion": {
-			"databricks_notebook": "/databricks/au-azure-databricks/ingestion/dbrks_nhs_app/dbrks_nhs_app_jumpoff_raw"
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_nhs_app/dbrks_nhs_app_jumpoff_raw"
 		},
 		"raw": {
 			"snapshot_source_path": "land/nhsdigital/nhs_app/timestamp/snapshot/",
