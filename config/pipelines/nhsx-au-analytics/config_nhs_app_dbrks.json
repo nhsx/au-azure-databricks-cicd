@@ -105,11 +105,10 @@
 		"name": "trigger_nhs_app",
     	"folder": "nhsx-au-analytics/nhsdigital/nhs_app/",
 		"source_adl_file_system": "digitallandcontainer",
-		"adl_file_system": "nhsxdatalakesagen2fsprod",
 		"ingestion": {
 			"sink_path": "land/nhsdigital/nhs_app/timestamp/snapshot/",
 			"source_path": "Prod/nhs_app/land/",
-			"databricks_notebook": "/Repos/prod/au-azure-databricks/ingestion/dbrks_nhs_app/dbrks_nhs_app_usage_raw"
+			"databricks_notebook": "/databricks/au-azure-databricks/ingestion/dbrks_nhs_app/dbrks_nhs_app_usage_raw"
 		},
 		"raw": {
 			"snapshot_source_path": "land/nhsdigital/nhs_app/timestamp/snapshot/",
@@ -129,230 +128,179 @@
 			"reference_source_file": "table_ons_population_demography_historical.parquet",
 			"reference_source_path_gp": "proc/sources/ncdr_etp/adf_v2/table/gp_practice_population/snapshot/",
 			"reference_source_file_gp": "table_gp_practice_population_snapshot.parquet",
-			"databricks_orchestrator_notebook": "/Repos/prod/au-azure-databricks/orchestration/dbrks_nhs_app_orchestrator",
+			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks/orchestration/dbrks_nhs_app_orchestrator",
 			"databricks":[
 				{
 				"metric": "nhs_app_registered_population_week_prop",
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_registered_population_week_prop/",
 				"sink_file": "nhs_app_registered_population_week_prop.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_registered_population_week_prop"
+				"databricks_notebook": "/databricks/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_registered_population_week_prop"
 				},
 				{
 				"metric": "nhs_app_uptake_registrations_day_cumsum",
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_uptake_registrations_day_cumsum/",
 				"sink_file": "nhs_app_uptake_registrations_day_cumsum.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_uptake_registrations_day_cumsum"
+				"databricks_notebook": "/databricks/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_uptake_registrations_day_cumsum"
 				},
 				{
 				"metric": "nhs_app_uptake_registrations_day_count",
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_uptake_registrations_day_count/",
 				"sink_file": "nhs_app_uptake_registrations_day_count.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_uptake_registrations_day_count"
+				"databricks_notebook": "/databricks/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_uptake_registrations_day_count"
 				},
 				{
 				"metric": "nhs_app_uptake_p9_registrations_day_cumsum",
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_uptake_p9_registrations_day_cumsum/",
 				"sink_file": "nhs_app_uptake_p9_registrations_day_cumsum.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_uptake_p9_registrations_day_cumsum"
+				"databricks_notebook": "/databricks/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_uptake_p9_registrations_day_cumsum"
 				},
 				{
 				"metric": "nhs_app_uptake_p9_registrations_day_count",
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_uptake_p9_registrations_day_count/",
 				"sink_file": "nhs_app_uptake_p9_registrations_day_count.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_uptake_p9_registrations_day_count"
+				"databricks_notebook": "/databricks/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_uptake_p9_registrations_day_count"
 				},
 				{
 				"metric": "nhs_app_uptake_gp_registered_population_day_prop",
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_uptake_gp_registered_population_day_prop/",
 				"sink_file": "nhs_app_uptake_gp_registered_population_day_prop.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_uptake_gp_registered_population_day_prop"
+				"databricks_notebook": "/databricks/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_uptake_gp_registered_population_day_prop"
 				},
 				{
 				"metric": "nhs_app_usage_logins_day_count",
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_logins_day_count/",
 				"sink_file": "nhs_app_usage_logins_day_count.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_logins_day_count"
+				"databricks_notebook": "/databricks/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_logins_day_count"
 				},
 				{
 				"metric": "nhs_app_usage_primary_care_appointments_booked_day_count",
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_primary_care_appointments_booked_day_count/",
 				"sink_file": "nhs_app_usage_primary_care_appointments_booked_day_count.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_primary_care_appointments_booked_day_count"
+				"databricks_notebook": "/databricks/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_primary_care_appointments_booked_day_count"
 				},
 				{
 				"metric": "nhs_app_usage_primary_care_appointments_cancelled_day_count",
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_primary_care_appointments_cancelled_day_count/",
 				"sink_file": "nhs_app_usage_primary_care_appointments_cancelled_day_count.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_primary_care_appointments_cancelled_day_count"
+				"databricks_notebook": "/databricks/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_primary_care_appointments_cancelled_day_count"
 				},
 				{
 				"metric": "nhs_app_usage_repeat_prescriptions_day_count",
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_repeat_prescriptions_day_count/",
 				"sink_file": "nhs_app_usage_repeat_prescriptions_day_count.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_repeat_prescriptions_day_count"
+				"databricks_notebook": "/databricks/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_repeat_prescriptions_day_count"
 				},
 				{
 				"metric": "nhs_app_usage_record_views_day_count",
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_record_views_day_count/",
 				"sink_file": "nhs_app_usage_record_views_day_count.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_record_views_day_count"
+				"databricks_notebook": "/databricks/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_record_views_day_count"
 				},
 				{
 				"metric": "nhs_app_usage_summary_record_views_day_count",
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_summary_record_views_day_count/",
 				"sink_file": "nhs_app_usage_summary_record_views_day_count.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_summary_record_views_day_count"
+				"databricks_notebook": "/databricks/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_summary_record_views_day_count"
 				},				
 				{
 				"metric": "nhs_app_usage_detail_coded_record_views_day_count",
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_detail_coded_record_views_day_count/",
 				"sink_file": "nhs_app_usage_detail_coded_record_views_day_count.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_detail_coded_record_views_day_count"
+				"databricks_notebook": "/databricks/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_detail_coded_record_views_day_count"
 				},
 				{
 				"metric": "nhs_app_usage_organ_donation_registration_day_count",
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_organ_donation_registration_day_count/",
 				"sink_file": "nhs_app_usage_organ_donation_registration_day_count.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_organ_donation_registration_day_count"
+				"databricks_notebook": "/databricks/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_organ_donation_registration_day_count"
 				},
 				{
 				"metric": "nhs_app_usage_organ_donation_withdrawal_day_count",
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_organ_donation_withdrawal_day_count/",
 				"sink_file": "nhs_app_usage_organ_donation_withdrawal_day_count.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_organ_donation_withdrawal_day_count"
+				"databricks_notebook": "/databricks/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_organ_donation_withdrawal_day_count"
 				},
 				{
 				"metric": "nhs_app_usage_organ_donation_update_day_count",
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_organ_donation_update_day_count/",
 				"sink_file": "nhs_app_usage_organ_donation_update_day_count.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_organ_donation_update_day_count"
+				"databricks_notebook": "/databricks/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_organ_donation_update_day_count"
 				},
 				{
 				"metric": "nhs_app_usage_organ_donation_lookup_day_count",
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_organ_donation_lookup_day_count/",
 				"sink_file": "nhs_app_usage_organ_donation_lookup_day_count.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_organ_donation_lookup_day_count"
+				"databricks_notebook": "/databricks/au-azure-databricks/analytics/dbrks_nhs_app/dbrks_nhs_app_usage_organ_donation_lookup_day_count"
 				}
       ]       
 		},
 		"staging": [ 
 			{
 				"metric":"nhs_app_registered_population_week_prop",
-				"stored_procedure":"[dbo].[stored_proc_nhs_app_registered_population_week_prop]",
-				"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_registered_population_week_prop/",
-				"source_file":"nhs_app_registered_population_week_prop.csv",
 				"sink_table":"nhs_app_registered_population_week_prop"
 			},
 			{
 				"metric":"nhs_app_uptake_registrations_day_cumsum",
-				"stored_procedure":"[dbo].[stored_proc_nhs_app_uptake_registrations_day_cumsum]",
-				"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_uptake_registrations_day_cumsum/",
-				"source_file":"nhs_app_uptake_registrations_day_cumsum.csv",
 				"sink_table":"nhs_app_uptake_registrations_day_cumsum"
 			},
 			{
 				"metric":"nhs_app_uptake_registrations_day_count",
-				"stored_procedure":"[dbo].[stored_proc_nhs_app_uptake_registrations_day_count]",
-				"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_uptake_registrations_day_count/",
-				"source_file":"nhs_app_uptake_registrations_day_count.csv",
 				"sink_table":"nhs_app_uptake_registrations_day_count"
 			},
 			{
 				"metric":"nhs_app_uptake_p9_registrations_day_cumsum",
-				"stored_procedure":"[dbo].[stored_proc_nhs_app_uptake_p9_registrations_day_cumsum]",
-				"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_uptake_p9_registrations_day_cumsum/",
-				"source_file":"nhs_app_uptake_p9_registrations_day_cumsum.csv",
 				"sink_table":"nhs_app_uptake_p9_registrations_day_cumsum"
 			},
 			{
 				"metric":"nhs_app_uptake_p9_registrations_day_count",
-				"stored_procedure":"[dbo].[stored_proc_nhs_app_uptake_p9_registrations_day_count]",
-				"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_uptake_p9_registrations_day_count/",
-				"source_file":"nhs_app_uptake_p9_registrations_day_count.csv",
 				"sink_table":"nhs_app_uptake_p9_registrations_day_count"
 			},
 			{
 				"metric":"nhs_app_uptake_gp_registered_population_day_prop",
-				"stored_procedure":"[dbo].[stored_proc_nhs_app_uptake_gp_registered_population_day_prop]",
-				"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_uptake_gp_registered_population_day_prop/",
-				"source_file":"nhs_app_uptake_gp_registered_population_day_prop.csv",
 				"sink_table":"nhs_app_uptake_gp_registered_population_day_prop"
 			},
 			{
 				"metric":"nhs_app_usage_logins_day_count",
-				"stored_procedure":"[dbo].[stored_proc_nhs_app_usage_logins_day_count]",
-				"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_logins_day_count/",
-				"source_file":"nhs_app_usage_logins_day_count.csv",
 				"sink_table":"nhs_app_usage_logins_day_count"
 			},
 			{
 				"metric":"nhs_app_usage_primary_care_appointments_booked_day_count",
-				"stored_procedure":"[dbo].[stored_proc_nhs_app_usage_primary_care_appointments_booked_day_count]",
-				"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_primary_care_appointments_booked_day_count/",
-				"source_file":"nhs_app_usage_primary_care_appointments_booked_day_count.csv",
 				"sink_table":"nhs_app_usage_primary_care_appointments_booked_day_count"
 			},
 			{
 				"metric":"nhs_app_usage_primary_care_appointments_cancelled_day_count",
-				"stored_procedure":"[dbo].[stored_proc_nhs_app_usage_primary_care_appointments_cancelled_day_count]",
-				"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_primary_care_appointments_cancelled_day_count/",
-				"source_file":"nhs_app_usage_primary_care_appointments_cancelled_day_count.csv",
 				"sink_table":"nhs_app_usage_primary_care_appointments_cancelled_day_count"
 			},
 			{
 				"metric":"nhs_app_usage_repeat_prescriptions_day_count",
-				"stored_procedure":"[dbo].[stored_proc_nhs_app_usage_repeat_prescriptions_day_count]",
-				"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_repeat_prescriptions_day_count/",
-				"source_file":"nhs_app_usage_repeat_prescriptions_day_count.csv",
 				"sink_table":"nhs_app_usage_repeat_prescriptions_day_count"
 			},
 			{
 				"metric":"nhs_app_usage_record_views_day_count",
-				"stored_procedure":"[dbo].[stored_proc_nhs_app_usage_record_views_day_count]",
-				"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_record_views_day_count/",
-				"source_file":"nhs_app_usage_record_views_day_count.csv",
 				"sink_table":"nhs_app_usage_record_views_day_count"
 			},
 			{
 				"metric":"nhs_app_usage_summary_record_views_day_count",
-				"stored_procedure":"[dbo].[stored_proc_nhs_app_usage_summary_record_views_day_count]",
-				"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_summary_record_views_day_count/",
-				"source_file":"nhs_app_usage_summary_record_views_day_count.csv",
 				"sink_table":"nhs_app_usage_summary_record_views_day_count"
 			},
 			{
 				"metric":"nhs_app_usage_detail_coded_record_views_day_count",
-				"stored_procedure":"[dbo].[stored_proc_nhs_app_usage_detail_coded_record_views_day_count]",
-				"source_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_detail_coded_record_views_day_count/",
-				"source_file":"nhs_app_usage_detail_coded_record_views_day_count.csv",
 				"sink_table":"nhs_app_usage_detail_coded_record_views_day_count"
 			},
 			{
 				"metric":"nhs_app_usage_organ_donation_registration_day_count",
-				"stored_procedure":"[dbo].[stored_proc_nhs_app_usage_organ_donation_registration_day_count]",
-				"source_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_organ_donation_registration_day_count/",
-				"source_file":"nhs_app_usage_organ_donation_registration_day_count.csv",
 				"sink_table":"nhs_app_usage_organ_donation_registration_day_count"
 			},
 			{
 				"metric":"nhs_app_usage_organ_donation_withdrawal_day_count",
-				"stored_procedure":"[dbo].[stored_proc_nhs_app_usage_organ_donation_withdrawal_day_count]",
-				"source_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_organ_donation_withdrawal_day_count/",
-				"source_file":"nhs_app_usage_organ_donation_withdrawal_day_count.csv",
 				"sink_table":"nhs_app_usage_organ_donation_withdrawal_day_count"
 			},
 			{
 				"metric":"nhs_app_usage_organ_donation_update_day_count",
-				"stored_procedure":"[dbo].[stored_proc_nhs_app_usage_organ_donation_update_day_count]",
-				"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_organ_donation_update_day_count/",
-				"source_file":"nhs_app_usage_organ_donation_update_day_count.csv",
 				"sink_table":"nhs_app_usage_organ_donation_update_day_count"
 			},
 			{
 				"metric":"nhs_app_usage_organ_donation_lookup_day_count",
-				"stored_procedure":"[dbo].[stored_proc_nhs_app_usage_organ_donation_lookup_day_count]",
-				"source_path":"proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_usage_organ_donation_lookup_day_count/",
-				"source_file":"nhs_app_usage_organ_donation_lookup_day_count.csv",
 				"sink_table":"nhs_app_usage_organ_donation_lookup_day_count"
 			}			
 
