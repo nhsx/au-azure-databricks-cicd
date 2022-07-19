@@ -16,7 +16,7 @@
 	{
 		"product_name": "NHS App Dashboard",
 		"Granularity": "GP practice level",
-		"topic": "NHS App",
+		"topic": "NHS App ",
 		"metrics": [
 			{
             "id": "M143",
