@@ -8,14 +8,14 @@
 # -------------------------------------------------------------------------
 
 """
-FILE:           dbrks_nhs_app_usage_logins_day_count.py
+FILE:           dbrks_nhs_app_uptake_p9_registrations_day_cumsum.py
 DESCRIPTION:
-                Databricks notebook with processing code for the NHSX Analyticus unit metric M0149: Logins (GP practice level)
+                Databricks notebook with processing code for the NHSX Analyticus unit metric M0145: Running Total P9 Registrations (GP practice level)
 USAGE:
                 ...
-CONTRIBUTORS:   Oliver Jones
+CONTRIBUTORS:   Mattia Ficarelli
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        16th May 2022
+CREATED:        12th May 2022
 VERSION:        0.0.1
 """
 
@@ -45,32 +45,29 @@ from azure.storage.filedatalake import DataLakeServiceClient
 # Connect to Azure datalake
 # -------------------------------------------------------------------------
 # !env from databricks secrets
-CONNECTION_STRING = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONNECTION_STRING") 
+CONNECTION_STRING = dbutils.secrets.get(scope="datalakefs", key="CONNECTION_STRING")
 
 # COMMAND ----------
 
-# MAGIC %run /Shared/functions/au-azure-databricks/functions/dbrks_helper_functions
+# MAGIC %run /Repos/prod/au-azure-databricks/functions/dbrks_helper_functions
 
 # COMMAND ----------
 
 #Download JSON config from Azure datalake
 file_path_config = "/config/pipelines/nhsx-au-analytics/"
 file_name_config = "config_nhs_app_dbrks.json"
-
-file_system_config = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
-
+file_system_config = "nhsxdatalakesagen2fsprod"
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
 # COMMAND ----------
 
 #Get parameters from JSON config
-file_system = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
-
+file_system = config_JSON['pipeline']['adl_file_system']
 source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']['source_file']
-sink_path = config_JSON['pipeline']['project']['databricks'][6]['sink_path']
-sink_file = config_JSON['pipeline']['project']['databricks'][6]['sink_file']  
+sink_path = config_JSON['pipeline']['project']['databricks'][3]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][3]['sink_file']  
 
 # COMMAND ----------
 
@@ -84,12 +81,14 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 #Processing
 # ---------------------------------------------------------------------------------------------------
-df1 = df[["Date", "OdsCode", "Logins"]].copy()
+df1 = df[["Date", "OdsCode", "P9VerifiedNHSAppUsers"]].copy()
 df1['Date'] = pd.to_datetime(df1['Date'], infer_datetime_format=True)
 df2 = df1[df1['Date'] >= '2021-01-01'].reset_index(drop = True)  #--------- remove rows pre 2021
-df2['Logins'] = pd.to_numeric(df2['Logins'],errors='coerce').fillna(0)
-df3 = df2.groupby(['Date','OdsCode']).sum().reset_index()
-df4 = df3.rename(columns = {'OdsCode': 'Practice code', 'Logins': 'Number of logins'})
+df2['P9VerifiedNHSAppUsers'] = pd.to_numeric(df2['P9VerifiedNHSAppUsers'],errors='coerce').fillna(0)
+df2=df2.sort_values(['Date']).reset_index(drop=True)
+df2["Cumulative number of P9 NHS app registrations"]=df2.groupby(['OdsCode'])['P9VerifiedNHSAppUsers'].cumsum(axis=0)
+df3 = df2.drop(columns = ['P9VerifiedNHSAppUsers']).reset_index(drop = True)
+df4 = df3.rename(columns = {'OdsCode': 'Practice code'})
 df4.index.name = "Unique ID"
 df_processed = df4.copy()
 

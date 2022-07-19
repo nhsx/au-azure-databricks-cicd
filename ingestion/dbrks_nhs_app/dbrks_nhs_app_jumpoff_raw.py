@@ -8,7 +8,7 @@
 # -------------------------------------------------------------------------
 
 """
-FILE:           dbrks_nhs_app_usage_raw.py
+FILE:           dbrks_nhs_app_jumpoff_raw.py
 DESCRIPTION:
                 Databricks notebook with code to append new raw data to historical
                 data for the NHSX Analyticus unit metrics within the NHS app
@@ -17,8 +17,8 @@ USAGE:
                 ...
 CONTRIBUTORS:   Mattia Ficarelli, Chris Todd, Everistus Oputa
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        21 Feb. 2021
-VERSION:        0.0.1
+CREATED:        07 Jun. 2022
+VERSION:        0.0.2
 """
 
 # COMMAND ----------
@@ -44,42 +44,35 @@ import numpy as np
 from pathlib import Path
 from azure.storage.filedatalake import DataLakeServiceClient
 
-
 # Connect to Azure datalake
 # -------------------------------------------------------------------------
 # !env from databricks secrets
-CONNECTION_STRING = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONNECTION_STRING")   
-
+CONNECTION_STRING = dbutils.secrets.get(scope="datalakefs", key="CONNECTION_STRING")
 
 # COMMAND ----------
 
-# MAGIC %run /Shared/functions/au-azure-databricks/functions/dbrks_helper_functions
+# MAGIC %run /Repos/prod/au-azure-databricks/functions/dbrks_helper_functions
 
 # COMMAND ----------
 
 # Load JSON config from Azure datalake
 # -------------------------------------------------------------------------
 file_path_config = "/config/pipelines/nhsx-au-analytics/"
-file_name_config = "config_nhs_app_dbrks.json"
-
-file_system_config = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
-
+file_name_config = "config_nhs_app_jumpoff_dbrks.json"
+file_system_config = "nhsxdatalakesagen2fsprod"
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
-
 
 # COMMAND ----------
 
 # Read parameters from JSON config
 # -------------------------------------------------------------------------
-file_system = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
-
+file_system = config_JSON['pipeline']['adl_file_system']
 new_source_path = config_JSON['pipeline']['raw']['snapshot_source_path']
 historical_source_path = config_JSON['pipeline']['raw']['appended_path']
 historical_source_file = config_JSON['pipeline']['raw']['appended_file']
 sink_path = config_JSON['pipeline']['raw']['appended_path']
 sink_file = config_JSON['pipeline']['raw']['appended_file']
-print(sink_path)
 
 # COMMAND ----------
 
@@ -87,12 +80,11 @@ print(sink_path)
 # -------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, new_source_path)
 file_name_list = datalake_listContents(CONNECTION_STRING, file_system, new_source_path+latestFolder)
-file_name_list = [file for file in file_name_list if 'nhs_app_table_snapshot' in file]
+file_name_list = [file for file in file_name_list if 'WeeklyIntegratedPartners' in file]
 for new_source_file in file_name_list:
   new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, new_source_file)
   new_dataframe = pd.read_csv(io.BytesIO(new_dataset))
   new_dataframe['Date'] = pd.to_datetime(new_dataframe['Date']).dt.strftime("%Y-%m-%d")
-
 
 # COMMAND ----------
 
