@@ -10,7 +10,7 @@
 """
 FILE:           dbrks_nhs_app_orchestrator.py
 DESCRIPTION:
-                Orchestrator databricks notebook which runs the processing notebooks for NHSX Analyticus unit metrics within the NHS APP topic
+                Orchestrator databricks notebook which runs the processing notebooks for NHSX Analytics unit metrics within the NHS APP topic
 USAGE:
                 ...
 CONTRIBUTORS:   Mattia Ficarelli, Chris Todd
