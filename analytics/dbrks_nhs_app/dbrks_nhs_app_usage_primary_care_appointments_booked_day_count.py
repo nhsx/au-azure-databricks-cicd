@@ -67,7 +67,8 @@ file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER
 source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']['source_file']
 sink_path = config_JSON['pipeline']['project']['databricks'][7]['sink_path']
-sink_file = config_JSON['pipeline']['project']['databricks'][7]['sink_file']  
+sink_file = config_JSON['pipeline']['project']['databricks'][7]['sink_file']
+table_name = config_JSON['pipeline']['staging'][7]['sink_table']
 
 # COMMAND ----------
 
@@ -96,3 +97,32 @@ df_processed = df4.copy()
 file_contents = io.StringIO()
 df_processed.to_csv(file_contents)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
+
+# COMMAND ----------
+
+# Create PySpark DataFrame from Pandas DataFrame
+# -------------------------------------------------------------------------
+
+sparkDF=spark.createDataFrame(df_processed)
+
+# Write data from databricks to dev SQL database
+# -------------------------------------------------------------------------
+
+server_name = dbutils.secrets.get(scope="sqldatabase", key="SERVER_NAME")
+database_name = dbutils.secrets.get(scope="sqldatabase", key="DATABASE_NAME")
+
+url = server_name + ";" + "databaseName=" + database_name + ";"
+username = dbutils.secrets.get(scope="sqldatabase", key="USER_NAME")
+password = dbutils.secrets.get(scope="sqldatabase", key="PASSWORD")
+
+try:
+  sparkDF.write \
+    .format("com.microsoft.sqlserver.jdbc.spark") \
+    .mode("overwrite") \
+    .option("url", url) \
+    .option("dbtable", table_name) \
+    .option("user", username) \
+    .option("password", password) \
+    .save()
+except ValueError as error:
+    print("Connector write failed", error)
