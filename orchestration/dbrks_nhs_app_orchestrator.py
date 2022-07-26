@@ -71,7 +71,7 @@ path_start = dbutils.secrets.get(scope='DatabricksNotebookPath', key="DATABRICKS
 for index, item in enumerate(config_JSON['pipeline']['project']['databricks']): # get index of objects in JSON array
     try:
         notebook = config_JSON['pipeline']['project']['databricks'][index]['databricks_notebook']
-        dbutils.notebook.run(path_start+notebook, 1000) # is 120 sec long enough for timeout?
+        dbutils.notebook.run(path_start+notebook, 8000) # is 120 sec long enough for timeout?
     except Exception as e:
         print(e)
         raise Exception()

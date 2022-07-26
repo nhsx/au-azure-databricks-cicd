@@ -131,29 +131,6 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestF
 
 # COMMAND ----------
 
-# Create PySpark DataFrame from Pandas DataFrame
-# -------------------------------------------------------------------------
-
-sparkDF=spark.createDataFrame(df_processed)
-
 # Write data from databricks to dev SQL database
 # -------------------------------------------------------------------------
-
-server_name = dbutils.secrets.get(scope="sqldatabase", key="SERVER_NAME")
-database_name = dbutils.secrets.get(scope="sqldatabase", key="DATABASE_NAME")
-
-url = server_name + ";" + "databaseName=" + database_name + ";"
-username = dbutils.secrets.get(scope="sqldatabase", key="USER_NAME")
-password = dbutils.secrets.get(scope="sqldatabase", key="PASSWORD")
-
-try:
-  sparkDF.write \
-    .format("com.microsoft.sqlserver.jdbc.spark") \
-    .mode("overwrite") \
-    .option("url", url) \
-    .option("dbtable", table_name) \
-    .option("user", username) \
-    .option("password", password) \
-    .save()
-except ValueError as error:
-    print("Connector write failed", error)
+write_to_sql(df_processed, table_name, "overwrite")
