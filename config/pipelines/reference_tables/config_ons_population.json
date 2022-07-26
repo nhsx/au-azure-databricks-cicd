@@ -17,7 +17,6 @@
 	"pipeline": {
 		"name": "trigger_ons_population",
     	"folder": "reference_tables/ons_population/",
-		"adl_file_system": "nhsxdatalakesagen2fsprod",
 		"ingestion": {
 		},
 		"raw": {
