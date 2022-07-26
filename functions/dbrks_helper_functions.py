@@ -57,6 +57,26 @@ def datalake_latestFolder(CONNECTION_STRING, file_system, source_path):
   except Exception as e:
       print(e)
 
+def write_to_sql(df_processed, table_name, write_mode = str):
+  sparkDF=spark.createDataFrame(df_processed)
+  server_name = dbutils.secrets.get(scope="sqldatabase", key="SERVER_NAME")
+  database_name = dbutils.secrets.get(scope="sqldatabase", key="DATABASE_NAME")
+  url = server_name + ";" + "databaseName=" + database_name + ";"
+  username = dbutils.secrets.get(scope="sqldatabase", key="USER_NAME")
+  password = dbutils.secrets.get(scope="sqldatabase", key="PASSWORD")
+  try:
+    sparkDF.write \
+    .format("com.microsoft.sqlserver.jdbc.spark") \
+    .mode(write_mode) \
+    .option("url", url) \
+    .option("dbtable", table_name) \
+    .option("user", username) \
+    .option("password", password) \
+    .save()
+    return print("Connector write succeed")
+  except ValueError as error:
+    return print("Connector write failed", error)
+
 # COMMAND ----------
 
 # Ingestion and analytical functions
