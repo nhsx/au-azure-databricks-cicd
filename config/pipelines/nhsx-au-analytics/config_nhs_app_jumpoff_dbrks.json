@@ -26,7 +26,10 @@
 	"pipeline": {
 		"name": "nhs_app_jumpoff",
     	"folder": "nhsx-au-analytics/nhsdigital/nhs_app/",
+	        "source_adl_file_system": "digitallandcontainer",
 		"ingestion": {
+			"sink_path": "land/nhsdigital/nhs_app/timestamp/snapshot/",
+			"source_path": "/nhs_app/land/",
 			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_nhs_app/dbrks_nhs_app_jumpoff_raw"
 		},
 		"raw": {
@@ -51,19 +54,19 @@
 			"databricks":[
 				{
 				"metric": "nhs_app_jumpoff_covid_vaccine_record_view_day_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_jumpoff_covid_vaccine_record_view_day_count/",
+				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_covid_vaccine_record_view_day_count/",
 				"sink_file": "nhs_app_jumpoff_covid_vaccine_record_view_day_count.csv",
 				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_covid_vaccine_record_view_day_count"
 				},
 				{
 				"metric": "nhs_app_jumpoff_PKB_carePlans_day_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_jumpoff_PKB_carePlans_day_count/",
+				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_PKB_carePlans_day_count/",
 				"sink_file": "nhs_app_jumpoff_PKB_carePlans_day_count.csv",
 				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_PKB_carePlans_day_count"
 				},
 				{
 				"metric": "nhs_app_jumpoff_engage_admin_day_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app/nhs_app_jumpoff_engage_admin_day_count/",
+				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_engage_admin_day_count/",
 				"sink_file": "nhs_app_jumpoff_engage_admin_day_count.csv",
 				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_engage_admin_day_count"
 					}
