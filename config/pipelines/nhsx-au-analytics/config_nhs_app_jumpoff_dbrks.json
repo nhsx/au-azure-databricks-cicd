@@ -7,10 +7,20 @@
 		"topic": "NHS App",
 		"metrics": [
 			{
-            "id": "",
-            "full_name": "Number of NHS app jumpoffs",
-			"short_name":"nhs_app_jumpoff"
-        	}
+            "id": "165",
+            "full_name": "Covid Vaccine Record ViewJump Off Clicks",
+			"short_name":"nhs_app_jumpoff_covid_vaccine_record_view_day_count"
+        	},
+		{
+			"id": "M171",
+			"full_name": "PKB - carePlansJump Off Clicks",
+			"short_name":"nhs_app_jumpoff_PKB_carePlans_day_count"
+			},
+			{
+			"id": "M174",
+			"full_name": "Engage - adminJump Off Clicks",
+			"short_name":"nhs_app_jumpoff_engage_admin_day_count"
+			}
 		]
 	}]},
 	"pipeline": {
@@ -25,30 +35,52 @@
 			"appended_file": "nhs_app_jumpoff_historical.parquet"
 		},
 		"proc": {
-			"source_path": "",
-			"source_file": "",
-			"sink_path": "",
-			"sink_file": ""
+			"source_path": "raw/nhsdigital/adf_v2/parquet/nhs_app_jumpoff/historical/",
+			"source_file": "nhs_app_jumpoff_historical.parquet",
+			"sink_path": "proc/sources/nhsdigital/adf_v2/parquet/nhs_app_jumpoff/historical/",
+			"sink_file": "nhs_app_jumpoff_historical.parquet"
 		},
 		"project": {
-			"source_path": "",
-			"source_file": "",
-			"reference_source_path": "",
-			"reference_source_file": "",
-			"databricks_orchestrator_notebook": "",
+			"source_path": "proc/sources/nhsdigital/adf_v2/parquet/nhs_app_jumpoff/historical/",
+			"source_file": "nhs_app_jumpoff_historical.parquet",
+			"reference_source_path": "proc/sources/ncdr_etp/adf_v2/table/ons_population_demography/historical/",
+			"reference_source_file": "table_ons_population_demography_historical.parquet",
+			"reference_source_path_gp": "proc/sources/ncdr_etp/adf_v2/table/gp_practice_population/snapshot/",
+			"reference_source_file_gp": "table_gp_practice_population_snapshot.parquet",
+			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_nhs_app_orchestrator",
 			"databricks":[
 				{
-				"metric": "",
-				"sink_path": "",
-				"sink_file": "",
-				"databricks_notebook": ""
-				}
+				"metric": "nhs_app_jumpoff_covid_vaccine_record_view_day_count",
+				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_covid_vaccine_record_view_day_count/",
+				"sink_file": "nhs_app_jumpoff_covid_vaccine_record_view_day_count.csv",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_covid_vaccine_record_view_day_count"
+				},
+				{
+				"metric": "nhs_app_jumpoff_PKB_carePlans_day_count",
+				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_PKB_carePlans_day_count/",
+				"sink_file": "nhs_app_jumpoff_PKB_carePlans_day_count.csv",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_PKB_carePlans_day_count"
+				},
+				{
+				"metric": "nhs_app_jumpoff_engage_admin_day_count",
+				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_engage_admin_day_count/",
+				"sink_file": "nhs_app_jumpoff_engage_admin_day_count.csv",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_engage_admin_day_count"
+					}
 			]
 		},
 		"staging": [ 
 			{
-				"metric":"",
-				"sink_table":""
+				"metric":"nhs_app_jumpoff_covid_vaccine_record_view_day_count",
+				"sink_table":"nhs_app_jumpoff_covid_vaccine_record_view_day_count"
+			},
+			{
+				"metric":"nhs_app_jumpoff_PKB_carePlans_day_count",
+				"sink_table":"nhs_app_jumpoff_PKB_carePlans_day_count"
+			},
+			{
+				"metric":"nhs_app_jumpoff_engage_admin_day_count",
+				"sink_table":"nhs_app_jumpoff_engage_admin_day_count"
 			}
 		]
 
