@@ -13,7 +13,7 @@
         	},
 		{
 			"id": "M171",
-			"full_name": "PKB - carePlansJump Off Clicks",
+			"full_name": "PKB carePlansJump Off Clicks",
 			"short_name":"nhs_app_jumpoff_PKB_carePlans_day_count"
 			},
 			{
@@ -83,7 +83,7 @@
 			},
 			{
 				"metric":"nhs_app_jumpoff_engage_admin_day_count",
-				"sink_table":"nhs_app_jumpoff_engage_admin_day_count"
+				"sink_table":"nhs_app_jumpoff_engage_admin_day_count" 
 			}
 		]
 
