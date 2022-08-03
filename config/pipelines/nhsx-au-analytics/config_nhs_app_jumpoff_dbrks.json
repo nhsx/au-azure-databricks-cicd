@@ -20,6 +20,16 @@
 			"id": "M174",
 			"full_name": "Engage - adminJump Off Clicks",
 			"short_name":"nhs_app_jumpoff_engage_admin_day_count"
+			},
+			{
+			"id": "M162",
+			"full_name": "Covid Pass Jump Off Clicks",
+			"short_name":"nhs_app_jumpoff_covid_pass_count"
+			},
+			{
+			"id": "M163",
+			"full_name": "Covid Pass P5 Jump Off Clicks",
+			"short_name":"nhs_app_jumpoff_covid_pass_p5_count"
 			}
 		]
 	}]},
@@ -69,7 +79,19 @@
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_engage_admin_day_count/",
 				"sink_file": "nhs_app_jumpoff_engage_admin_day_count.csv",
 				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_engage_admin_day_count"
-					}
+				},
+				{
+				"metric": "nhs_app_jumpoff_covid_pass_count",
+				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_covid_pass_p5_count/",
+				"sink_file": "nhs_app_jumpoff_covid_pass_count.csv",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_nhs_app_jumpoff_covid_pass_count"
+				},
+				{
+				"metric": "nhs_app_jumpoff_covid_pass_p5_count",
+				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_covid_pass_p5_count/",
+				"sink_file": "nhs_app_jumpoff_covid_pass_p5_count.csv",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_nhs_app_jumpoff_covid_pass_p5_count"
+				}
 			]
 		},
 		"staging": [ 
@@ -84,6 +106,14 @@
 			{
 				"metric":"nhs_app_jumpoff_engage_admin_day_count",
 				"sink_table":"nhs_app_jumpoff_engage_admin_day_count" 
+			},
+			{
+				"metric":"nhs_app_jumpoff_covid_pass_count",
+				"sink_table":"nhs_app_jumpoff_covid_pass_count" 
+			},
+			{
+				"metric":"nhs_app_jumpoff_covid_pass_p5_count",
+				"sink_table":"nhs_app_jumpoff_covid_pass_p5_count" 
 			}
 		]
 
