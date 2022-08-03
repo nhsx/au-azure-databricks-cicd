@@ -40,11 +40,11 @@
 		"proc": {
 			"source_path": "raw/nhsdigital/adf_v2/parquet/nhs_app_jumpoff/historical/",
 			"source_file": "nhs_app_jumpoff_historical.parquet",
-			"sink_path": "proc/sources/nhsdigital/adf_v2/parquet/nhs_app_jumpoff/historical/",
+			"sink_path": "proc/sources/nhsdigital/adf_v2/parquet/nhs_app/historical/",
 			"sink_file": "nhs_app_jumpoff_historical.parquet"
 		},
 		"project": {
-			"source_path": "proc/sources/nhsdigital/adf_v2/parquet/nhs_app_jumpoff/historical/",
+			"source_path": "proc/sources/nhsdigital/adf_v2/parquet/nhs_app/historical/",
 			"source_file": "nhs_app_jumpoff_historical.parquet",
 			"reference_source_path": "proc/sources/ncdr_etp/adf_v2/table/ons_population_demography/historical/",
 			"reference_source_file": "table_ons_population_demography_historical.parquet",
