@@ -145,7 +145,7 @@
 				"metric":"nhs_app_jumpoff_pkb_sharedlinks_count",
 				"sink_table":"nhs_app_jumpoff_pkb_sharedlinks_count" 
 			}
-		]
+		         ]
 
 		}
 	}
