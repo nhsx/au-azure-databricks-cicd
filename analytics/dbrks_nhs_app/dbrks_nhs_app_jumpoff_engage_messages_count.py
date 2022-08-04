@@ -8,14 +8,14 @@
 # -------------------------------------------------------------------------
 
 """
-FILE:           dbrks_nhs_app_jumpoff_PKB_carePlans_day_count.py
+FILE:           dbrks_nhs_app_jumpoff_engage_messages_count.py
 DESCRIPTION:
-                Databricks notebook with processing code for the NHSX Analyticus unit metric M0162: Covid Pass Jump Off Clicks (GP practice level)
+                Databricks notebook with processing code for the NHSX Analytics unit metric M0172: Engage Messages Jump Off Clicks (GP practice level)
 USAGE:
                 ...
 CONTRIBUTORS:   Chris Todd
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        3nd Aug 2022
+CREATED:        4nd Aug 2022
 VERSION:        0.0.1
 """
 
