@@ -40,6 +40,16 @@
 			"id": "M173",
 			"full_name": "PKB - sharedLinks Jump Off Clicks",
 			"short_name":"nhs_app_jumpoff_pkb_sharedlinks_count"
+			},
+			{
+			"id": "M175",
+			"full_name": "Engage - medicalJump Off Clicks",
+			"short_name":"nhs_app_jumpoff_engage_medical_day_count"
+			},
+			{
+			"id": "M177",
+			"full_name": "Substrakt - accountAdminJump Off Clicks",
+			"short_name":"nhs_app_jumpoff_substrakt_accountAdmin_day_count"
 			}
 		]
 	}]},
@@ -113,6 +123,18 @@
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_pkb_sharedlinks_count/",
 				"sink_file": "nhs_app_jumpoff_pkb_sharedlinks_count.csv",
 				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_pkb_sharedlinks_count"
+				},
+				{
+				"metric": "nhs_app_jumpoff_engage_medical_day_count",
+				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_engage_medical_day_count/",
+				"sink_file": "nhs_app_jumpoff_engage_medical_day_count.csv",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_engage_medical_day_count"
+				},
+				{
+				"metric": "nhs_app_jumpoff_substrakt_accountAdmin_day_count",
+				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_substrakt_accountAdmin_day_count/",
+				"sink_file": "nhs_app_jumpoff_engage_medical_day_count.csv",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_substrakt_accountAdmin_day_count"
 				}
 			]
 		},
@@ -144,6 +166,14 @@
 			{
 				"metric":"nhs_app_jumpoff_pkb_sharedlinks_count",
 				"sink_table":"nhs_app_jumpoff_pkb_sharedlinks_count" 
+			},
+			{
+				"metric":"nhs_app_jumpoff_engage_medical_day_count",
+				"sink_table":"nhs_app_jumpoff_engage_medical_day_count" 
+			},
+			{
+				"metric":"nhs_app_jumpoff_substrakt_accountAdmin_day_count",
+				"sink_table":"nhs_app_jumpoff_substrakt_accountAdmin_day_count" 
 			}
 		         ]
 
