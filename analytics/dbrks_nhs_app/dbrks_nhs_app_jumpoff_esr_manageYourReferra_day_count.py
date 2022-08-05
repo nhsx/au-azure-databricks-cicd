@@ -8,14 +8,15 @@
 # -------------------------------------------------------------------------
 
 """
-FILE:           dbrks_nhs_app_jumpoff_PKB_carePlans_day_count.py
+FILE:           dbrks_nhs_app_jumpoff_esr_manageYourReferra_day_count.py
 DESCRIPTION:
-                Databricks notebook with processing code for the NHSX Analyticus unit metric M0171: PKB - carePlansJump Off Clicks (GP practice level)
+                Databricks notebook with processing code for the NHSX Analyticus unit metric M0164: 	
+Manage Your Referral Jump Off Clicks (GP practice level)
 USAGE:
                 ...
-CONTRIBUTORS:   Everistus Oputa, Kabir Khan
+CONTRIBUTORS:   Everistus Oputa
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        2nd Aug 2022
+CREATED:        5th Aug 2022
 VERSION:        0.0.1
 """
 
@@ -66,9 +67,9 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']['source_file']
-sink_path = config_JSON['pipeline']['project']['databricks'][1]['sink_path']
-sink_file = config_JSON['pipeline']['project']['databricks'][1]['sink_file']
-table_name = config_JSON['pipeline']['staging'][1]['sink_table']
+sink_path = config_JSON['pipeline']['project']['databricks'][11]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][11]['sink_file']
+table_name = config_JSON['pipeline']['staging'][11]['sink_table']
 
 # COMMAND ----------
 
@@ -82,14 +83,12 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 #Processing
 # -------------------------------------------------------------------------------------------------
-df1 = df[["Date", "OdsCode", "JumpOff","Clicks"]].copy()
-df1 = df1[(df1['JumpOff']=='carePlans') & (df1['Provider']=='Patients Know Best')]
+df1 = df[["Date", "OdsCode", "Provider","JumpOff","Clicks"]].copy()
+df1 = df1[(df1['JumpOff']=='manageYourReferral') ]
 df1['Date'] = pd.to_datetime(df1['Date'], infer_datetime_format=True)
 df2 = df1[df1['Date'] >= '2021-01-01'].reset_index(drop = True)  #--------- remove rows pre 2021
 df3 = df2[['Date', 'OdsCode', 'Clicks']]
-# df2['vaccineRecord'] = pd.to_numeric(df2['vaccineRecord'],errors='coerce').fillna(0)
-# df3 = df2.groupby(['Date','OdsCode']).sum().reset_index()
-df4 = df3.rename(columns = {'OdsCode': 'Practice code', 'Clicks': 'Number of PKB carePlans'})
+df4 = df3.rename(columns = {'OdsCode': 'Practice code', 'Clicks': 'Number of Manage Your Referral Jump Off Clicks'})
 df4.index.name = "Unique ID"
 df_processed = df4.copy()
 
