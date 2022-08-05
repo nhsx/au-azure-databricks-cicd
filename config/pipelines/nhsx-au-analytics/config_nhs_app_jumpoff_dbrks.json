@@ -62,6 +62,16 @@
 			"short_name":"nhs_app_jumpoff_substrakt_patientparticipationgroup_day_count"
 			},
 			{
+			"id": "M169",
+			"full_name": "PKB - medicinesJump Off Clicks",
+			"short_name":"nhs_app_jumpoff_pkb_medicines_day_count"
+			},
+			{
+			"id": "M170",
+			"full_name": "PKB - healthTrackersJump Off Clicks",
+			"short_name":"nhs_app_jumpoff_pkb_healthTrackers_day_count"
+      			},
+     			{
 			"id": "M164",
 			"full_name": "Manage Your Referral Jump Off Clicks",
 			"short_name":"nhs_app_jumpoff_esr_manageYourReferra_day_count"
@@ -169,6 +179,18 @@
 				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_substrakt_patientparticipationgroup_day_count"
 				},
 				{
+				"metric": "nhs_app_jumpoff_pkb_medicines_day_count",
+				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_pkb_medicines_day_count/",
+				"sink_file": "nhs_app_jumpoff_pkb_medicines_day_count.csv",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_pkb_medicines_day_count"
+				},
+				{
+				"metric": "nhs_app_jumpoff_pkb_healthTrackers_day_count",
+				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_pkb_healthTrackers_day_count/",
+				"sink_file": "nhs_app_jumpoff_pkb_healthTrackers_day_count.csv",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_pkb_healthTrackers_day_count"
+        },
+        {
 				"metric": "nhs_app_jumpoff_esr_manageYourReferra_day_count",
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_esr_manageYourReferra_day_count/",
 				"sink_file": "nhs_app_jumpoff_esr_manageYourReferra_day_count.csv",
@@ -228,6 +250,13 @@
 				"sink_table":"nhs_app_jumpoff_substrakt_patientparticipationgroup_day_count" 
 			},
 			{
+				"metric":"nhs_app_jumpoff_pkb_medicines_day_count",
+				"sink_table":"nhs_app_jumpoff_pkb_medicines_day_count" 
+			},
+			{
+				"metric":"nhs_app_jumpoff_pkb_healthTrackers_day_count",
+				"sink_table":"nhs_app_jumpoff_pkb_healthTrackers_day_count" 
+      {
 				"metric":"nhs_app_jumpoff_esr_manageYourReferra_day_count",
 				"sink_table":"nhs_app_jumpoff_esr_manageYourReferra_day_count" 
 			},
