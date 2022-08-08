@@ -10,7 +10,7 @@
 """
 FILE:           dbrks_nhs_app_jumpoff_substrakt_patientparticipationgroup_day_count.py
 DESCRIPTION:
-                Databricks notebook with processing code for the NHSX Analyticus unit metric M0176: Substrakt Patient Participation Group Jump Off Clicks (GP practice level)
+                Databricks notebook with processing code for the NHSX Analyticus unit metric M0178: Substrakt Patient Participation Group Jump Off Clicks (GP practice level)
 USAGE:
                 ...
 CONTRIBUTORS:   Chris Todd
@@ -83,6 +83,7 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 #Processing
 # -------------------------------------------------------------------------------------------------
 df1 = df[["Date", "OdsCode", "Provider","JumpOff","Clicks"]].copy()
+#df['Clicks'] = df['Clicks'].astype(int)
 df1 = df1[(df1['JumpOff']=='patientParticipationGroups') & (df1['Provider']=='Substrakt Health')]
 df1['Date'] = pd.to_datetime(df1['Date'], infer_datetime_format=True)
 df2 = df1[df1['Date'] >= '2021-01-01'].reset_index(drop = True)  #--------- remove rows pre 2021
@@ -90,6 +91,10 @@ df3 = df2[['Date', 'OdsCode', 'Clicks']]
 df4 = df3.rename(columns = {'OdsCode': 'Practice code', 'Clicks': 'Number of Substrakt Patient Participation Group Jump Off Clicks'})
 df4.index.name = "Unique ID"
 df_processed = df4.copy()
+
+# COMMAND ----------
+
+df_processed
 
 # COMMAND ----------
 
