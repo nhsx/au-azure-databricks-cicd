@@ -80,13 +80,10 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 # COMMAND ----------
 
-df
-
-# COMMAND ----------
-
 #Processing
 # -------------------------------------------------------------------------------------------------
 df1 = df[["Date", "OdsCode", "Provider","JumpOff","Clicks"]].copy()
+df['Clicks'] = df['Clicks'].astype(int)
 df1 = df1[(df1['JumpOff']=='messages') & (df1['Provider']=='Substrakt Health')]
 df1['Date'] = pd.to_datetime(df1['Date'], infer_datetime_format=True)
 df2 = df1[df1['Date'] >= '2021-01-01'].reset_index(drop = True)  #--------- remove rows pre 2021
@@ -94,10 +91,6 @@ df3 = df2[['Date', 'OdsCode', 'Clicks']]
 df4 = df3.rename(columns = {'OdsCode': 'Practice code', 'Clicks': 'Number of Substrakt Messages'})
 df4.index.name = "Unique ID"
 df_processed = df4.copy()
-
-# COMMAND ----------
-
-df_processed
 
 # COMMAND ----------
 
