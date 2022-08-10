@@ -77,6 +77,25 @@ def write_to_sql(df_processed, table_name, write_mode = str):
   except ValueError as error:
     return print("Connector write failed", error)
 
+def write_spark_df_to_sql(sparkDF, table_name, write_mode = str):
+  server_name = dbutils.secrets.get(scope="sqldatabase", key="SERVER_NAME")
+  database_name = dbutils.secrets.get(scope="sqldatabase", key="DATABASE_NAME")
+  url = server_name + ";" + "databaseName=" + database_name + ";"
+  username = dbutils.secrets.get(scope="sqldatabase", key="USER_NAME")
+  password = dbutils.secrets.get(scope="sqldatabase", key="PASSWORD")
+  try:
+    sparkDF.write \
+    .format("com.microsoft.sqlserver.jdbc.spark") \
+    .mode(write_mode) \
+    .option("url", url) \
+    .option("dbtable", table_name) \
+    .option("user", username) \
+    .option("password", password) \
+    .save()
+    return print("Connector write succeed")
+  except ValueError as error:
+    return print("Connector write failed", error)
+
 # COMMAND ----------
 
 # Ingestion and analytical functions
@@ -161,3 +180,5 @@ def contains_digits(input_string):
     if character.isdigit() == True:
       flag = True
   return flag #returns a true value if the status has got digits and false otherwise
+
+
