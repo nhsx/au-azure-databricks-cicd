@@ -1,0 +1,77 @@
+{
+	"metadata": {
+		"products": [
+		{
+		"product_name": "Digitise, Connect, Transform (DCT) Dashboard",
+		"granularity": "National",
+		"topic": "Cyber Security",
+		"metrics": [
+			{
+            "id": "M015",
+            "full_name": "Proportion of GP practices compliant with IT standards",
+			"short_name":"gp_it_standards_year_prop"
+        	}
+		]
+	},
+	{
+		"product_name": "NHSX DFPC Dashboard",
+		"granularity": "GP practice",
+		"topic": "Cyber Security",
+		"metrics": [
+			{
+            "id": "M074",
+            "full_name": "No. and % of GP practices compliant with IT standards (GPITOM)",
+			"short_name":"gp_it_standards_year_count_prop"
+    		}
+ 			]	
+    	}
+   	]	
+	},
+	"pipeline": {
+		"name": "trigger_gp_it_standards",
+    	"folder": "nhsx-au-analytics/nhsx/gp_it_standards/",
+		"ingestion": {
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_gp_practices_it_standards/dbrks_gp_it_standards_raw"
+		},
+		"raw": {
+			"snapshot_source_path":"land/nhsx/manual_upload/timestamp/csv/gp_it_standards/",
+			"appended_path": "raw/gp_it_standards/manual_upload/parquet/gp_it_standards_results/historical/",
+			"appended_file": "gp_it_standards_results_historical.parquet"
+		},
+		"proc": {
+			"source_path": "raw/gp_it_standards/manual_upload/parquet/gp_it_standards_results/historical/",
+			"source_file": "gp_it_standards_results_historical.parquet",
+			"sink_path": "proc/sources/gp_it_standards/manual_upload/parquet/gp_it_standards_results/historical/",
+			"sink_file": "gp_it_standards_results_historical.parquet"
+		},
+		"project": {
+			"source_path": "proc/sources/gp_it_standards/manual_upload/parquet/gp_it_standards_results/historical/",
+			"source_file": "gp_it_standards_results_historical.parquet",
+			"databricks_orchestrator_notebook":"/databricks/au-azure-databricks-cicd/orchestration/dbrks_gp_it_orchestrator",
+			"databricks":[
+			{
+			"metric": "gp_it_standards_year_prop",   
+			"sink_path": "proc/projects/nhsx_slt_analytics/primarycare/gp_it/standards_year_prop/",
+			"sink_file": "gp_it_standards_year_prop.csv",
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_gp_practices_it_standards/dbrks_primarycare_gp_it_standards_year_prop"
+			},
+			{
+			"metric": "gp_it_standards_year_count_prop",   
+			"sink_path": "proc/projects/nhsx_dfpc_analytics/primarycare/gp_it/standards_year_count_prop/",
+			"sink_file": "gp_it_standards_year_count_prop.csv",
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_gp_practices_it_standards/dbrks_primarycare_gp_it_standards_year_count_prop"	
+			}	
+		]
+		},  					
+		"staging": [
+			{
+			"metric":"gp_it_standards_year_prop",
+			"sink_table":"gp_it_standards_year_prop"
+			},
+			{
+			"metric":"gp_it_standards_year_count_prop",
+			"sink_table":"gp_it_standards_year_count_prop"
+			}
+		]
+	}
+}
