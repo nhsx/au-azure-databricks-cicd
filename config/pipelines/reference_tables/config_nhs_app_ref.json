@@ -34,7 +34,7 @@
             },
             {
             "source_path":"proc/sources/ncdr_etp/adf_v2/table/ons_population_demography/historical/",
-            "source_file": "table_gp_practice_population_snapshot.parquet",
+            "source_file": "table_ons_population_demography_historical.parquet",
             "sink_path": "proc/sources/ncdr_etp/adf_v2/table/ons_population_demography/historical/",
             "sink_file": "table_ons_population_demography_historical.parquet"
             }
