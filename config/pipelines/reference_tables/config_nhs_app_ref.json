@@ -1,0 +1,43 @@
+{
+	"metadata":  {
+		"products": [
+			{
+			"product_name": "Reference Data",
+			"topic": "Demographics",
+			"metrics": [
+				{
+            			"id": "R009",
+            			"full_name": "Reference table with the latest snapshot of the registered population of patients for each GP practice (copy between PROD and DEV/TEST/LIVE enviroments)",
+	 			"short_name":"gp_practice_population"
+        			},
+                    {
+            			"id": "R006",
+            			"full_name": "Reference table with Office of National Statistics (ONS) age banded population (copy between PROD and DEV/TEST/LIVE enviroments)",
+	 			"short_name":"ons_population"
+        			}
+				]
+			}
+		]
+	},
+	"pipeline": {
+		"name": "trigger_gp_practice_ons_population_env_copy",
+    	"folder": "reference_tables/gp_ons_population",
+        "source_adl_file_system": "nhsxdatalakesagen2fsprod",
+		"ingestion": {
+		},
+		"proc": [ 
+            {
+			"source_path":"proc/sources/ncdr_etp/adf_v2/table/gp_practice_population/snapshot/",
+			"source_file": "table_gp_practice_population_snapshot.parquet",
+			"sink_path": "proc/sources/ncdr_etp/adf_v2/table/gp_practice_population/snapshot/",
+			"sink_file": "table_gp_practice_population_snapshot.parquet"
+            },
+            {
+            "source_path":"proc/sources/ncdr_etp/adf_v2/table/ons_population_demography/historical/",
+            "source_file": "table_gp_practice_population_snapshot.parquet",
+            "sink_path": "proc/sources/ncdr_etp/adf_v2/table/ons_population_demography/historical/",
+            "sink_file": "table_ons_population_demography_historical.parquet"
+            }
+        ]
+	}
+}
