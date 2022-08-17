@@ -84,6 +84,7 @@ df1["GP practice compliance with IT standards"] = df1["GP practice compliance wi
 df2 = df1.groupby(["Date","Financial Year"]).agg({"GP practice compliance with IT standards": "sum", "Practice code":"count"}).reset_index()
 df3 = df2.rename(columns  = {"GP practice compliance with IT standards": "Number of GP practices compliant with IT standards", "Practice code": "Number of GP practices"})
 df3['Percentage of GP practices compliant with IT standards'] = (df3["Number of GP practices compliant with IT standards"]/df3["Number of GP practices"]).round(4)
+df3["Date"] = pd.to_datetime(df3["Date"])
 df3.index.name = "Unique ID"
 df_processed = df3.copy()
 
