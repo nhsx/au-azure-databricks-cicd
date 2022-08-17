@@ -103,7 +103,7 @@ resampled_date_df = resampled_date_df.reset_index(drop = True)
 resampled_date_df_1 = resampled_date_df.merge(df1, how='left', on='Date')
 resampled_date_df_1 = resampled_date_df_1.sort_values(by='Date', ascending=True).reset_index(drop = True)
 df4 = resampled_date_df_1.rename(columns = {'Date of extract': 'Date', 'Number of patient records viewed': 'Number of GP records accessed using the digital API'})
-df4['Date'] = df4['Date'].dt.strftime("%Y-%m")
+df4['Date'] = pd.to_datetime(df4['Date'])
 df4.index.name = "Unique ID"
 df_processed = df4.copy()
 

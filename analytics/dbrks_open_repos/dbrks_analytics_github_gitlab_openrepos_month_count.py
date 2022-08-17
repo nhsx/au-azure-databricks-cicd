@@ -79,6 +79,7 @@ table_name = config_JSON['pipeline']['staging']['sink_table']
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 df = pd.read_csv(io.BytesIO(file))
+df["Date"] = pd.to_datetime(df["Date"])
 df1 = df.set_index('Unique ID')
 df_processed = df1.copy()
 
