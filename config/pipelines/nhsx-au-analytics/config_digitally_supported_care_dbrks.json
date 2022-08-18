@@ -1,0 +1,48 @@
+{
+	"metadata": {
+		"products": [
+			{
+				"product_name": "Digitise, Connect, Transform (DCT) Dashboard",
+				"Granularity": "National",
+				"topic": "Remote Monitoring Outpatients and Care Pathways",
+				"metrics": [
+					{
+						"id": "M006",
+						"full_name": "Number of people being receiving digitally supported care at home",
+						"short_name": "digitally_supported_care_patients_month_count"
+					}
+				]
+			}
+		]
+	},
+	"pipeline": {
+		"name": "trigger_digitally_supported_care",
+		"folder": "nhsx-au-analytics/nhsx/digitally_supported_care/",
+		"ingestion": {
+			"source_path": "Shared Documents/nhsx_au_ingestion/digitally_supported_care/",
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_digital_care/dbrks_digitally_supported_care_raw"
+		},
+		"raw": {
+			"source_path": "land/sharepoint/Shared Documents/nhsx_au_ingestion/digitally_supported_care/",
+			"appended_path": "raw/nhsx/sharepoint/csv/digitally_supported_care/historical/",
+			"appended_file": "digitally_supported_care_historical.csv"
+		},
+		"proc": {
+			"source_path": "raw/nhsx/sharepoint/csv/digitally_supported_care/historical/",
+			"source_file": "digitally_supported_care_historical.csv",
+			"sink_path": "proc/sources/nhsx/sharepoint/csv/digitally_supported_care/historical/",
+			"sink_file": "digitally_supported_care_historical.csv"
+		},
+		"project": {
+			"source_path": "proc/sources/nhsx/sharepoint/csv/digitally_supported_care/historical/",
+			"source_file": "digitally_supported_care_historical.csv",
+			"sink_path": "proc/projects/nhsx_slt_analytics/remote_monitoring/digitally_supported_care/patients_month_count/",
+			"sink_file": "digitally_supported_care_patients_month_count.csv",
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_digital_care/dbrks_digitally_supported_care_patients_month_count"
+		},
+		"staging": {
+			"metric": "digitally_supported_care_patients_month_count",
+			"sink_table": "digitally_supported_care_patients_month_count"
+		}
+	}
+}

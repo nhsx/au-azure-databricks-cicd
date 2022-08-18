@@ -1,0 +1,116 @@
+{
+	"metadata": {
+		"products": [
+			{
+				"product_name": "General Practice Digital Maturity and Capability (GPDMC) Dashboard",
+				"granularity": "GP practice",
+				"topic": "Electronic Prescription Service (EPS)",
+				"metrics": [
+					{
+						"id": "M083",
+						"full_name": "% patients with nominated pharmacy",
+						"short_name": "eps_usage_patient_nominated_pharmacy_month_prop"
+					},
+					{
+						"id": "M084",
+						"full_name": "EPS utilisation",
+						"short_name": "eps_usage_eps_utilisation_month_prop"
+					},
+					{
+						"id": "M085",
+						"full_name": "ERD utilisation (% all items)",
+						"short_name": "eps_usage_erd_utilisation_month_prop"
+					},
+					{
+						"id": "M086",
+						"full_name": "Number of items prescribed and dispensed via EPS during the reporting period",
+						"short_name": "eps_usage_eps_items_month_count"
+					},
+					{
+						"id": "M088",
+						"full_name": "Number of repeat dispensing items prescribed and dispensed via EPS during the reporting period",
+						"short_name": "eps_usage_eps_repeat_items_month_count"
+					}
+				]
+			}
+		]
+	},
+	"pipeline": {
+		"name": "trigger_gp_eps",
+		"folder": "nhsx-au-analytics/nhs_digital/gp_eps/",
+		"ingestion": {
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_gp_eps/dbrks_gp_eps_results_raw"
+		},
+		"raw": {
+			"sink_path": "land/nhsdigital/webscrape/timestamp/csv/gp_eps/",
+			"sink_file": "gp_eps_data_snapshot.csv",
+			"appended_path": "raw/nhsdigital/webscrape/parquet/gp_eps_data/historical/",
+			"appended_file": "gp_eps_data_historical.parquet"
+		},
+		"proc": {
+			"source_path": "raw/nhsdigital/webscrape/parquet/gp_eps_data/historical/",
+			"source_file": "gp_eps_data_historical.parquet",
+			"sink_path": "proc/sources/nhsdigital/webscrape/parquet/gp_eps_data/historical/",
+			"sink_file": "gp_eps_data_historical.parquet"
+		},
+		"project": {
+			"source_path": "proc/sources/nhsdigital/webscrape/parquet/gp_eps_data/historical/",
+			"source_file": "gp_eps_data_historical.parquet",
+			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_gp_eps_orchestrator",
+			"databricks": [
+				{
+					"metric": "eps_usage_patient_nominated_pharmacy_month_prop",
+					"sink_path": "proc/projects/nhsx_dfpc_analytics/primarycare/eps_usage/patient_nominated_pharmacy_month_prop/",
+					"sink_file": "eps_usage_patient_nominated_pharmacy_month_prop.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_gp_eps/dbrks_eps_usage_patient_nominated_pharmacy_month_prop"
+				},
+				{
+					"metric": "eps_usage_eps_utilisation_month_prop",
+					"sink_path": "proc/projects/nhsx_dfpc_analytics/primarycare/eps_usage/eps_utilisation_month_prop/",
+					"sink_file": "eps_usage_eps_utilisation_month_prop.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_gp_eps/dbrks_eps_usage_eps_utilisation_month_prop"
+				},
+				{
+					"metric": "eps_usage_erd_utilisation_month_prop",
+					"sink_path": "proc/projects/nhsx_dfpc_analytics/primarycare/eps_usage/erd_utilisation_month_prop/",
+					"sink_file": "eps_usage_erd_utilisation_month_prop.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_gp_eps/dbrks_eps_usage_erd_utilisation_month_prop/"
+				},
+				{
+					"metric": "eps_usage_eps_items_month_count",
+					"sink_path": "proc/projects/nhsx_dfpc_analytics/primarycare/eps_usage/eps_items_month_count/",
+					"sink_file": "eps_usage_eps_items_month_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_gp_eps/dbrks_eps_usage_eps_items_month_count"
+				},
+				{
+					"metric": "eps_usage_eps_repeat_items_month_count",
+					"sink_path": "proc/projects/nhsx_dfpc_analytics/primarycare/eps_usage/eps_repeat_items_month_count/",
+					"sink_file": "eps_usage_eps_repeat_items_month_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_gp_eps/dbrks_eps_usage_eps_repeat_items_month_count"
+				}
+			]
+		},
+		"staging": [
+			{
+				"metric": "eps_usage_patient_nominated_pharmacy_month_prop",
+				"sink_table": "eps_usage_patient_nominated_pharmacy_month_prop"
+			},
+			{
+				"metric": "eps_usage_eps_utilisation_month_prop",
+				"sink_table": "eps_usage_eps_utilisation_month_prop"
+			},
+			{
+				"metric": "eps_usage_erd_utilisation_month_prop",
+				"sink_table": "eps_usage_erd_utilisation_month_prop"
+			},
+			{
+				"metric": "eps_usage_eps_items_month_count",
+				"sink_table": "eps_usage_eps_items_month_count"
+			},
+			{
+				"metric": "eps_usage_eps_repeat_items_month_count",
+				"sink_table": "eps_usage_eps_repeat_items_month_count"
+			}
+		]
+	}
+}
