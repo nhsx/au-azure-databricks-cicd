@@ -14,7 +14,7 @@ DESCRIPTION:
                 data for the NHSX Analytics unit metrics within the topic AI lab solutions trialled at Trusts
 USAGE:
                 ...
-CONTRIBUTORS:   Mattia Ficarelli
+CONTRIBUTORS:   Mattia Ficarelli, Kabir Khan
 CONTACT:        data@nhsx.nhs.uk
 CREATED:        02 Feb. 2022
 VERSION:        0.0.1
