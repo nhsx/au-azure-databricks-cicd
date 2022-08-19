@@ -45,18 +45,18 @@ from azure.storage.filedatalake import DataLakeServiceClient
 # Connect to Azure datalake
 # -------------------------------------------------------------------------
 # !env from databricks secrets
-CONNECTION_STRING = dbutils.secrets.get(scope="datalakefs", key="CONNECTION_STRING")
+CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONNECTION_STRING")
 
 # COMMAND ----------
 
-# MAGIC %run /Repos/prod/au-azure-databricks/functions/dbrks_helper_functions
+# MAGIC %run /Shared/databricks/au-azure-databricks-cicd/functions/dbrks_helper_functions
 
 # COMMAND ----------
 
 #Download JSON config from Azure datalake
 file_path_config = "/config/pipelines/nhsx-au-analytics/"
 file_name_config = "config_gp_eps_dbrks.json"
-file_system_config = "nhsxdatalakesagen2fsprod"
+file_system_config = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
