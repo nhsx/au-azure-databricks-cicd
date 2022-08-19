@@ -80,6 +80,7 @@ df1 = df[['ODS Code', 'eRD Items', 'All Items', 'eRD Utilisation (All Items)', '
 df1['eRD Utilisation (All Items)'] = df1['eRD Utilisation (All Items)'].str.replace("%", "")
 df1['eRD Utilisation (All Items)'] = (pd.to_numeric(df1['eRD Utilisation (All Items)'])/100)
 df1.rename(columns = {'ODS Code': 'Practice code', 'eRD Items': 'Number of eRD items', 'All Items':'All items', 'eRD Utilisation (All Items)': '% eRD utilisation'}, inplace=True)
+df1['Date'] = pd.to_datetime(df1['Date'])
 df1.index.name = "Unique ID"
 df_processed = df1.copy()
 
