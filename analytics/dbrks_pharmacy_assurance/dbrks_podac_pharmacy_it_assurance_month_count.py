@@ -78,6 +78,7 @@ latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 df = pd.read_csv(io.BytesIO(file))
 df1 = df[["Date", "Number of IT system suppliers assured to enable pharmacists to provide CPCS", "Number of IT system suppliers"]]
+df1['Date'] = pd.to_datetime(df1['Date'])
 df1.index.name = "Unique ID"
 df_processed = df1.copy()
 

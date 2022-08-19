@@ -78,6 +78,7 @@ file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolde
 df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 df1 = df[['ODS Code', 'eRD Items', 'Date']]
 df1.rename(columns = {'ODS Code': 'Practice code', 'eRD Items': 'Number of eRD items'}, inplace=True)
+df1['Date'] = pd.to_datetime(df1['Date'])
 df1.index.name = "Unique ID"
 df_processed = df1.copy()
 

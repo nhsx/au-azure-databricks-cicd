@@ -80,6 +80,7 @@ df1 = df[['ODS Code', 'EPS Items', 'All Items', 'EPS Utilisation', 'Date']]
 df1['EPS Utilisation'] = df1['EPS Utilisation'].str.replace("%", "")
 df1['EPS Utilisation'] = (pd.to_numeric(df1['EPS Utilisation'])/100)
 df1.rename(columns = {'ODS Code': 'Practice code', 'EPS Items': 'Number of EPS items', 'All Items':'All items', 'EPS Utilisation': '% EPS utilisation'}, inplace=True)
+df1['Date'] = pd.to_datetime(df1['Date'])
 df1.index.name = "Unique ID"
 df_processed = df1.copy()
 
