@@ -110,7 +110,7 @@
 			"reference_source_file": "table_ons_population_demography_historical.parquet",
 			"reference_source_path_gp": "proc/sources/ncdr_etp/adf_v2/table/gp_practice_population/snapshot/",
 			"reference_source_file_gp": "table_gp_practice_population_snapshot.parquet",
-			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_nhs_app_orchestrator",
+			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_nhs_app_jumpoff_orchestrator",
 			"databricks":[
 				{
 				"metric": "nhs_app_jumpoff_covid_vaccine_record_view_day_count",
