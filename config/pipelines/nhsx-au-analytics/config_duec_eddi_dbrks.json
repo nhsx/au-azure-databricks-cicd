@@ -1,0 +1,62 @@
+{
+	"metadata":  {
+		"products": [
+			{
+			"product_name": "",
+			"granularity": "",
+			"topic": "",
+			"metrics": [
+				{
+            		"id": "",
+            		"full_name": "",
+	 				"short_name":""
+        			}
+			]
+			}
+			]
+		},
+	"pipeline": {
+		"name": "trigger_duec_eddi",
+    	"folder": "nhsx-au-analytics/nhs_digital/duec_eddi/",
+		"ingestion": {
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_duec_eddi/dbrks_duec_eddi_raw"
+		},
+		"raw": {		
+			"snapshot_source_path": "land/datainbox/email_attachment/data@nhsx.nhs.uk/[data] EDDI Appointment Report/",
+			"appended_path": "raw/nhsdigital/email_attachment/parquet/duec_eddi_report/historical/",
+			"appended_file": "duec_eddi_report_historical.parquet"
+		},
+		"proc": 
+			{
+			"metric": "",
+			"source_path": "",
+			"source_file": "",
+			"sink_path": "",
+			"sink_file": ""
+			},
+		"project": {
+			"source_path": "",
+			"source_file": "",
+			"databricks_orchestrator_notebook": "",
+			"databricks":[    
+    			{
+				"metric": "",
+				"sink_path": "",
+				"sink_file": "",
+				"databricks_notebook": ""
+				}
+			]
+		},
+		"staging":[        			
+			{
+				"metric": "",
+				"stored_procedure": "",
+				"source_path": "",
+				"source_file": "",
+				"sink_table": ""
+				}
+			]
+	}
+
+}
+
