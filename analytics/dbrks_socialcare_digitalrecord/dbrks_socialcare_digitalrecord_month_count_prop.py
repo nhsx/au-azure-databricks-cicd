@@ -108,6 +108,7 @@ df_join = df_4.merge(df_ref_4, how ='left', on = 'Date')
 df_join['Percentage of adult socialcare providers that have adopted a digital social care record']= df_join['Cummulative number of adult socialcare providers that have adopted a digital social care record']/df_join['Number of active adult socialcare organisations']
 df_join.index.name = "Unique ID"
 df_join = df_join.round(4)
+df_join["Date"] = pd.to_datetime(df_join["Date"])
 df_processed = df_join.copy()
 
 # COMMAND ----------

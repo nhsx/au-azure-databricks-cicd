@@ -120,6 +120,7 @@ df_dates_merged_1 = df_dates_merged.rename(columns = { 'Count_x':'Number of soci
 df_dates_merged_1["Percent of social care organizations with a standards met or exceeded DSPT status"] = df_dates_merged_1['Number of social care organizations with a standards met or exceeded DSPT status']/df_dates_merged_1['Total number of social care organizations']
 df_dates_merged_2 = df_dates_merged_1 .round(4)
 df_dates_merged_2.index.name = "Unique ID"
+df_dates_merged_2["Date"] = pd.to_datetime(df_dates_merged_2["Date"])
 df_processed = df_dates_merged_2.copy()
 
 # COMMAND ----------
