@@ -8,14 +8,14 @@
 # -------------------------------------------------------------------------
 
 """
-FILE:           dbrks_primarycare_gp_it_standards_year_count_prop.py
+FILE:           dbrks_primarycare_online_consultation_gp_practice_submissions_week_rate.py
 DESCRIPTION:
-                Databricks notebook with processing code for the NHSX Analyticus unit metric: No. and % of GP practices compliant with IT standards (GPITOM) (M074)
+                Databricks notebook with processing code for the NHSX dfpc analytics metric: Number of online consultation submissions per 1,000 registered population, per week (M061)
 USAGE:
-                ...
-CONTRIBUTORS:   Mattia Ficarelli, Kabir Khan
+                
+CONTRIBUTORS:   Craig Shenton, Mattia Ficarelli, Everistus Oputa, Kabir Khan
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        12 Aug 2022
+CREATED:        23 Aug 2022
 VERSION:        0.0.2
 """
 
@@ -56,7 +56,7 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 # Load JSON config from Azure datalake
 # -------------------------------------------------------------------------
 file_path_config = "/config/pipelines/nhsx-au-analytics/"
-file_name_config = "config_gp_it_standards_dbrks.json"
+file_name_config = "config_online_consult_dbrks.json"
 file_system_config = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
@@ -68,9 +68,9 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']['source_file']
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
-sink_path = config_JSON['pipeline']['project']["databricks"][1]['sink_path']
-sink_file = config_JSON['pipeline']['project']["databricks"][1]['sink_file']
-table_name = config_JSON['pipeline']["staging"][1]['sink_table']
+sink_path = config_JSON['pipeline']['project']['databricks'][3]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][3]['sink_file']
+table_name = config_JSON['pipeline']['staging'][3]['sink_table']
 
 # COMMAND ----------
 
@@ -78,12 +78,14 @@ table_name = config_JSON['pipeline']["staging"][1]['sink_table']
 # -------------------------------------------------------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
-df = pd.read_parquet(io.BytesIO(file), engine = 'pyarrow')
-df1 = df.rename(columns = {"Practice ODS Code": "Practice code", "FULLY COMPLIANT": "GP practice compliance with IT standards"})
-df1["GP practice compliance with IT standards"] = df1["GP practice compliance with IT standards"].replace("YES", 1).replace("NO", 0)
-df1["Date"] = pd.to_datetime(df1["Date"])
-df1.index.name = "Unique ID"
-df_processed = df1.copy()
+df = pd.read_csv(io.BytesIO(file))
+df1 = df[df['Valid_Practice'] == 1]
+df2 = df1[["Week Commencing", "Practice Code", "oc_submissions_total", "Practice_Population"]]
+df2.rename(columns={"oc_submissions_total": "Number of patient online consultation submissions", "Practice_Population": "GP practice population", "Practice Code": "Practice code"},inplace=True)
+df2['Week Commencing'] = pd.to_datetime(df['Week Commencing'], format='%Y-%m-%d')
+df3 = df2.sort_values(by='Week Commencing').reset_index(drop = True)
+df3.index.name = "Unique ID"
+df_processed = df3.copy()
 
 # COMMAND ----------
 

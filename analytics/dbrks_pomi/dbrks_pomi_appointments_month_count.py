@@ -8,14 +8,14 @@
 # -------------------------------------------------------------------------
 
 """
-FILE:           dbrks_primarycare_gp_it_standards_year_count_prop.py
+FILE:           dbrks_pomi_appointments_month_count.py
 DESCRIPTION:
-                Databricks notebook with processing code for the NHSX Analyticus unit metric: No. and % of GP practices compliant with IT standards (GPITOM) (M074)
+                Databricks notebook with processing code for the NHSX Analyticus unit metric: Total number of GP appointments managed online (M002)
 USAGE:
                 ...
-CONTRIBUTORS:   Mattia Ficarelli, Kabir Khan
+CONTRIBUTORS:   Craig Shenton, Mattia Ficarelli, Kabir Khan
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        12 Aug 2022
+CREATED:        23 Aug 2022
 VERSION:        0.0.2
 """
 
@@ -56,7 +56,7 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 # Load JSON config from Azure datalake
 # -------------------------------------------------------------------------
 file_path_config = "/config/pipelines/nhsx-au-analytics/"
-file_name_config = "config_gp_it_standards_dbrks.json"
+file_name_config = "config_pomi_dbrks.json"
 file_system_config = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
@@ -68,9 +68,9 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']['source_file']
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
-sink_path = config_JSON['pipeline']['project']["databricks"][1]['sink_path']
-sink_file = config_JSON['pipeline']['project']["databricks"][1]['sink_file']
-table_name = config_JSON['pipeline']["staging"][1]['sink_table']
+sink_path = config_JSON['pipeline']['project']['databricks'][1]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][1]['sink_file']  
+table_name = config_JSON['pipeline']['staging'][1]['sink_table']
 
 # COMMAND ----------
 
@@ -78,12 +78,24 @@ table_name = config_JSON['pipeline']["staging"][1]['sink_table']
 # -------------------------------------------------------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
-df = pd.read_parquet(io.BytesIO(file), engine = 'pyarrow')
-df1 = df.rename(columns = {"Practice ODS Code": "Practice code", "FULLY COMPLIANT": "GP practice compliance with IT standards"})
-df1["GP practice compliance with IT standards"] = df1["GP practice compliance with IT standards"].replace("YES", 1).replace("NO", 0)
-df1["Date"] = pd.to_datetime(df1["Date"])
-df1.index.name = "Unique ID"
-df_processed = df1.copy()
+df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
+df = df[df["Field"] == "Pat_Appts_Use"]
+df1 = df.groupby(["Report_Period_End", "Field"])
+df2 = df1["Value"].aggregate(np.sum)
+df2 = df2.reset_index()
+df2["Report_Period_End"] = df2["Report_Period_End"].astype("datetime64[ns]")
+df2 = df2.sort_values("Report_Period_End")
+df2 = df2.reset_index(drop=True)
+df2["pandas_SMA_3"] = df2["Value"].rolling(window=3).mean()
+df2 = df2.drop(columns="Field")
+df2.rename(columns={
+  "Value": "Number of GP appointments managed online",
+  "pandas_SMA_3": "3 month rolling average",
+  "Report_Period_End": "Date"},
+           inplace=True,)
+df2['3 month rolling average'] = np.floor(pd.to_numeric(df2['3 month rolling average'], errors='coerce')).astype('Int64')
+df2.index.name = "Unique ID"
+df_processed = df2.copy()
 
 # COMMAND ----------
 

@@ -8,14 +8,14 @@
 # -------------------------------------------------------------------------
 
 """
-FILE:           dbrks_primarycare_gp_it_standards_year_count_prop.py
+FILE:           dbrks_pomi_microtest_gp_practice_month_count.py
 DESCRIPTION:
-                Databricks notebook with processing code for the NHSX Analyticus unit metric: No. and % of GP practices compliant with IT standards (GPITOM) (M074)
+                Databricks notebook with processing code for the NHSX Analyticus unit metric: No. of Microtest GP Practices (M058B)
 USAGE:
                 ...
-CONTRIBUTORS:   Mattia Ficarelli, Kabir Khan
+CONTRIBUTORS:   Craig Shenton, Mattia Ficarelli, Kabir Khan
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        12 Aug 2022
+CREATED:        23 Aug 2022
 VERSION:        0.0.2
 """
 
@@ -38,7 +38,6 @@ import json
 
 # 3rd party:
 import pandas as pd
-import numpy as np
 from pathlib import Path
 from azure.storage.filedatalake import DataLakeServiceClient
 
@@ -53,42 +52,52 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 
 # COMMAND ----------
 
-# Load JSON config from Azure datalake
-# -------------------------------------------------------------------------
+#Download JSON config from Azure datalake
 file_path_config = "/config/pipelines/nhsx-au-analytics/"
-file_name_config = "config_gp_it_standards_dbrks.json"
+file_name_config = "config_pomi_dbrks.json"
 file_system_config = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
 # COMMAND ----------
 
-# Read parameters from JSON config
-# -------------------------------------------------------------------------
+#Get parameters from JSON config
 source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']['source_file']
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
-sink_path = config_JSON['pipeline']['project']["databricks"][1]['sink_path']
-sink_file = config_JSON['pipeline']['project']["databricks"][1]['sink_file']
-table_name = config_JSON['pipeline']["staging"][1]['sink_table']
+sink_path = config_JSON['pipeline']['project']['databricks'][11]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][11]['sink_file']  
+table_name = config_JSON['pipeline']['staging'][11]['sink_table']
 
 # COMMAND ----------
 
-# Processing
-# -------------------------------------------------------------------------
+#Processing
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
-df = pd.read_parquet(io.BytesIO(file), engine = 'pyarrow')
-df1 = df.rename(columns = {"Practice ODS Code": "Practice code", "FULLY COMPLIANT": "GP practice compliance with IT standards"})
-df1["GP practice compliance with IT standards"] = df1["GP practice compliance with IT standards"].replace("YES", 1).replace("NO", 0)
-df1["Date"] = pd.to_datetime(df1["Date"])
-df1.index.name = "Unique ID"
-df_processed = df1.copy()
+df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
+df1 = df.groupby(["Report_Period_End", "Practice_Code", "System_Supplier"]).count().reset_index()
+df2 = df1[["Report_Period_End","Practice_Code", "System_Supplier"]]
+df2['System_Supplier_bool'] = df2['System_Supplier'].str.contains("MICROTEST")
+def microtest_gp_practice(c):
+  if c['System_Supplier_bool'] == True:
+    return 1
+  else:
+    return 0
+df2['MICROTEST GP Practices'] = df2.apply(microtest_gp_practice, axis=1)
+df3 = df2.sort_values("Report_Period_End")
+df4 = df3.reset_index(drop = True)
+df5 = df4.drop(columns={"System_Supplier", 
+                         "System_Supplier_bool"})
+df5.rename(columns={
+    "Report_Period_End": "Date",
+    "Practice_Code": "Practice code"},
+     inplace=True)
+df5.index.name = "Unique ID"
+df_processed = df5.copy()
 
 # COMMAND ----------
 
-# Upload processed data to datalake
-# -------------------------------------------------------------------------
+#Upload processed data to datalake
 file_contents = io.StringIO()
 df_processed.to_csv(file_contents)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)

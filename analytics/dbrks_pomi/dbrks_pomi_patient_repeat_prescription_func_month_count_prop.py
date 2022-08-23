@@ -8,14 +8,14 @@
 # -------------------------------------------------------------------------
 
 """
-FILE:           dbrks_primarycare_gp_it_standards_year_count_prop.py
+FILE:           dbrks_pomi_patient_repeat_prescription_func_month_count_prop.py
 DESCRIPTION:
-                Databricks notebook with processing code for the NHSX Analyticus unit metric: No. and % of GP practices compliant with IT standards (GPITOM) (M074)
+                Databricks notebook with processing code for the NHSX Analyticus unit metric: No. and % of patients registered for repeat prescription functionality enabled (M0141)
 USAGE:
                 ...
-CONTRIBUTORS:   Mattia Ficarelli, Kabir Khan
+CONTRIBUTORS:   Craig Shenton, Mattia Ficarelli, Kabir Khan
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        12 Aug 2022
+CREATED:        23 Aug 2022
 VERSION:        0.0.2
 """
 
@@ -53,42 +53,45 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 
 # COMMAND ----------
 
-# Load JSON config from Azure datalake
-# -------------------------------------------------------------------------
+#Download JSON config from Azure datalake
 file_path_config = "/config/pipelines/nhsx-au-analytics/"
-file_name_config = "config_gp_it_standards_dbrks.json"
+file_name_config = "config_pomi_dbrks.json"
 file_system_config = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
 # COMMAND ----------
 
-# Read parameters from JSON config
-# -------------------------------------------------------------------------
+#Get parameters from JSON config
 source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']['source_file']
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
-sink_path = config_JSON['pipeline']['project']["databricks"][1]['sink_path']
-sink_file = config_JSON['pipeline']['project']["databricks"][1]['sink_file']
-table_name = config_JSON['pipeline']["staging"][1]['sink_table']
+sink_path = config_JSON['pipeline']['project']['databricks'][13]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][13]['sink_file']  
+table_name = config_JSON['pipeline']['staging'][13]['sink_table']
 
 # COMMAND ----------
 
-# Processing
-# -------------------------------------------------------------------------
+#Processing
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
-df = pd.read_parquet(io.BytesIO(file), engine = 'pyarrow')
-df1 = df.rename(columns = {"Practice ODS Code": "Practice code", "FULLY COMPLIANT": "GP practice compliance with IT standards"})
-df1["GP practice compliance with IT standards"] = df1["GP practice compliance with IT standards"].replace("YES", 1).replace("NO", 0)
-df1["Date"] = pd.to_datetime(df1["Date"])
-df1.index.name = "Unique ID"
-df_processed = df1.copy()
+df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
+df1 = df[['Report_Period_End', 'Practice_Code', 'Field', 'Value']]
+df_num = df1[df1["Field"] == "Pat_Presc_Enbld"]
+df_num_1 = df_num.rename(columns = {'Value': 'Number of patients registered for repeat prescription functionality'}).drop(columns = ['Field']).reset_index(drop = True)
+df_denom = df1[df1["Field"] == "patient_list_size"]
+df_denom_1 = df_denom.rename(columns = {'Value': 'Number of registered patients'}).drop(columns = ['Field']).reset_index(drop = True)
+df_join = pd.merge(df_num_1, df_denom_1,  how='left', left_on=['Report_Period_End','Practice_Code'], right_on = ['Report_Period_End','Practice_Code'])
+df_join["Percent of patients registered for repeat prescription functionality"] = df_join["Number of patients registered for repeat prescription functionality"]/df_join["Number of registered patients"]
+df_join.rename(columns={"Report_Period_End": "Date", "Practice_Code": "Practice code"}, inplace=True)
+df_join_1 = df_join[~(df_join['Percent of patients registered for repeat prescription functionality'] > 1)].reset_index(drop = True)
+df_join_2 = df_join_1.round(4)
+df_join_2.index.name = "Unique ID"
+df_processed = df_join_2.copy()
 
 # COMMAND ----------
 
-# Upload processed data to datalake
-# -------------------------------------------------------------------------
+#Upload processed data to datalake
 file_contents = io.StringIO()
 df_processed.to_csv(file_contents)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
