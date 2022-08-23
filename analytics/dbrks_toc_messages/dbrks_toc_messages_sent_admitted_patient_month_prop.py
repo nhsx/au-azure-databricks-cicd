@@ -105,6 +105,7 @@ df_join_1 = df_join.drop(columns = ['_time']).rename(columns = {'Discharge_Date'
 df_join_1['Acute admitted patient care FHIR ToC utilisation (per 1,000 discharges)'] = df_join_1["Number of successful FHIR ToC acute admitted patient care discharge messages"]/ (df_join_1['Number of admitted patient care discharges (excluding mental health and maternity related discharges)']/1000)
 df_join_2 = df_join_1.round(2)
 df_join_2.index.name = "Unique ID"
+df_join_2["Date"] = pd.to_datetime(df_join_2["Date"])
 df_processed = df_join_2.copy()
 
 # COMMAND ----------
