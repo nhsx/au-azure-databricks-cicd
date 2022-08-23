@@ -20,8 +20,8 @@
 		]
 	},
 	"pipeline": {
-		"name": "trigger_gp_practice_ons_population_env_copy",
-    	"folder": "reference_tables/gp_ons_population",
+		"name": "trigger_copy_ref_data",
+    	"folder": "reference_tables/copy_ref_data",
         "source_adl_file_system": "nhsxdatalakesagen2fsprod",
 		"ingestion": {
 		},
