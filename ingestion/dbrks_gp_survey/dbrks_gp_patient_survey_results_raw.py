@@ -15,9 +15,9 @@ DESCRIPTION:
                 topic
 USAGE:
                 ...
-CONTRIBUTORS:   Craig Shenton, Mattia Ficarelli
+CONTRIBUTORS:   Everistus Oputa
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        20 Jan 2021
+CREATED:        23 Aug 2022
 VERSION:        0.0.2
 """
 
@@ -47,11 +47,11 @@ from azure.storage.filedatalake import DataLakeServiceClient
 # Connect to Azure datalake
 # -------------------------------------------------------------------------
 # !env from databricks secrets
-CONNECTION_STRING = dbutils.secrets.get(scope="datalakefs", key="CONNECTION_STRING")
+CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONNECTION_STRING")
 
 # COMMAND ----------
 
-# MAGIC %run /Repos/prod/au-azure-databricks/functions/dbrks_helper_functions
+# MAGIC %run /Shared/databricks/au-azure-databricks-cicd/functions/dbrks_helper_functions
 
 # COMMAND ----------
 
@@ -59,7 +59,7 @@ CONNECTION_STRING = dbutils.secrets.get(scope="datalakefs", key="CONNECTION_STRI
 # -------------------------------------------------------------------------
 file_path_config = "/config/pipelines/nhsx-au-analytics/"
 file_name_config = "config_gp_patient_survey_dbrks.json"
-file_system_config = "nhsxdatalakesagen2fsprod"
+file_system_config = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
@@ -67,7 +67,7 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
 # Read parameters from JSON config
 # -------------------------------------------------------------------------
-file_system = config_JSON['pipeline']['adl_file_system']
+file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 new_source_path = config_JSON['pipeline']['raw']['snapshot_source_path']
 historical_source_path = config_JSON['pipeline']['raw']['appended_path']
 historical_source_file = config_JSON['pipeline']['raw']['appended_file']
