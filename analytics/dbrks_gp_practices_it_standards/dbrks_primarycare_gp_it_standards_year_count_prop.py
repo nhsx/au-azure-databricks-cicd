@@ -16,7 +16,7 @@ USAGE:
 CONTRIBUTORS:   Mattia Ficarelli, Kabir Khan
 CONTACT:        data@nhsx.nhs.uk
 CREATED:        12 Aug 2022
-VERSION:        0.1.1
+VERSION:        0.0.2
 """
 
 # COMMAND ----------

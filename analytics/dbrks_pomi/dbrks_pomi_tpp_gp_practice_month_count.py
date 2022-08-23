@@ -13,10 +13,10 @@ DESCRIPTION:
                 Databricks notebook with processing code for the NHSX Analyticus unit metric: No. of TPP GP Practices (M057)
 USAGE:
                 ...
-CONTRIBUTORS:   Craig Shenton, Mattia Ficarelli
+CONTRIBUTORS:   Craig Shenton, Mattia Ficarelli, Kabir Khan
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        13 Dec 2021
-VERSION:        0.0.1
+CREATED:        23 Aug 2022
+VERSION:        0.0.2
 """
 
 # COMMAND ----------
@@ -44,18 +44,18 @@ from azure.storage.filedatalake import DataLakeServiceClient
 # Connect to Azure datalake
 # -------------------------------------------------------------------------
 # !env from databricks secrets
-CONNECTION_STRING = dbutils.secrets.get(scope="datalakefs", key="CONNECTION_STRING")
+CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONNECTION_STRING")
 
 # COMMAND ----------
 
-# MAGIC %run /Repos/prod/au-azure-databricks/functions/dbrks_helper_functions
+# MAGIC %run /Shared/databricks/au-azure-databricks-cicd/functions/dbrks_helper_functions
 
 # COMMAND ----------
 
 #Download JSON config from Azure datalake
 file_path_config = "/config/pipelines/nhsx-au-analytics/"
 file_name_config = "config_pomi_dbrks.json"
-file_system_config = "nhsxdatalakesagen2fsprod"
+file_system_config = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONNECTION_STRING")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
@@ -64,9 +64,10 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 #Get parameters from JSON config
 source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']['source_file']
-file_system = config_JSON['pipeline']['adl_file_system']
+file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONNECTION_STRING")
 sink_path = config_JSON['pipeline']['project']['databricks'][9]['sink_path']
-sink_file = config_JSON['pipeline']['project']['databricks'][9]['sink_file']  
+sink_file = config_JSON['pipeline']['project']['databricks'][9]['sink_file'] 
+table_name = config_JSON['pipeline']['staging'][9]['sink_table']
 
 # COMMAND ----------
 
@@ -100,3 +101,9 @@ df_processed = df5.copy()
 file_contents = io.StringIO()
 df_processed.to_csv(file_contents)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
+
+# COMMAND ----------
+
+# Write data from databricks to dev SQL database
+# -------------------------------------------------------------------------
+write_to_sql(df_processed, table_name, "overwrite")
