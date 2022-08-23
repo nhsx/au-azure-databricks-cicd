@@ -45,28 +45,33 @@ from azure.storage.filedatalake import DataLakeServiceClient
 # Connect to Azure datalake
 # -------------------------------------------------------------------------
 # !env from databricks secrets
-CONNECTION_STRING = dbutils.secrets.get(scope="datalakefs", key="CONNECTION_STRING")
+CONNECTION_STRING = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONNECTION_STRING") 
 
 # COMMAND ----------
 
-# MAGIC %run /Repos/prod/au-azure-databricks/functions/dbrks_helper_functions
+# MAGIC %run /Shared/databricks/au-azure-databricks-cicd/functions/dbrks_helper_functions
 
 # COMMAND ----------
 
 #Download JSON config from Azure datalake
 file_path_config = "/config/pipelines/nhsx-au-analytics/"
 file_name_config = "config_toc_messages_dbrks.json"
-file_system_config = "nhsxdatalakesagen2fsprod"
+file_system_config = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
 # COMMAND ----------
 
+#Get databricksworkspace specfic path
+#---------------------------------
+path_start = dbutils.secrets.get(scope='DatabricksNotebookPath', key="DATABRICKS_PATH")
+
 #Squentially run metric notebooks
+#---------------------------------
 for index, item in enumerate(config_JSON['pipeline']['project']['databricks']): # get index of objects in JSON array
   try:
     notebook = config_JSON['pipeline']['project']['databricks'][index]['databricks_notebook']
-    dbutils.notebook.run(notebook, 1000) # is 120 sec long enough for timeout?
+    dbutils.notebook.run(path_start+notebook, 8000) # is 120 sec long enough for timeout?
   except Exception as e:
     print(e)
     raise Exception()
