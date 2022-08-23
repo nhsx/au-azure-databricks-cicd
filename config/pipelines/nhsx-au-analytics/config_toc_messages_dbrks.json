@@ -1,0 +1,162 @@
+{
+	"metadata":  {
+		"products": [
+			{
+			"product_name": "Digitise, Connect, Transform (DCT) Dashboard",
+			"granularity": "National",
+			"topic": "TOC messages",
+			"metrics": [
+				{
+            		"id": "M030A",
+            		"full_name": "No. transfer of care digital messages sent to GPs (all use cases)",
+	 				"short_name":"toc_messages_sent_week_count"
+        			},
+				{
+            		"id": "M030B",
+            		"full_name": "No. transfer of care digital messages sent to GPs per 1,000 discharges (acute and mental health)",
+	 				"short_name":"toc_messages_sent_admitted_patient_month_prop"
+        			}	
+			]
+			},
+			{
+			"product_name": "Transfer of Care (TOC) Dashboard",
+			"granularity": "Trust",
+			"topic": "TOC messages",
+			"metrics": [
+					{
+					"id": "M030A.1",
+					"full_name": "No. transfer of care digital messages sent to GPs at a NHS Trust level (all use cases)",
+					"short_name":"toc_messages_provider_sent_week_count"
+					},
+					{
+					"id": "M030B.1",
+					"full_name": "Acute admitted patient care FHIR ToC utilisation (per 1,000 discharges)",
+					"short_name":"toc_messages_provider_sent_admitted_patient_month_prop"
+					},
+					{
+					"id": "M030C.1",
+					"full_name": "Emergency care FHIR ToC utilisation (per 1,000 discharges)",
+					"short_name":"toc_messages_provider_sent_emergency_care_month_prop"
+					},
+					{
+					"id": "M030D.1",
+					"full_name": "Mental health FHIR ToC utilisation (per 1,000 discharges)",
+					"short_name":"toc_messages_provider_sent_mental_health_month_prop"
+					}
+				]
+			    }
+			]
+		},
+	"pipeline": {
+		"name": "trigger_toc_messages",
+    	"folder": "nhsx-au-analytics/nhs_digital/toc_messages/",
+		"ingestion": {
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_toc_messages/dbrks_toc_messages_raw"
+		},
+		"raw": {		
+			"snapshot_source_path": "land/datainbox/email_attachment/reporting.live@nhs.net/Splunk Report: TOC Uploads/",
+			"appended_path": "raw/nhsdigital/email_attachment/parquet/toc_messages/historical/",
+			"appended_file": "toc_messages_historical.parquet"
+			
+		},
+		"proc": 
+			{
+			"metric": "toc_messages_sent_week_count",
+			"source_path": "raw/nhsdigital/email_attachment/parquet/toc_messages/historical/",
+			"source_file": "toc_messages_historical.parquet",
+			"sink_path": "proc/sources/nhsdigital/email_attachment/parquet/toc_messages/historical/",
+			"sink_file": "toc_messages_historical.parquet"
+			},
+		"project": {
+			"source_path": "proc/sources/nhsdigital/email_attachment/parquet/toc_messages/historical/",
+			"source_file": "toc_messages_historical.parquet",
+			"M30B_denominator_source_path": "proc/sources/ncdr_etp/adf_v2/table/admitted_patient_care_discharges/full/",
+			"M30B_denominator_source_file": "admitted_patient_care_discharges_full.parquet",
+			"M30C_denominator_source_path": "proc/sources/ncdr_etp/adf_v2/table/emergency_care_discharges/full/",
+			"M30C_denominator_source_file": "emergency_care_discharges_full.parquet",
+			"M30D_denominator_source_path": "proc/sources/ncdr_etp/adf_v2/table/mental_health_related_discharges/full/",
+			"M30D_denominator_source_file": "mental_health_related_discharges_full.parquet",
+			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_toc_messages_orchestrator",
+			"databricks":[    
+    			{
+				"metric": "toc_messages_sent_week_count",
+				"sink_path": "proc/projects/nhsx_slt_analytics/standards/toc/messages_sent_week_count/",
+				"sink_file": "toc_messages_sent_week_count.csv",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_toc_messages/dbrks_toc_messages_sent_week_count"
+				},    
+    			{
+				"metric": "toc_messages_sent_admitted_patient_month_prop",
+				"sink_path": "proc/projects/nhsx_slt_analytics/standards/toc/toc_messages_sent_admitted_patient_month_prop/",
+				"sink_file": "toc_messages_sent_admitted_patient_month_prop.csv",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_toc_messages/dbrks_toc_messages_sent_admitted_patient_month_prop"
+				},
+				{
+				"metric": "toc_messages_provider_sent_week_count",
+				"sink_path": "proc/projects/nhsx_toc_analytics/standards/toc/toc_messages_provider_sent_week_count/",
+				"sink_file": "toc_messages_provider_sent_week_count.csv",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_toc_messages/dbrks_toc_messages_provider_sent_week_count"
+				},
+				{
+				"metric": "toc_messages_provider_sent_admitted_patient_month_prop",
+				"sink_path": "proc/projects/nhsx_toc_analytics/standards/toc/toc_messages_provider_sent_admitted_patient_month_prop/",
+				"sink_file": "toc_messages_provider_sent_admitted_patient_month_prop.csv",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_toc_messages/dbrks_toc_messages_provider_sent_admitted_patient_month_prop"
+				},
+				{
+				"metric": "toc_messages_provider_sent_emergency_care_month_prop",
+				"sink_path": "proc/projects/nhsx_toc_analytics/standards/toc/toc_messages_provider_sent_emergency_care_month_prop/",
+				"sink_file": "toc_messages_provider_sent_emergency_care_month_prop.csv",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_toc_messages/dbrks_toc_messages_provider_sent_emergency_care_month_prop"
+				},
+				{
+				"metric": "toc_messages_provider_sent_mental_health_month_prop",
+				"sink_path": "proc/projects/nhsx_toc_analytics/standards/toc/toc_messages_provider_sent_mental_health_month_prop/",
+				"sink_file": "toc_messages_provider_sent_mental_health_month_prop.csv",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_toc_messages/dbrks_toc_messages_provider_sent_mental_health_month_prop"
+				},
+				{
+				"metric": "toc_messages_data_to_send",
+				"sink_path": "proc/projects/nhsx_slt_analytics/standards/toc/data_to_send/",
+				"sink_file": "toc_messages_data.xlsx",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_toc_messages/dbrks_toc_messages_data_to_send"
+				}             
+			]
+		},
+		"staging":[        			
+			{
+				"metric": "toc_messages_sent_week_count",
+				"sink_table": "toc_messages_sent_week_count"
+				},    
+    			{
+				"metric": "toc_messages_sent_admitted_patient_month_prop",
+				"sink_table": "toc_messages_sent_admitted_patient_month_prop"
+				},    
+    			{
+				"metric": "toc_messages_provider_sent_week_count",
+				"sink_table": "toc_messages_provider_sent_week_count"
+				},
+				{
+				"metric": "toc_messages_provider_sent_admitted_patient_month_prop",
+				"sink_table": "toc_messages_provider_sent_admitted_patient_month_prop"
+				},
+				{
+				"metric": "toc_messages_provider_sent_emergency_care_month_prop",
+				"sink_table": "toc_messages_provider_sent_emergency_care_month_prop"
+				},
+				{
+				"metric": "toc_messages_provider_sent_mental_health_month_prop",
+				"sink_table": "toc_messages_provider_sent_mental_health_month_prop"
+				}
+			],
+		"email": {
+			"subjectLine": "Data: Transfer of care (ToC) digital messages",
+			"address": "interop.standards@nhsx.nhs.uk", 
+			"filePath": "proc/projects/nhsx_slt_analytics/standards/toc/data_to_send/",
+			"fileName": "toc_messages_data.xlsx",
+			"toName": "Dear Digital Standards team,",
+			"emailBody": "Find attached the latest data on Transfer of Care (ToC) digital messages.",
+			"contactEmail": "If this email does not contain any attachments, or if there are any issues with the attached data please contact data@nhsx.nhs.uk"
+			}
+	}
+
+}
