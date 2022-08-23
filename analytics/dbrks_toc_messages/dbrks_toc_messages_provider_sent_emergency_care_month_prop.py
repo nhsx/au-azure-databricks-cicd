@@ -44,7 +44,7 @@ from azure.storage.filedatalake import DataLakeServiceClient
 # Connect to Azure datalake
 # -------------------------------------------------------------------------
 # !env from databricks secrets
-CONNECTION_STRING = dbutils.secrets.get(scope="datalakefs", key="CONNECTION_STRING")
+CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONNECTION_STRING")
 
 # COMMAND ----------
 
@@ -108,6 +108,7 @@ df_join_2['Emergency care FHIR ToC utilisation (per 1,000 discharges)'] = df_joi
 df_join_2 =  df_join_2[df_join_2['Date'] < df_join_2['Date'].max()] #----- drop latest month in the data to account for incomplete submission of discharges and avoid data quality issues
 df_join_2 = df_join_2.round(2)
 df_join_2.index.name = "Unique ID"
+df_join_2["Date"] = pd.to_datetime(df_join_2["Date"])
 df_processed = df_join_2.copy()
 
 # COMMAND ----------

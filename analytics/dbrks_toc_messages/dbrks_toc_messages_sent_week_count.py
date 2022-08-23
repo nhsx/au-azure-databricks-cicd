@@ -95,6 +95,7 @@ df4.columns.name = None
 df4.index.name = "Unique ID"
 if df4['Date'].iloc[-1] == datetime.now().strftime("%Y-%m"):
   df4.drop(df4.tail(1).index,inplace=True)
+df4["Date"] = pd.to_datetime(df4["Date"])
 df_processed = df4.copy()
 
 # COMMAND ----------
