@@ -45,18 +45,18 @@ from azure.storage.filedatalake import DataLakeServiceClient
 # Connect to Azure datalake
 # -------------------------------------------------------------------------
 # !env from databricks secrets
-CONNECTION_STRING = dbutils.secrets.get(scope="datalakefs", key="CONNECTION_STRING")
+CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONNECTION_STRING")
 
 # COMMAND ----------
 
-# MAGIC %run /Repos/prod/au-azure-databricks/functions/dbrks_helper_functions
+# MAGIC %run /Shared/databricks/au-azure-databricks-cicd/functions/dbrks_helper_functions
 
 # COMMAND ----------
 
 #Download JSON config from Azure datalake
 file_path_config = "/config/pipelines/nhsx-au-analytics/"
 file_name_config = "config_dspt_gp_practices_historical_dbrks.json"
-file_system_config = "nhsxdatalakesagen2fsprod"
+file_system_config = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
@@ -70,6 +70,7 @@ reference_source_path = config_JSON['pipeline']['project']['reference_source_pat
 reference_source_file = config_JSON['pipeline']['project']['reference_source_file']
 sink_path = config_JSON['pipeline']['project']['databricks'][1]['sink_path']
 sink_file = config_JSON['pipeline']['project']['databricks'][1]['sink_file']
+table_name = config_JSON['pipeline']["staging"][1]['sink_table']
 
 # COMMAND ----------
 
@@ -114,7 +115,14 @@ df_processed = df_join.copy()
 
 # COMMAND ----------
 
-#Upload processed data to datalake
+# Upload processed data to datalake
+# -------------------------------------------------------------------------
 file_contents = io.StringIO()
 df_processed.to_csv(file_contents)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
+
+# COMMAND ----------
+
+# Write data from databricks to dev SQL database
+# -------------------------------------------------------------------------
+write_to_sql(df_processed, table_name, "overwrite")
