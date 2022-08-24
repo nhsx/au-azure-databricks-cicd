@@ -60,7 +60,7 @@
 				"metric": "dspt_gp_practices_standards_nosubmission_month_count_prop",
 				"sink_path": "proc/projects/nhsx_dfpc_analytics/cybersecurity/dspt_gp_practices/standards_nosubmission_month_count_prop/",
 				"sink_file": "dspt_gp_practices_standards_nosubmission_month_count_prop.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_dspt_gp_practices/dbrks_cybersecurity_dspt_gp_practices_standards_nosubmission_month_count_prop"
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dspt_gp_practices/dbrks_cybersecurity_dspt_gp_practices_standards_nosubmission_month_count_prop"
 				}
 			]
 		},
