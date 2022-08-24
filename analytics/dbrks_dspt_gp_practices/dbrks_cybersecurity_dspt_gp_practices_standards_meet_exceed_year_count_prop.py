@@ -64,7 +64,7 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 # COMMAND ----------
 
 #Get parameters from JSON config
-file_system = config_JSON['pipeline']['adl_file_system']
+file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']['source_file']
 reference_source_path = config_JSON['pipeline']['project']['reference_source_path']
