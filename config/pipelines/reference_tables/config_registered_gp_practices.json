@@ -1,0 +1,38 @@
+{
+	"metadata":  {
+		"products": [
+			{
+			"product_name": "Reference Data",
+			"topic": "Registered GP practices",
+			"metrics": [
+				{
+            			"id": "R010",
+            			"full_name": "Number of registered GP practices (NHS Digital) at the end of a financial year (for use as a denominator in metrics on the DSPT status of GP practices)",
+	 			"short_name":"registered_gp_practices"
+        			}
+			]
+			}
+		]
+	},
+	"pipeline": {
+		"name": "trigger_registered_gp_practices",
+    	"folder": "reference_tables/registered_gp_practices/",
+		"ingestion": {
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_registered_gp_practices/dbrks_registered_gp_practices_raw"
+		},
+		"raw": {
+			"snapshot_source_path": "land/nhsdigital/manual_upload/timestamp/csv/registered_gp_practices/",
+			"appended_path": "raw/nhsdigital/manual_upload/parquet/registered_gp_practices/historical/",
+			"appended_file": "registered_gp_practices_historical.parquet"
+		},
+		"proc": {
+			"metric": "registered_gp_practices",
+			"source_path": "raw/nhsdigital/manual_upload/parquet/registered_gp_practices/historical/",
+			"source_file": "registered_gp_practices_historical.parquet",
+			"sink_path": "proc/sources/nhsdigital/manual_upload/parquet/registered_gp_practices/historical/",
+			"sink_file": "registered_gp_practices_historical.parquet"
+			}
+	}
+
+}
+
