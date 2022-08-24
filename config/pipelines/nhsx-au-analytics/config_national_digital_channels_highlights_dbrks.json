@@ -1,0 +1,49 @@
+{
+	"metadata": {
+		"products": [
+			{
+				"product_name": "Natioanl Digitial Channels (NDC) Dashboard",
+				"Granularity": "National",
+				"topic": "National Digital Channels report ",
+				"metrics": [
+					{
+						"id": "M268",
+						"full_name": "Highlights",
+						"short_name": "Highlights"
+					}
+				]
+			}
+		]
+	},
+	"pipeline": {
+		"name": "trigger_national_digital_channels_highlights",
+		"folder": "nhsx-au-analytics/nhsdigital/national_digital_channels/",
+		"ingestion": {
+			"source_path": "Shared Documents/nhsx_au_ingestion/national_digital_channels/",
+			"logic_app_url": "https://prod-01.uksouth.logic.azure.com:443/workflows/c27ffc275044425097b94b69c6792d77/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=dVUKugfOw1WJj8a_zZmkohGQH_TtvTt937zY6DqhsAY",
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_national_digital_channels/dbrks_national_digital_channels_highlights_raw"
+		},
+		"raw": {
+			"source_path": "land/sharepoint/Shared Documents/nhsx_au_ingestion/national_digital_channels/",
+			"appended_path": "raw/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
+			"appended_file": "national_digital_channels_historical_highlights.parquet"
+		},
+		"proc": {
+			"source_path": "raw/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
+			"source_file": "national_digital_channels_historical_highlights.parquet",
+			"sink_path": "proc/sources/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
+			"sink_file": "national_digital_channels_historical_highlights.parquet"
+		},
+		"project": {
+			"source_path": "proc/sources/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
+			"source_file": "national_digital_channels_historical_highlights.parquet",
+			"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_highlights/",
+			"sink_file": "national_digital_channels_historical_highlights.csv",
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_dashboard_highlights"
+		},
+		"staging": {
+			"metric": "ndc_dashboard_highlights",
+			"sink_table": "ndc_insights_highlights"
+		}
+	}
+}
