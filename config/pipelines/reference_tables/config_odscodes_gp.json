@@ -1,0 +1,79 @@
+{
+	"metadata":  {
+		"products": [
+			{
+			"product_name": "Reference Data",
+			"topic": "ODS Codes",
+			"metrics": [
+				{
+            			"id": "R002",
+            			"full_name": "GP practice organizational hierarchy relationship table",
+				"short_name":"odscodes_gp_mapping"
+        			}
+			]
+			}
+		]
+	},
+	"pipeline": {
+		"name": "trigger_odscodes_gp_mapping",
+    	"folder": "reference_tables/ods_codes/",
+		"adl_file_system": "nhsxdatalakesagen2fsprod",
+		"raw": {
+			"source_dbo": "dbo",
+			"source_table": "vw_ref_ods_gp_hierarchies",
+			"source_query": "SELECT * FROM dbo.vw_ref_ods_gp_hierarchies;",
+			"sink_path": "raw/ncdr_etp/adf_v2/table/odscodes/gp_mapping/",
+			"sink_file": "table_odscodes_gp_mapping.parquet"
+		},
+		"proc": {
+			"source_path": "raw/ncdr_etp/adf_v2/table/odscodes/gp_mapping/",
+			"source_file": "table_odscodes_gp_mapping.parquet",
+			"source_schema": [
+				{"name": "GP_Code", "type": "String"},
+				{"name": "GP_Name", "type": "String"},
+				{"name": "GP_Register_Date", "type": "String"},
+				{"name": "GP_LAT", "type": "String"},
+				{"name": "GP_Long", "type": "String"},
+				{"name": "GP_Address1", "type": "String"},
+				{"name": "GP_Address2", "type": "String"},
+				{"name": "GP_Address3", "type": "String"},
+				{"name": "GP_Postcode", "type": "String"},
+				{"name": "GP_CCG_Code", "type": "String"},
+				{"name": "GP_CCG_Name", "type": "String"},
+				{"name": "GP_STP_Code", "type": "String"},
+				{"name": "GP_STP_Name", "type": "String"},
+				{"name": "GP_Region_Code", "type": "String"},
+				{"name": "GP_Region_Name", "type": "String"},
+				{"name": "Region_Name", "type": "String"},
+				{"name": "Region_Code_Name", "type": "String"},
+				{"name": "GP_PCN_Code", "type": "String"},
+				{"name": "GP_PCN_Name", "type": "String"},
+				{"name": "PCN_CCG_Code", "type": "String"},
+				{"name": "PCN_CCG_Name", "type": "String"},
+				{"name": "PCN_STP_Code", "type": "String"},
+				{"name": "PCN_STP_Name", "type": "String"},
+				{"name": "PCN_Region_Code", "type": "String"},
+				{"name": "PCN_Region_Name", "type": "String"},
+				{"name": "Last_Refreshed", "type": "String"}
+				],
+			"sink_path": "proc/sources/ncdr_etp/adf_v2/table/odscodes/gp_mapping/",
+			"sink_file": "table_odscodes_gp_mapping.parquet"
+	},
+	"project": {
+		"source_path": "proc/sources/ncdr_etp/adf_v2/table/odscodes/gp_mapping/",
+		"source_file": "table_odscodes_gp_mapping.parquet",
+		"sink_path": "proc/projects/reference_tables/ods_codes/gp_mapping/",
+		"sink_file": "table_odscodes_gp_mapping.parquet"
+	},
+		"staging":[    
+    			{
+				"metric": "odscodes_gp_mapping",
+				"stored_procedure": "[dbo].[stored_proc_odscodes_gp_mapping]",
+				"source_path": "proc/projects/reference_tables/ods_codes/gp_mapping/",
+				"source_file": "table_odscodes_gp_mapping.parquet",
+				"sink_table": "odscodes_gp_mapping"
+				}
+			]
+	}
+}
+

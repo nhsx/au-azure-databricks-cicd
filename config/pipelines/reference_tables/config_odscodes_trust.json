@@ -1,0 +1,73 @@
+{
+	"metadata":  {
+		"products": [
+			{
+			"product_name": "Reference Data",
+			"topic": "ODS Codes",
+			"metrics": [
+				{
+            			"id": "R011",
+            			"full_name": "NHS Trust organizational hierarchy relationship table",
+	 			"short_name":"odscodes_trust_mapping"
+        			}
+				]
+			}
+		]
+	},
+	"pipeline": {
+		"name": "trigger_odscodes_trust_mapping",
+    	"folder": "reference_tables/ods_codes/",
+		"adl_file_system": "nhsxdatalakesagen2fsprod",
+		"ingestion": {
+		},
+		"raw": {
+				"source_dbo": "dbo",
+				"source_table": "vw_ods_provider_trust_hierachies",
+				"source_query": "SELECT * FROM vw_ods_provider_trust_hierachies;",	
+				"sink_path": "raw/ncdr_etp/adf_v2/table/odscodes/trust_mapping/",
+				"sink_file": "table_odscodes_trust_mapping.parquet"
+			},
+		"proc": {
+				"source_path":"raw/ncdr_etp/adf_v2/table/odscodes/trust_mapping/",
+				"source_file": "table_odscodes_trust_mapping.parquet",
+				"source_schema": [
+					{"name": "Organisation_Code", "type": "String"},
+					{"name": "Organisation_Name", "type": "String"},
+					{"name": "Organisation_Code_Name", "type": "String"},					
+					{"name": "NHSE_Organisation_Type", "type": "String"},
+					{"name": "ODS_Organisation_Type", "type": "String"},               
+					{"name": "Region_Code", "type": "String"},
+					{"name": "Region_Short_Name", "type": "String"},
+					{"name": "Region_Name", "type": "String"},
+					{"name": "Region_Code_Name", "type": "String"}, 
+					{"name": "Higher_Health_Authority_Code", "type": "String"}, 
+					{"name": "Higher_Health_Authority_Name", "type": "String"}, 
+					{"name": "Higher_Health_Authority_Code_Name", "type": "String"}, 
+					{"name": "STP_Code", "type": "String"},
+					{"name": "STP_Name", "type": "String"},
+					{"name": "STP_Code_Name", "type": "String"},
+					{"name": "Effective_From", "type": "datetime"},
+					{"name": "Effective_To", "type": "datetime"},
+					{"name": "Last_Refreshed", "type": "datetime"}
+				],
+				"sink_path": "proc/sources/ncdr_etp/adf_v2/table/odscodes/trust_mapping/",
+				"sink_file": "table_odscodes_trust_mapping.parquet"
+        },
+		"project": {
+			"source_path": "proc/sources/ncdr_etp/adf_v2/table/odscodes/trust_mapping/",
+			"source_file": "table_odscodes_trust_mapping.parquet",
+			"sink_path": "proc/projects/reference_tables/ods_codes/trust_mapping/",
+			"sink_file": "table_odscodes_trust_mapping.parquet",
+			"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_reference_odscodes/dbrks_odscodes_trust_mapping"	
+		},
+		"staging":[    
+				{
+				"metric": "odscodes_trust_mapping",
+				"stored_procedure": "[dbo].[stored_proc_odscodes_trust_mapping]",
+				"source_path": "proc/projects/reference_tables/ods_codes/trust_mapping/",
+				"source_file": "table_odscodes_trust_mapping.parquet",
+				"sink_table": "odscodes_trust_mapping"
+				}
+			]
+		}
+	}
