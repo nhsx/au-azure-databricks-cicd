@@ -17,7 +17,6 @@
 	"pipeline": {
 		"name": "trigger_gp_patient_age_band",
     	"folder": "reference_tables/gp_patient_age_band/",
-		"adl_file_system": "nhsxdatalakesagen2fsprod",
 		"ingestion": {
 		},
 		"raw": {

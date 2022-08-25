@@ -17,7 +17,6 @@
 	"pipeline": {
 		"name": "trigger_odscodes_trust_mapping",
     	"folder": "reference_tables/ods_codes/",
-		"adl_file_system": "nhsxdatalakesagen2fsprod",
 		"ingestion": {
 		},
 		"raw": {

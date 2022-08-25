@@ -17,7 +17,6 @@
 	"pipeline": {
 		"name": "trigger_mental_health_related_discharges",
     	"folder": "reference_tables/mental_health_related_discharges/",
-		"adl_file_system": "nhsxdatalakesagen2fsprod",
 		"ingestion": {
 		},
 		"raw": {

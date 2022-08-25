@@ -17,7 +17,6 @@
 	"pipeline": {
 		"name": "trigger_emergency_care_discharges",
     	"folder": "reference_tables/emergency_care_discharges/",
-		"adl_file_system": "nhsxdatalakesagen2fsprod",
 		"ingestion": {
 		},
 		"raw": {

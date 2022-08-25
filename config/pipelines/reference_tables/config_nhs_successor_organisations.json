@@ -17,7 +17,6 @@
 	"pipeline": {
 		"name": "trigger_nhs_successor_organisations",
     	"folder": "reference_tables/nhs_successor_organisations/",
-		"adl_file_system": "nhsxdatalakesagen2fsprod",
 		"ingestion": {
 		},
 		"raw": {
