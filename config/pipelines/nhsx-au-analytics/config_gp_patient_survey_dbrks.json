@@ -31,9 +31,8 @@
 	"pipeline": {
 		"name": "trigger_gp_survey_results",
     	"folder": "nhsx-au-analytics/nhsengland/gp_survey_results/",
-		"adl_file_system": "nhsxdatalakesagen2fsprod",
 		"ingestion": {
-			"databricks_notebook": "/Repos/prod/au-azure-databricks/ingestion/dbrks_gp_survey/dbrks_gp_patient_survey_results_raw"
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_gp_survey/dbrks_gp_patient_survey_results_raw"
 		},
 		"raw": {
 			"snapshot_source_path": "land/nhsengland/manual_upload/timestamp/csv/gp_patient_survey/",
@@ -49,61 +48,49 @@
 		"project": {
 			"source_path": "proc/sources/gp_patient_survey/manual_upload/parquet/gp_survey_results/historical/",
 			"source_file": "gp_survey_results_historical.parquet",
-			"databricks_orchestrator_notebook": "/Repos/prod/au-azure-databricks/orchestration/dbrks_gp_survey_orchestrator",
+			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_gp_survey_orchestrator",
 			"databricks":[    
     			{
 				"metric": "results_booked_appointment_online_year_prop",
 				"sink_path": "proc/projects/nhsx_dfpc_analytics/gp_patient_survey/results/booked_appointment_online_year_prop/",
 				"sink_file": "results_booked_appointment_online_year_prop.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_gp_survey/dbrks_gp_patient_survey_results_booked_appointment_online_year_prop"
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_gp_survey/dbrks_gp_patient_survey_results_booked_appointment_online_year_prop"
 				},    
     			{
 				"metric": "results_use_online_services_year_prop",
 				"sink_path": "proc/projects/nhsx_dfpc_analytics/gp_patient_survey/results/use_online_services_year_prop/",
 				"sink_file": "results_use_online_services_year_prop.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_gp_survey/dbrks_gp_patient_survey_results_use_online_services_year_prop"
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_gp_survey/dbrks_gp_patient_survey_results_use_online_services_year_prop"
 				},
 				{
 				"metric": "results_use_gp_website_year_prop", 
 				"sink_path": "proc/projects/nhsx_dfpc_analytics/gp_patient_survey/results/use_gp_website_year_prop/",
 				"sink_file": "results_use_gp_website_year_prop.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_gp_survey/dbrks_gp_patient_survey_results_use_gp_website_year_prop"
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_gp_survey/dbrks_gp_patient_survey_results_use_gp_website_year_prop"
 				},
 				{
 				"metric": "results_easyuse_gp_website_year_prop",
 				"sink_path": "proc/projects/nhsx_dfpc_analytics/gp_patient_survey/results/easyuse_gp_website_year_prop/",
 				"sink_file": "results_easyuse_gp_website_year_prop.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_gp_survey/dbrks_gp_patient_survey_results_easyuse_gp_website_year_prop"
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_gp_survey/dbrks_gp_patient_survey_results_easyuse_gp_website_year_prop"
 				}
 			]
 		},
 		"staging":[
 				{
 				"metric": "results_booked_appointment_online_year_prop",
-				"stored_procedure": "[dbo].[stored_proc_results_booked_appointment_online_year_prop]",
-				"source_path": "proc/projects/nhsx_dfpc_analytics/gp_patient_survey/results/booked_appointment_online_year_prop/",
-				"source_file": "results_booked_appointment_online_year_prop.csv",
 				"sink_table": "results_booked_appointment_online_year_prop"
 				},    
     			{
 				"metric": "results_use_online_services_year_prop",
-				"stored_procedure": "[dbo].[stored_proc_results_use_online_services_year_prop]",
-				"source_path": "proc/projects/nhsx_dfpc_analytics/gp_patient_survey/results/use_online_services_year_prop/",
-				"source_file": "results_use_online_services_year_prop.csv",
 				"sink_table": "results_use_online_services_year_prop"
 				},    
 				{
 				"metric": "results_use_gp_website_year_prop", 
-				"stored_procedure": "[dbo].[stored_proc_results_use_gp_website_year_prop]",
-				"source_path": "proc/projects/nhsx_dfpc_analytics/gp_patient_survey/results/use_gp_website_year_prop/",
-				"source_file": "results_use_gp_website_year_prop.csv",
 				"sink_table": "results_use_gp_website_year_prop"
 				},
 				{
 				"metric": "results_easyuse_gp_website_year_prop", 
-				"stored_procedure": "[dbo].[stored_proc_results_easyuse_gp_website_year_prop]",
-				"source_path": "proc/projects/nhsx_dfpc_analytics/gp_patient_survey/results/easyuse_gp_website_year_prop/",
-				"source_file": "results_easyuse_gp_website_year_prop.csv",
 				"sink_table": "results_easyuse_gp_website_year_prop"
 				}
 				
