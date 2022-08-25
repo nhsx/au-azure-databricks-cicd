@@ -1,0 +1,37 @@
+{
+	"metadata":  {
+		"products": [
+			{
+			"product_name": "Reference Data",
+			"topic": "ODS codes",
+			"metrics": [
+				{
+            			"id": "R014",
+            			"full_name": "Reference table with the successor organisations for merged NHS organisations",
+	 			"short_name":"nhs_successor_organisations"
+        			}
+				]
+			}
+		]
+	},
+	"pipeline": {
+		"name": "trigger_nhs_successor_organisations",
+    	"folder": "reference_tables/nhs_successor_organisations/",
+		"adl_file_system": "nhsxdatalakesagen2fsprod",
+		"ingestion": {
+		},
+		"raw": {
+				"source_dbo": "dbo",
+				"source_table": "vw_ref_other_provider_successor",
+				"source_query": "SELECT* FROM dbo.vw_ref_other_provider_successor;",	
+				"sink_path": "raw/ncdr_etp/adf_v2/table/nhs_successor_organisations/full/",
+				"sink_file": "nhs_successor_organisations_full.parquet"
+			},
+		"proc": {
+				"source_path":"raw/ncdr_etp/adf_v2/table/nhs_successor_organisations/full/",
+				"source_file": "nhs_successor_organisations_full.parquet",
+				"sink_path": "proc/sources/ncdr_etp/adf_v2/table/nhs_successor_organisations/full/",
+				"sink_file": "nhs_successor_organisations_full.parquet"
+        }
+	}
+}
