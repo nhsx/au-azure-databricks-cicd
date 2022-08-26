@@ -55,7 +55,7 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 #Download JSON config from Azure datalake
 file_path_config = "/config/pipelines/nhsx-au-analytics/"
 file_name_config = "config_pomi_dbrks.json"
-file_system_config = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONNECTION_STRING")
+file_system_config = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
@@ -64,7 +64,7 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 #Get parameters from JSON config
 source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']['source_file']
-file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONNECTION_STRING")
+file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 sink_path = config_JSON['pipeline']['project']['databricks'][9]['sink_path']
 sink_file = config_JSON['pipeline']['project']['databricks'][9]['sink_file'] 
 table_name = config_JSON['pipeline']['staging'][9]['sink_table']
