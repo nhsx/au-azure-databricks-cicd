@@ -57,14 +57,11 @@
 			"source_file": "table_odscodes_trust_mapping.parquet",
 			"sink_path": "proc/projects/reference_tables/ods_codes/trust_mapping/",
 			"sink_file": "table_odscodes_trust_mapping.parquet",
-			"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_reference_odscodes/dbrks_odscodes_trust_mapping"	
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_reference_odscodes/dbrks_odscodes_trust_mapping"	
 		},
 		"staging":[    
 				{
 				"metric": "odscodes_trust_mapping",
-				"stored_procedure": "[dbo].[stored_proc_odscodes_trust_mapping]",
-				"source_path": "proc/projects/reference_tables/ods_codes/trust_mapping/",
-				"source_file": "table_odscodes_trust_mapping.parquet",
 				"sink_table": "odscodes_trust_mapping"
 				}
 			]

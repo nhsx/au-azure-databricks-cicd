@@ -49,7 +49,6 @@
 				"stored_procedure": "[dbo].[stored_proc_gp_practice_population_snapshot]",
 				"source_path": "proc/projects/reference_tables/demographies/gp_practice_population_table/",
 				"source_file": "table_gp_practice_population_snapshot.parquet",
-				"table_schema": "ref_data",
 				"sink_table": "gp_practice_population_snapshot"
 				}
 			]
