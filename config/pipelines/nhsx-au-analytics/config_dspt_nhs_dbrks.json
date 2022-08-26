@@ -21,7 +21,6 @@
 	"pipeline": {
 		"name": "trigger_dspt_nhs",
     	"folder": "nhsx-au-analytics/nhs_digital/dspt_nhs/",
-		"adl_file_system": "nhsxdatalakesagen2fsprod",
 		"raw": {
 			"source_url": "https://www.dsptoolkit.nhs.uk/OrganisationSearch/ExportSearchResults?searchValue=",	
 			"sink_path": "raw/nhsdigital/adf_v2/csv/nhs_dspt_results/snapshot/",
@@ -38,35 +37,29 @@
 			"source_file": "nhs_dspt_results_snapshot.csv",
 			"reference_path": "/proc/sources/factsanddim/adf_v2/table/odscodes/full/",
 			"reference_file": "table_odscodes_full.parquet",
-			"databricks_orchestrator_notebook": "/Repos/prod/au-azure-databricks/orchestration/dbrks_dspt_nhs_orchestrator",
+			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_dspt_nhs_orchestrator",
 			"databricks":[    
     			{
 				"metric": "dspt_nhs_trusts_standards_month_count_prop",
 				"sink_path": "proc/projects/nhsx_slt_analytics/cybersecurity/dspt_nhs_trusts/standards_month_count_prop/",
 				"sink_file": "dspt_nhs_trusts_standards_month_count_prop.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_dspt_nhs/dbrks_cybersecurity_dspt_nhs_trusts_standards_month_count_prop"
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dspt_nhs/dbrks_cybersecurity_dspt_nhs_trusts_standards_month_count_prop"
 				},    
     			{
 				"metric": "dspt_nhs_csu_ccg_standards_month_count_prop",
 				"sink_path": "proc/projects/nhsx_slt_analytics/cybersecurity/dspt_nhs_csu_ccg/standards_month_count_prop/",
 				"sink_file": "dspt_nhs_csu_ccg_standards_month_count_prop.csv",
-				"databricks_notebook": "/Repos/prod/au-azure-databricks/analytics/dbrks_dspt_nhs/dbrks_cybersecurity_dspt_nhs_csu_ccg_standards_month_count_prop"
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dspt_nhs/dbrks_cybersecurity_dspt_nhs_csu_ccg_standards_month_count_prop"
 				}
 			]
 		},
 		"staging": [
 			{
 				"metric":"dspt_nhs_trusts_standards_month_count_prop",
-				"stored_procedure":"[dbo].[stored_proc_dspt_nhs_trust_standards_month_count_prop]",
-				"source_path":"proc/projects/nhsx_slt_analytics/cybersecurity/dspt_nhs_trusts/standards_month_count_prop/",
-				"source_file":"dspt_nhs_trusts_standards_month_count_prop.csv",
 				"sink_table":"dspt_nhs_trust_standards_month_count_prop"
 		   },
 		   {
 			    "metric":"dspt_nhs_csu_ccg_standards_month_count_prop",
-			    "stored_procedure":"[dbo].[stored_proc_dspt_nhs_csu_ccg_standards_month_count_prop]",
-			    "source_path":"proc/projects/nhsx_slt_analytics/cybersecurity/dspt_nhs_csu_ccg/standards_month_count_prop/",
-			    "source_file":"dspt_nhs_csu_ccg_standards_month_count_prop.csv",
 			    "sink_table":"dspt_nhs_csu_ccg_standards_month_count_prop"
 		    }
 
