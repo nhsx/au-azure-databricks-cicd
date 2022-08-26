@@ -42,7 +42,7 @@
 		"proc": {
 			"source_path": "raw/gp_patient_survey/manual_upload/parquet/gp_survey_results/historical/",
 			"source_file": "gp_survey_results_historical.parquet",
-			"sink_path": "proc/sources/gp_patient_survey/manual_upload/gp_survey_results/historical/",
+			"sink_path": "proc/sources/gp_patient_survey/manual_upload/parquet/gp_survey_results/historical/",
 			"sink_file": "gp_survey_results_historical.parquet"
 		},
 		"project": {
