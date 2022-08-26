@@ -94,6 +94,7 @@ df2.rename(columns={
   "Report_Period_End": "Date"},
            inplace=True,)
 df2['3 month rolling average'] = np.floor(pd.to_numeric(df2['3 month rolling average'], errors='coerce')).astype('Int64')
+df2.loc[df2['3 month rolling average'].isna(),'3 month rolling average']=0
 df2.index.name = "Unique ID"
 df_processed = df2.copy()
 
