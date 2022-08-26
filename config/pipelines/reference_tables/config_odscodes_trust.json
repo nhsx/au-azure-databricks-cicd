@@ -59,11 +59,10 @@
 			"sink_file": "table_odscodes_trust_mapping.parquet",
 			"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_reference_odscodes/dbrks_odscodes_trust_mapping"	
 		},
-		"staging":[    
+		"staging":   
 				{
 				"metric": "odscodes_trust_mapping",
 				"sink_table": "odscodes_trust_mapping"
 				}
-			]
 		}
 	}
