@@ -16,8 +16,8 @@ DESCRIPTION:
 USAGE:         
 CONTRIBUTORS:   Mattia Ficarelli and Craig Shenton
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        21 Oct. 2021
-VERSION:        0.0.1
+CREATED:        30 Aug. 2021
+VERSION:        0.0.2
 """
 
 # COMMAND ----------
@@ -56,11 +56,11 @@ shapely.speedups.enable()
 # Connect to Azure datalake
 # -------------------------------------------------------------------------
 # !env from databricks secrets
-CONNECTION_STRING = dbutils.secrets.get(scope="datalakefs", key="CONNECTION_STRING")
+CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONNECTION_STRING")
 
 # COMMAND ----------
 
-# MAGIC %run /Repos/prod/au-azure-databricks/functions/dbrks_helper_functions
+# MAGIC %run /Shared/databricks/au-azure-databricks-cicd/functions/dbrks_helper_functions
 
 # COMMAND ----------
 
@@ -68,7 +68,7 @@ CONNECTION_STRING = dbutils.secrets.get(scope="datalakefs", key="CONNECTION_STRI
 # -------------------------------------------------------------------------
 file_path_config = "/config/pipelines/reference_tables/"
 file_name_config = "config_shapefiles.json"
-file_system_config = "nhsxdatalakesagen2fsprod"
+file_system_config = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
@@ -76,7 +76,7 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
 # Read parameters from JSON config
 # -------------------------------------------------------------------------
-file_system = config_JSON['pipeline']['adl_file_system']
+file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 shapefile_source_path = config_JSON['pipeline']['project'][0]['shapefile_source_path']
 shapefile_source_file = config_JSON['pipeline']['project'][0]['shapefile_source_file']
 shapefile_sink_path = config_JSON['pipeline']['project'][0]['shapefile_sink_path']
