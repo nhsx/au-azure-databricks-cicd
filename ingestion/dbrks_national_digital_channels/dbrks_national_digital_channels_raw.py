@@ -152,9 +152,3 @@ current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.BytesIO()
 new_data_ods_df.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, appended_path+current_date_path, appended_ods_file)
-
-# COMMAND ----------
-
-# Write data from databricks to dev SQL database
-# -------------------------------------------------------------------------
-write_to_sql(df_processed, table_name, "overwrite")
