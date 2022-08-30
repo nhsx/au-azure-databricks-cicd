@@ -150,9 +150,6 @@
 		"staging":[    
     			{
 				"metric": "shapefile_ccg_boundaries_snapshot",
-				"stored_procedure": "[dbo].[stored_proc_ccg_code_mapping_snapshot]",
-				"source_path": "proc/projects/reference_tables/shapefile/ccg_code_mapping/snapshot/",
-				"source_file": "table_ccg_code_mapping_snapshot.parquet",
 				"sink_table": "ccg_code_mapping_snapshot",
 				"shapefile_stored_procedure": "[dbo].[stored_proc_shapefile_ccg_boundaries_snapshot]",
 				"shapefile_source_path": "proc/projects/reference_shapefiles/csv/ccg_boundaries/snapshot/",
@@ -162,9 +159,6 @@
 				},
 				{
 				"metric": "shapefile_stp_boundaries_snapshot",
-				"stored_procedure": "[dbo].[stored_proc_stp_code_mapping_snapshot]",
-				"source_path": "proc/projects/reference_tables/shapefile/stp_code_mapping/snapshot/",
-				"source_file": "table_stp_code_mapping_snapshot.parquet",
 				"sink_table": "stp_code_mapping_snapshot",
 				"shapefile_stored_procedure": "[dbo].[stored_proc_shapefile_stp_boundaries_snapshot]",
 				"shapefile_source_path": "proc/projects/reference_shapefiles/csv/stp_boundaries/snapshot/",
@@ -174,9 +168,6 @@
 				},
 				{
 				"metric": "shapefile_nhs_region_boundaries_snapshot",
-				"stored_procedure": "[dbo].[stored_proc_nhs_region_code_mapping_snapshot]",
-				"source_path": "proc/projects/reference_tables/shapefile/nhs_region_code_mapping/snapshot/",
-				"source_file": "table_nhs_region_code_mapping_snapshot.parquet",
 				"sink_table": "nhs_region_code_mapping_snapshot",
 				"shapefile_stored_procedure": "[dbo].[stored_proc_shapefile_nhs_region_boundaries_snapshot]",
 				"shapefile_source_path": "proc/projects/reference_shapefiles/csv/nhs_region_boundaries/snapshot/",
