@@ -76,6 +76,7 @@ shapefile_sink_path = config_JSON['pipeline']['raw']['databricks'][1]["shapefile
 shapefile_sink_file = config_JSON['pipeline']['raw']['databricks'][1]["shapefile_sink_file"]
 code_maping_sink_path = config_JSON['pipeline']['raw']['databricks'][1]["code_maping_sink_path"]
 code_maping_sink_file = config_JSON['pipeline']['raw']['databricks'][1]["code_maping_sink_file"]
+table_name = config_JSON['pipeline']["staging"][1]['sink_table']
 
 # COMMAND ----------
 
@@ -132,7 +133,14 @@ file_contents = io.StringIO()
 geojson.dump(ons_geoportal_geojson, file_contents, ensure_ascii=False, indent=4)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, shapefile_sink_path+current_date_path, shapefile_sink_file)
 
+# COMMAND ----------
+
 #STP ONS to ODS code mapping table
+# -------------------------------------------------------------------------
 file_contents = io.BytesIO()
 mapped_stp_geojson_df.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, code_maping_sink_path+current_date_path, code_maping_sink_file)
+
+# Write data from databricks to dev SQL database
+# -------------------------------------------------------------------------
+write_to_sql(mapped_stp_geojson_df, table_name, "overwrite")

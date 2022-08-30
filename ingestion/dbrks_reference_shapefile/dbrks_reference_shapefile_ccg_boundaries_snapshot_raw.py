@@ -70,7 +70,6 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
 # Read parameters from JSON config
 # -------------------------------------------------------------------------
-
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 ods_source_path = config_JSON['pipeline']['raw']["source_path"]
 ods_source_file = config_JSON['pipeline']['raw']["source_file"]
@@ -80,6 +79,7 @@ code_maping_sink_path = config_JSON['pipeline']['raw']['databricks'][0]["code_ma
 code_maping_sink_file = config_JSON['pipeline']['raw']['databricks'][0]["code_maping_sink_file"]
 markdown_sink_path = config_JSON['pipeline']['raw']['databricks'][0]["markdown_sink_path"]
 markdown_sink_file = config_JSON['pipeline']['raw']['databricks'][0]["markdown_sink_file"]
+table_name = config_JSON['pipeline']["staging"][0]['sink_table']
 
 # COMMAND ----------
 
@@ -151,12 +151,19 @@ file_contents = io.StringIO()
 geojson.dump(ons_geoportal_geojson, file_contents, ensure_ascii=False, indent=4)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, shapefile_sink_path+current_date_path, shapefile_sink_file)
 
-#CCG ONS to ODS code mapping table
-file_contents = io.BytesIO()
-mapped_ccg_geojson_df.to_parquet(file_contents, engine="pyarrow")
-datalake_upload(file_contents, CONNECTION_STRING, file_system, code_maping_sink_path+current_date_path, code_maping_sink_file)
-
 #CCG ODS code mapping to CCG shapefile documentation
 file_contents = io.StringIO()
 ods_mappped_df.to_markdown(file_contents)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, markdown_sink_path+current_date_path, markdown_sink_file)
+
+# COMMAND ----------
+
+#CCG ONS to ODS code mapping table
+# -------------------------------------------------------------------------
+file_contents = io.BytesIO()
+mapped_ccg_geojson_df.to_parquet(file_contents, engine="pyarrow")
+datalake_upload(file_contents, CONNECTION_STRING, file_system, code_maping_sink_path+current_date_path, code_maping_sink_file)
+
+# Write data from databricks to dev SQL database
+# -------------------------------------------------------------------------
+write_to_sql(mapped_ccg_geojson_df, table_name, "overwrite")
