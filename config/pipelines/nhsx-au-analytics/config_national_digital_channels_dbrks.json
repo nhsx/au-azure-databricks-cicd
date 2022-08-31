@@ -228,7 +228,6 @@
 			"appended_path": "raw/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
 			"appended_file_daily": "national_digital_channels_historical_daily.parquet",
 			"appended_file_monthly": "national_digital_channels_historical_monthly.parquet",
-			"appended_file_daily_notification": "national_digital_channels_historical_daily_notification.parquet",
 			"appended_file_daily_ods": "national_digital_channels_historical_daily_ods.parquet"
 		},
 		"proc": [
@@ -246,12 +245,6 @@
 			},
 			{
 				"source_path": "raw/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
-				"source_file": "national_digital_channels_historical_daily_notification.parquet",
-				"sink_path": "proc/sources/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
-				"sink_file": "national_digital_channels_historical_daily_notification.parquet"
-			},
-			{
-				"source_path": "raw/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
 				"source_file": "national_digital_channels_historical_daily_ods.parquet",
 				"sink_path": "proc/sources/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
 				"sink_file": "national_digital_channels_historical_daily_ods.parquet"
@@ -261,7 +254,6 @@
 			"source_path": "proc/sources/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
 			"source_file_daily": "national_digital_channels_historical_daily.parquet",
 			"source_file_monthly": "national_digital_channels_historical_monthly.parquet",
-			"source_file_notification": "national_digital_channels_historical_daily_notification.parquet",
 			"source_file_ods": "national_digital_channels_historical_daily_ods.parquet",
 			"reference_source_path": "proc/sources/ncdr_etp/adf_v2/table/ons_population_demography/historical/",
 			"reference_source_file": "table_ons_population_demography_historical.parquet",
