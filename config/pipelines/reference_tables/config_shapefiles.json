@@ -1,0 +1,181 @@
+{
+	"metadata":  {
+		"products": [
+			{
+			"product_name": "Reference Data",
+			"topic": "Shapefiles",
+			"metrics": [
+				{
+            			"id": "R003",
+            			"full_name": "GeoJSON Shapefile for CCG boundaries, mapping between CCG ONS and ODS codes, and generation of change documentation markdown",
+	 			"short_name":"shapefile_ccg_boundaries_snapshot"
+        			},
+				{
+            			"id": "R004",
+            			"full_name": "GeoJSON Shapefile for STP boundaries and mapping between STP ONS and ODS codes",
+	 			"short_name":"shapefile_stp_boundaries_snapshot"
+        			},
+					{
+            			"id": "R005",
+            			"full_name": "GeoJSON Shapefile for NHS region boundaries, mapping between NHS region ONS and ODS codes, and generation of change documentation markdown",
+	 			"short_name":"shapefile_nhs_region_boundaries_snapshot"
+				}
+				]
+			}
+		]
+	},
+	"pipeline": {
+		"name": "trigger_nhs_shapefiles",
+    	"folder": "reference_tables/nhs_shapefiles/",
+		"ingestion": {
+			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_reference_shapefile_orchestrator"
+		},
+		"raw": {
+			"source_path": "raw/factsanddim/adf_v2/table/odscodes/full/",
+			"source_file": "table_odscodes_full.parquet",
+			"databricks":[    
+    			{
+				"metric": "shapefile_ccg_boundaries_snapshot",
+				"shapefile_sink_path": "raw/ons_geoportal/webscrape/shapefile/ccg_boundaries/snapshot/",
+				"shapefile_sink_file": "shapefile_ccg_boundaries_snapshot.geojson",
+				"code_maping_sink_path": "raw/ons_geoportal/webscrape/table/ccg_code_mapping/snapshot/",
+				"code_maping_sink_file": "table_ccg_code_mapping_snapshot.parquet",
+				"markdown_sink_path": "raw/documentation/odscodes_mapping/table/ccg_ods_shapefile_mapping/snapshot/",
+				"markdown_sink_file": "table_ccg_ods_shapefile_mapping_snapshot.markdown",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_reference_shapefile/dbrks_reference_shapefile_ccg_boundaries_snapshot_raw"
+				},
+    			{
+				"metric": "shapefile_stp_boundaries_snapshot",
+				"shapefile_sink_path": "raw/ons_geoportal/webscrape/shapefile/stp_boundaries/snapshot/",
+				"shapefile_sink_file": "shapefile_stp_boundaries_snapshot.geojson",
+				"code_maping_sink_path": "raw/ons_geoportal/webscrape/table/stp_code_mapping/snapshot/",
+				"code_maping_sink_file": "table_stp_code_mapping_snapshot.parquet",
+				"markdown_sink_path": "",
+				"markdown_sink_file": "",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_reference_shapefile/dbrks_reference_shapefile_stp_boundaries_snapshot_raw"
+				},
+				{
+				"metric": "shapefile_nhs_region_boundaries_snapshot",
+				"shapefile_sink_path": "raw/ons_geoportal/webscrape/shapefile/nhs_region_boundaries/snapshot/",
+				"shapefile_sink_file": "shapefile_nhs_region_boundaries_snapshot.geojson",
+				"code_maping_sink_path": "raw/ons_geoportal/webscrape/table/nhs_region_code_mapping/snapshot/",
+				"code_maping_sink_file": "table_nhs_region_code_mapping_snapshot.parquet",
+				"markdown_sink_path": "raw/documentation/odscodes_mapping/table/nhs_region_ods_shapefile_mapping/snapshot/",
+				"markdown_sink_file": "table_nhs_region_ods_shapefile_mapping_snapshot.markdown",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_reference_shapefile/dbrks_reference_shapefile_region_boundaries_snapshot_raw"
+				}	
+			]
+		},
+		"proc": [
+				{
+				"metric": "shapefile_ccg_boundaries_snapshot",
+				"source_path": "raw/ons_geoportal/webscrape/table/ccg_code_mapping/snapshot/",
+				"source_file": "table_ccg_code_mapping_snapshot.parquet",
+				"shapefile_source_path": "raw/ons_geoportal/webscrape/shapefile/ccg_boundaries/snapshot/",
+				"shapefile_source_file": "shapefile_ccg_boundaries_snapshot.geojson",
+				"sink_path": "proc/sources/ons_geoportal/webscrape/table/ccg_code_mapping/snapshot/",
+				"sink_file": "table_ccg_code_mapping_snapshot.parquet",
+				"shapefile_sink_path": "proc/sources/ons_geoportal/webscrape/shapefile/ccg_boundaries/snapshot/",
+				"shapefile_sink_file": "shapefile_ccg_boundaries_snapshot.geojson"
+				},
+				{
+				"metric": "shapefile_stp_boundaries_snapshot",
+				"source_path": "raw/ons_geoportal/webscrape/table/stp_code_mapping/snapshot/",
+				"source_file": "table_stp_code_mapping_snapshot.parquet",
+				"shapefile_source_path": "raw/ons_geoportal/webscrape/shapefile/stp_boundaries/snapshot/",
+				"shapefile_source_file": "shapefile_stp_boundaries_snapshot.geojson",
+				"sink_path": "proc/sources/ons_geoportal/webscrape/table/stp_code_mapping/snapshot/",
+				"sink_file": "table_stp_code_mapping_snapshot.parquet",
+				"shapefile_sink_path": "proc/sources/ons_geoportal/webscrape/shapefile/stp_boundaries/snapshot/",
+				"shapefile_sink_file": "shapefile_stp_boundaries_snapshot.geojson"
+				},
+				{
+				"metric": "shapefile_nhs_region_boundaries_snapshot",
+				"source_path": "raw/ons_geoportal/webscrape/table/nhs_region_code_mapping/snapshot/",
+				"source_file": "table_nhs_region_code_mapping_snapshot.parquet",
+				"shapefile_source_path": "raw/ons_geoportal/webscrape/shapefile/nhs_region_boundaries/snapshot/",
+				"shapefile_source_file": "shapefile_nhs_region_boundaries_snapshot.geojson",
+				"sink_path": "proc/sources/ons_geoportal/webscrape/table/nhs_region_code_mapping/snapshot/",
+				"sink_file": "table_nhs_region_code_mapping_snapshot.parquet",
+				"shapefile_sink_path": "proc/sources/ons_geoportal/webscrape/shapefile/nhs_region_boundaries/snapshot/",
+				"shapefile_sink_file": "shapefile_nhs_region_boundaries_snapshot.geojson"
+				}
+		],
+		"project": [
+				{
+				"metric": "shapefile_ccg_boundaries_snapshot",
+				"source_path": "proc/sources/ons_geoportal/webscrape/table/ccg_code_mapping/snapshot/",
+				"source_file": "table_ccg_code_mapping_snapshot.parquet",
+				"sink_path": "proc/projects/reference_tables/shapefile/ccg_code_mapping/snapshot/",
+				"sink_file": "table_ccg_code_mapping_snapshot.parquet",
+				"shapefile_source_path": "proc/sources/ons_geoportal/webscrape/shapefile/ccg_boundaries/snapshot/",
+				"shapefile_source_file": "shapefile_ccg_boundaries_snapshot.geojson",
+				"shapefile_sink_path": "proc/projects/reference_shapefiles/csv/ccg_boundaries/snapshot/",
+				"shapefile_sink_file": "proc_shapefile_ccg_boundaries_snapshot.csv"
+				},
+				{
+				"metric": "shapefile_stp_boundaries_snapshot",
+				"source_path": "proc/sources/ons_geoportal/webscrape/table/stp_code_mapping/snapshot/",
+				"source_file": "table_stp_code_mapping_snapshot.parquet",
+				"sink_path": "proc/projects/reference_tables/shapefile/stp_code_mapping/snapshot/",
+				"sink_file": "table_stp_code_mapping_snapshot.parquet",
+				"shapefile_source_path": "proc/sources/ons_geoportal/webscrape/shapefile/stp_boundaries/snapshot/",
+				"shapefile_source_file": "shapefile_stp_boundaries_snapshot.geojson",
+				"shapefile_sink_path": "proc/projects/reference_shapefiles/csv/stp_boundaries/snapshot/",
+				"shapefile_sink_file": "proc_shapefile_stp_boundaries_snapshot.csv"
+				},
+				{
+				"metric": "shapefile_nhs_region_boundaries_snapshot",
+				"source_path": "proc/sources/ons_geoportal/webscrape/table/nhs_region_code_mapping/snapshot/",
+				"source_file": "table_nhs_region_code_mapping_snapshot.parquet",
+				"sink_path": "proc/projects/reference_tables/shapefile/nhs_region_code_mapping/snapshot/",
+				"sink_file": "table_nhs_region_code_mapping_snapshot.parquet",
+				"shapefile_source_path": "proc/sources/ons_geoportal/webscrape/shapefile/nhs_region_boundaries/snapshot/",
+				"shapefile_source_file": "shapefile_nhs_region_boundaries_snapshot.geojson",
+				"shapefile_sink_path": "proc/projects/reference_shapefiles/csv/nhs_region_boundaries/snapshot/",
+				"shapefile_sink_file": "proc_shapefile_nhs_region_boundaries_snapshot.csv"
+				}
+		],
+		"project_databricks": {
+				"databricks_orchestrator_notebook":"/databricks/au-azure-databricks-cicd/orchestration/dbrks_reference_shapefile_processing_orchestrator",
+				"databricks":[
+					{"metric": "shapefile_ccg_boundaries_snapshot",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_reference_shapefile/dbrks_reference_shapefile_ccg_boundaries_snapshot"},
+					{"metric": "shapefile_stp_boundaries_snapshot",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_reference_shapefile/dbrks_reference_shapefile_stp_boundaries_snapshot"},
+					{"metric": "shapefile_nhs_region_boundaries_snapshot",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_reference_shapefile/dbrks_shapefile_nhs_region_boundaries_snapshot"}
+				]
+			},
+		"staging":[    
+    			{
+				"metric": "shapefile_ccg_boundaries_snapshot",
+				"sink_table": "ccg_code_mapping_snapshot",
+				"shapefile_stored_procedure": "[dbo].[stored_proc_shapefile_ccg_boundaries_snapshot]",
+				"shapefile_source_path": "proc/projects/reference_shapefiles/csv/ccg_boundaries/snapshot/",
+				"shapefile_source_file": "proc_shapefile_ccg_boundaries_snapshot.csv",
+				"shapefile_sink_table": "shapefile_ccg_boundaries_snapshot",
+				"shapefile_format_column_stored_procedure": "[dbo].[stored_proc_format_clmn_shapefile_ccg_boundaries_snapshot]" 
+				},
+				{
+				"metric": "shapefile_stp_boundaries_snapshot",
+				"sink_table": "stp_code_mapping_snapshot",
+				"shapefile_stored_procedure": "[dbo].[stored_proc_shapefile_stp_boundaries_snapshot]",
+				"shapefile_source_path": "proc/projects/reference_shapefiles/csv/stp_boundaries/snapshot/",
+				"shapefile_source_file": "proc_shapefile_stp_boundaries_snapshot.csv",
+				"shapefile_sink_table": "shapefile_stp_boundaries_snapshot",
+				"shapefile_format_column_stored_procedure": "[dbo].[stored_proc_format_clmn_shapefile_stp_boundaries_snapshot]" 
+				},
+				{
+				"metric": "shapefile_nhs_region_boundaries_snapshot",
+				"sink_table": "nhs_region_code_mapping_snapshot",
+				"shapefile_stored_procedure": "[dbo].[stored_proc_shapefile_nhs_region_boundaries_snapshot]",
+				"shapefile_source_path": "proc/projects/reference_shapefiles/csv/nhs_region_boundaries/snapshot/",
+				"shapefile_source_file": "proc_shapefile_nhs_region_boundaries_snapshot.csv",
+				"shapefile_sink_table": "shapefile_nhs_region_boundaries_snapshot",
+				"shapefile_format_column_stored_procedure": "[dbo].[stored_proc_format_clmn_shapefile_nhs_region_boundaries_snapshot]" 
+				}
+			]
+	}
+}
+
