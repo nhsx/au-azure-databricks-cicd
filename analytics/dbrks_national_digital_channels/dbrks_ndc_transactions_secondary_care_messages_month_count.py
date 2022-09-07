@@ -89,6 +89,7 @@ df_2['Number of Secondary Care Messages sent via NHS App'] = df_2['PKB_messages'
 df_3 = df_2.drop(columns = ['PKB_messages', 'Substrakt_messages'])
 df_4 = df_3.rename(columns = {'Monthly': 'Date'})
 df_4.index.name = 'Unique ID'
+df_4['Date'] = pd.to_datetime(df_4['Date'])
 df_processed = df_4.copy()
 
 # COMMAND ----------

@@ -84,7 +84,7 @@ df1 = df.rename(columns = {'M092_denominator': 'Total number of responses', 'M09
 df1['Number of patients reporting having tried to use their GP practices website'].loc[df1['Number of patients reporting having tried to use their GP practices website'] < 0] = np.nan 
 df1['Percent of patients reporting having tried to use their GP practices website'] = df1['Number of patients reporting having tried to use their GP practices website']/df1['Total number of responses']
 df2 = df1.reset_index(drop = True)
-#df['Date'] =pd.to_datetime(df['Date'])
+df2['Date'] = pd.to_datetime(df2['Date'])
 df2.index.name = "Unique ID"
 df_processed = df2.copy()
 

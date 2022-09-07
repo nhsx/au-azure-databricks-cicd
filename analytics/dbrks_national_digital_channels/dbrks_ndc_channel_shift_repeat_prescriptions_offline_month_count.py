@@ -116,6 +116,7 @@ df_joint_1['Number of offline repeat prescriptions'] = df_joint_1['Number of EPS
 df_joint_1 = df_joint_1[df_joint_1['Number of offline repeat prescriptions'] > 0].reset_index(drop = True)
 df_joint_1.index.name = "Unique ID"
 df_joint_2 = df_joint_1.round(4)
+df_joint_2['Date'] = pd.to_datetime(df_joint_2['Date'])
 df_processed = df_joint_2.copy()
 
 # COMMAND ----------

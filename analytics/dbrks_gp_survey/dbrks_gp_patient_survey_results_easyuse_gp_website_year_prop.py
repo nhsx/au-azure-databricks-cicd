@@ -87,7 +87,7 @@ df1['Number of patients reporting having tried to use their GP practices website
 df1['Number of patients reporting that their GP practice website was easy to use'].loc[df1['Number of patients reporting that their GP practice website was easy to use'] < 0] = np.nan
 df1['Percent of patients reporting that their GP practice website was easy to use'] = df1['Number of patients reporting that their GP practice website was easy to use']/df1['Number of patients reporting having tried to use their GP practices website']
 df2 = df1.reset_index(drop = True)
-#df['Date'] =pd.to_datetime(df['Date'])
+df2['Date'] = pd.to_datetime(df2['Date'])
 df2.index.name = "Unique ID"
 df_processed = df2.copy()
 

@@ -89,6 +89,7 @@ df4 = df3.reset_index(drop=True)
 df4["3 month rolling average"] = (df4["Number of patient online consultation submissions"].rolling(window=12).mean())
 df4 = df4.round(decimals=0)
 df4.index.name = "Unique ID"
+df4['Week Commencing'] = pd.to_datetime(df4['Week Commencing'])
 df_processed = df4.copy()
 
 # COMMAND ----------

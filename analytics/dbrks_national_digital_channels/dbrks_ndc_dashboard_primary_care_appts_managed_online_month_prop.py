@@ -114,6 +114,7 @@ df_joint_1.rename(columns = {'Value': 'Number of primary care appointments manag
 df_joint_1.replace(np.inf, 0, inplace=True)
 df_joint_1.index.name = "Unique ID"
 df_joint_2 = df_joint_1.round(4)
+df_joint_2['Date'] = pd.to_datetime(df_joint_2['Date'])
 df_processed = df_joint_2.copy()
 
 # COMMAND ----------

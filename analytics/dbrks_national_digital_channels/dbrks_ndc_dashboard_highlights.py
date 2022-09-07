@@ -82,6 +82,7 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 #processing
 df.index.name = "Unique ID"
+df['ndc_date'] = pd.to_datetime(df['ndc_date'])
 df_processed = df.copy()
 
 # COMMAND ----------
