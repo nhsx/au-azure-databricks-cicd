@@ -121,8 +121,6 @@ file_contents = io.BytesIO()
 monthly_raw_df.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, appended_path+current_date_path, appended_monthly_file)
 
-# COMMAND ----------
-
 # Pull ODS dataset
 # ----------------------------------------
 new_data_ods = pd.read_excel(io.BytesIO(new_dataset), sheet_name = 'econsult', engine='openpyxl')
