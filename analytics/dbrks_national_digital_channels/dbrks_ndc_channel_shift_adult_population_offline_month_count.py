@@ -112,6 +112,7 @@ df_joint.rename(columns = {'Report_Period_End': 'Date', 'Value': 'Total number o
 df_joint['Adult population'] = current_population
 df_joint['Adult population not registered to use an patient online transactional services'] = df_joint['Adult population'] - df_joint['Total number of patients registered to use an patient online transactional services']
 df_joint.index.name = "Unique ID"
+df_joint['Date'] = pd.to_datetime(df_joint['Date'])
 df_processed = df_joint.copy()
 
 # COMMAND ----------

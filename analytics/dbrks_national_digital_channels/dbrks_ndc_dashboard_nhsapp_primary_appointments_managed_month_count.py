@@ -70,7 +70,6 @@ sink_path = config_JSON['pipeline']['project']['databricks'][6]['sink_path']
 sink_file = config_JSON['pipeline']['project']['databricks'][6]['sink_file']  
 table_name = config_JSON['pipeline']["staging"][6]['sink_table']
 
-
 # COMMAND ----------
 
 # Ingestion of numerator data (NHS app performance data)
@@ -93,6 +92,7 @@ df_2['Number of primary care appointments managed via the NHS App'] = df_2['User
 df_3 = df_2.drop(columns = ['UsersAppointmentsBooked','UsersAppointmentsCancelled'])
 df_3.rename(columns  = {'Daily': 'Date'}, inplace = True)
 df_3.index.name = "Unique ID"
+df_3['Date'] = pd.to_datetime(df_3['Date'])
 df_processed = df_3.copy()
 
 # COMMAND ----------

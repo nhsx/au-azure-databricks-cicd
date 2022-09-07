@@ -115,6 +115,7 @@ df_joint_1.rename(columns = {'Value': 'Total number of repeat prescriptions'}, i
 df_joint_1['Number of repeat prescriptions through an other POL service'] = df_joint_1['Total number of repeat prescriptions'] - df_joint_1['Number of repeat prescriptions through the NHS app']
 df_joint_1.index.name = "Unique ID"
 df_joint_2 = df_joint_1.round(4)
+df_joint_2['Date'] = pd.to_datetime(df_joint_2['Date'])
 df_processed = df_joint_2.copy()
 
 # COMMAND ----------

@@ -113,6 +113,7 @@ df_join.rename(columns={"PRACTICE_CODE":"Practice code", "FY":"Financial year"},
 df_join = df_join.drop(["Code", "Latest Status", "EXTRACT_DATE", "PRACTICE_NAME"], axis = 1)
 df_join.insert(1,'Date', datetime.now().strftime('%Y-%m-%d'))
 df_join.index.name = "Unique ID"
+df_join['Date'] = pd.to_datetime(df_join['Date'])
 df_processed = df_join.copy()
 
 # COMMAND ----------

@@ -113,6 +113,7 @@ df_joint.rename(columns = {'Value': 'Number of repeat prescriptions ordered onli
 df_joint.replace(np.inf, 0, inplace=True)
 df_joint.index.name = "Unique ID"
 df_joint_1 = df_joint.round(4)
+df_joint_1['Date'] = pd.to_datetime(df_joint_1['Date'])
 df_processed = df_joint_1.copy()
 
 # COMMAND ----------

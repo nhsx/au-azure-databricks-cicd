@@ -72,7 +72,6 @@ sink_path = config_JSON['pipeline']['project']['databricks'][0]['sink_path']
 sink_file = config_JSON['pipeline']['project']['databricks'][0]['sink_file'] 
 table_name = config_JSON['pipeline']["staging"][0]['sink_table']
 
-
 # COMMAND ----------
 
 # Processing
@@ -85,10 +84,9 @@ df1 = df.rename(columns = {'M091_denominator': 'Total number of responses', 'M09
 df1['Number of patients reporting having booked an appointment online'].loc[df1['Number of patients reporting having booked an appointment online'] < 0] = np.nan 
 df1['Percent of patients reporting having booked an appointment online'] = df1['Number of patients reporting having booked an appointment online']/df1['Total number of responses']
 df2 = df1.reset_index(drop = True)
-#df['Date'] =pd.to_datetime(df['Date'])
+df2['Date'] = pd.to_datetime(df2['Date'])
 df2.index.name = "Unique ID"
 df_processed = df2.copy()
-
 
 # COMMAND ----------
 

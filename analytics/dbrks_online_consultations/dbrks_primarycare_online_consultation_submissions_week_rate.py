@@ -101,6 +101,7 @@ df7 = df7[[
     "Rate of patient online consultation submissions per week (per 1000 practice population)",
     "3 month rolling average"]]
 df7.index.name = "Unique ID"
+df7['Week Commencing'] = pd.to_datetime(df7['Week Commencing'])
 df_processed = df7.copy()
 
 # COMMAND ----------

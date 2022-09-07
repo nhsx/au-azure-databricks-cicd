@@ -121,6 +121,7 @@ df_join.rename(columns={"PRACTICE_CODE":"Practice code", "FY":"Financial year", 
 df_join_1 = df_join.drop(["Organisation_Name", "Status_Raw", "Edition flag_1", "Edition flag_2", "Number of GP practices that exceed the DSPT standard (historical)", 
                "Number of GP practices that met the DSPT standard (historical)","PRACTICE_NAME", "Snapshot_Date","DSPT_Edition", "Code"], axis = 1)
 df_join_1.index.name = "Unique ID"
+df_join['Date'] = pd.to_datetime(df_join['Date'])
 df_processed = df_join_1.copy()
 
 # COMMAND ----------

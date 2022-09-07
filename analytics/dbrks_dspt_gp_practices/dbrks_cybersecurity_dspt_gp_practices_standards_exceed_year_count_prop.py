@@ -111,6 +111,7 @@ df_join['Number of GP practices that exceed the DSPT standard (historical)'] = d
 df_join.rename(columns={"PRACTICE_CODE":"Practice code", "FY":"Financial year", "EXTRACT_DATE": "Date"}, inplace = True)
 df_join = df_join.drop(["Code", "Organisation_Name", "Status_Raw", "Edition flag", "Snapshot_Date", "DSPT_Edition", "PRACTICE_NAME"], axis = 1)
 df_join.index.name = "Unique ID"
+df_join['Date'] = pd.to_datetime(df_join['Date'])
 df_processed = df_join.copy()
 
 # COMMAND ----------

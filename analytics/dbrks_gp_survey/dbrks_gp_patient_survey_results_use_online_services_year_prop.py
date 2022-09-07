@@ -86,7 +86,7 @@ df1['Number of patients reporting using GP practice online services'] = df1['Tot
 df1['Percent of patients reporting using GP practice online services'] = df1['Number of patients reporting using GP practice online services']/df1['Total number of responses']
 df2 = df1.drop(columns = ["Number of patients reporting not using GP practice online services"])
 df3 = df2.reset_index(drop = True)
-#df['Date'] =pd.to_datetime(df['Date'])
+df3['Date'] = pd.to_datetime(df3['Date'])
 df3.index.name = "Unique ID"
 df_processed = df3.copy()
 

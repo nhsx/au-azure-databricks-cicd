@@ -114,6 +114,7 @@ df_joint = df1.merge(df_ref1, how = 'inner', left_on = 'Date', right_on = 'Repor
 df_joint = df_joint.drop(columns = ['Report_Period_End'])
 df_joint['DCR views through other POL service'] = df_joint['DCR views through other POL service'] - df_joint['Number of DCR views through the NHS app']
 df_joint.index.name = "Unique ID"
+df_joint['Date'] = pd.to_datetime(df_joint['Date'])
 df_processed = df_joint.copy()
 
 # COMMAND ----------

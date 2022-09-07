@@ -78,7 +78,6 @@ latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
-
 # COMMAND ----------
 
 #Processing
@@ -89,6 +88,7 @@ df1.iloc[:, 0] = df1.iloc[:,0].dt.strftime('%Y-%m')
 df2 = df1.groupby(df1.iloc[:,0]).sum().reset_index()
 df2.rename(columns = {'Daily':'Date', 'total_dose_1':'Number of NHS.UK vaccination bookings 1st dose'}, inplace=True)
 df2.index.name = "Unique ID"
+df2['Date'] = pd.to_datetime(df2['Date'])
 df_processed = df2.copy()
 
 # COMMAND ----------

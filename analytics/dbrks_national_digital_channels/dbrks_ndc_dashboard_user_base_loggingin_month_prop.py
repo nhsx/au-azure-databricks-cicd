@@ -93,6 +93,7 @@ df_2.rename(columns  = {'Monthly': 'Date', "unique_logins_nhs_app": 'Number of u
 df_2['Proportion of NHS App user base logging in each month'] = df_2['Number of unique NHS App logins'] / df_2['Number of users with an NHS App registration']
 df_3 = df_2.round(4)
 df_3.index.name = "Unique ID"
+df_3['Date'] = pd.to_datetime(df_3['Date'])
 df_processed = df_3.copy()
 
 # COMMAND ----------

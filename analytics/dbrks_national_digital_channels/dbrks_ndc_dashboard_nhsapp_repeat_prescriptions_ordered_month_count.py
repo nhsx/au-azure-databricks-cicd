@@ -90,6 +90,7 @@ df_1.iloc[:, 0] = df_1.iloc[:,0].dt.strftime('%Y-%m')
 df_2 = df_1.groupby(df_1.iloc[:,0]).sum().reset_index()
 df_2.rename(columns  = {'Daily': 'Date', "Prescriptions": 'Number of repeat prescriptions ordered via the NHS App'}, inplace = True)
 df_2.index.name = "Unique ID"
+df_2['Date'] = pd.to_datetime(df_2['Date'])
 df_processed = df_2.copy()
 
 # COMMAND ----------

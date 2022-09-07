@@ -92,6 +92,7 @@ df_2["Number of NHS app covid pass uses"] = df_2["Covid_Pass"] + df_2["Covid_Pas
 df_2 = df_2.drop(columns = ["Covid_Pass","Covid_Pass_P5"])
 df_2.rename(columns  = {'Monthly': 'Date'}, inplace = True)
 df_2.index.name = "Unique ID"
+df_2['Date'] = pd.to_datetime(df_2['Date'])
 df_processed = df_2.copy()
 
 # COMMAND ----------

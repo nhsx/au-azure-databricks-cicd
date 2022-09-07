@@ -110,6 +110,7 @@ df_join['Number of record, information and results views on the NHS App'] = df_j
 df_join_1 = df_join.drop(columns = col_list)
 df_join_1.rename(columns  = {'Daily': 'Date'}, inplace = True)
 df_join_1.index.name = "Unique ID"
+df_join_1['Date'] = pd.to_datetime(df_join_1['Date'])
 df_processed = df_join_1.copy()
 
 # COMMAND ----------

@@ -95,6 +95,7 @@ df_2['Proportion of Detail Coded Record Views'] = df_2['Number of Detail Coded R
 df_2['Proportion of Detail Coded Record Views'] = df_2['Proportion of Detail Coded Record Views'].fillna(0)
 df_3 = df_2.round(4)
 df_3.index.name = "Unique ID"
+df_3['Date'] = pd.to_datetime(df_3['Date'])
 df_processed = df_3.copy()
 
 # COMMAND ----------

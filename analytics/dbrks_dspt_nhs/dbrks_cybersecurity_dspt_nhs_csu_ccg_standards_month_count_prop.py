@@ -132,7 +132,7 @@ data = [[date_string, dspt_edition, met_exceed_csu_ccg, total_no_csu_ccg]]
 df_output = pd.DataFrame(data, columns=["Date", "DSPT edition", "Number of CSUs and CCGs with a standards met or exceeded DSPT status", "Total number of CSUs and CCGs"])
 df_output["Percent of CSUs and CCGs with a standards met or exceeded DSPT status"] = df_output["Number of CSUs and CCGs with a standards met or exceeded DSPT status"]/df_output["Total number of CSUs and CCGs"]
 df_output = df_output.round(4)
-#df['Date'] =pd.to_datetime(df['Date'])
+df_output['Date'] = pd.to_datetime(df_output['Date'])
 df_output.index.name = "Unique ID"
 df_processed = df_output.copy()
 

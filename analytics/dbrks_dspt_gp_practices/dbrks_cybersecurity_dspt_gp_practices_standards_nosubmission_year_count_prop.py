@@ -115,6 +115,7 @@ df_join['Number of GP practices that have not submitted a DSPT assessment (histo
 df_join.rename(columns={"PRACTICE_CODE":"Practice code", "FY":"Financial year", "EXTRACT_DATE": "Date"}, inplace = True)
 df_join_1 = df_join.drop(["Organisation_Name", "Status_Raw", "Code", "PRACTICE_NAME", "Snapshot_Date", "DSPT_Edition", "Edition Flag", "DSPT_Edition_short"], axis = 1)
 df_join_1.index.name = "Unique ID"
+df_join['Date'] = pd.to_datetime(df_join['Date'])
 df_processed = df_join_1.copy()
 
 # COMMAND ----------
