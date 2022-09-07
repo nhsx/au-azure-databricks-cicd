@@ -24,11 +24,11 @@
 		"raw": {
 			"source_url": "https://www.dsptoolkit.nhs.uk/OrganisationSearch/ExportSearchResults?searchValue=",	
 			"sink_path": "raw/nhsdigital/adf_v2/csv/nhs_dspt_results/snapshot/",
-			"sink_file": "dspt_snapshot.csv"
+			"sink_file": "nhs_dspt_results_snapshot.csv"
 		},
 		"proc": {
 			"source_path": "raw/nhsdigital/adf_v2/csv/nhs_dspt_results/snapshot/",
-			"source_file": "dspt_snapshot.csv",
+			"source_file": "nhs_dspt_results_snapshot.csv",
 			"sink_path": "proc/sources/nhsdigital/adf_v2/csv/nhs_dspt_results/snapshot/",
 			"sink_file": "nhs_dspt_results_snapshot.csv"
 		},
