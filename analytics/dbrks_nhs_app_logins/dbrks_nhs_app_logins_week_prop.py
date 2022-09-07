@@ -98,6 +98,7 @@ df['Adult population'] = denominator
 df['Percentage of adult population logging into NHS digital services'] = df['No. of people logging into NHS digital services']/denominator
 df = df.round(4)
 df.index.name = "Unique ID"
+df['Date'] = pd.to_datetime(df['Date'])
 df_processed = df.copy()
 
 # COMMAND ----------
