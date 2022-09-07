@@ -240,71 +240,71 @@
 		"staging": [ 
 			{
 				"metric":"nhs_app_registered_population_week_prop",
-				"sink_table":"[nhs_app_registered_population_week_prop]"
+				"sink_table":"nhs_app_registered_population_week_prop"
 			},
 			{
 				"metric":"nhs_app_uptake_registrations_day_cumsum",
-				"sink_table":"[nhs_app_uptake_registrations_day_cumsum]"
+				"sink_table":"nhs_app_uptake_registrations_day_cumsum"
 			},
 			{
 				"metric":"nhs_app_uptake_registrations_day_count",
-				"sink_table":"[nhs_app_uptake_registrations_day_count]"
+				"sink_table":"nhs_app_uptake_registrations_day_count"
 			},
 			{
 				"metric":"nhs_app_uptake_p9_registrations_day_cumsum",
-				"sink_table":"[nhs_app_uptake_p9_registrations_day_cumsum]"
+				"sink_table":"nhs_app_uptake_p9_registrations_day_cumsum"
 			},
 			{
 				"metric":"nhs_app_uptake_p9_registrations_day_count",
-				"sink_table":"[nhs_app_uptake_p9_registrations_day_count]"
+				"sink_table":"nhs_app_uptake_p9_registrations_day_count"
 			},
 			{
 				"metric":"nhs_app_uptake_gp_registered_population_day_prop",
-				"sink_table":"[nhs_app_uptake_gp_registered_population_day_prop]"
+				"sink_table":"nhs_app_uptake_gp_registered_population_day_prop"
 			},
 			{
 				"metric":"nhs_app_usage_logins_day_count",
-				"sink_table":"[nhs_app_usage_logins_day_count]"
+				"sink_table":"nhs_app_usage_logins_day_count"
 			},
 			{
 				"metric":"nhs_app_usage_primary_care_appointments_booked_day_count",
-				"sink_table":"[nhs_app_usage_primary_care_appointments_booked_day_count]"
+				"sink_table":"nhs_app_usage_primary_care_appointments_booked_day_count"
 			},
 			{
 				"metric":"nhs_app_usage_primary_care_appointments_cancelled_day_count",
-				"sink_table":"[nhs_app_usage_primary_care_appointments_cancelled_day_count]"
+				"sink_table":"nhs_app_usage_primary_care_appointments_cancelled_day_count"
 			},
 			{
 				"metric":"nhs_app_usage_repeat_prescriptions_day_count",
-				"sink_table":"[nhs_app_usage_repeat_prescriptions_day_count]"
+				"sink_table":"nhs_app_usage_repeat_prescriptions_day_count"
 			},
 			{
 				"metric":"nhs_app_usage_record_views_day_count",
-				"sink_table":"[nhs_app_usage_record_views_day_count]"
+				"sink_table":"nhs_app_usage_record_views_day_count"
 			},
 			{
 				"metric":"nhs_app_usage_summary_record_views_day_count",
-				"sink_table":"[nhs_app_usage_summary_record_views_day_count]"
+				"sink_table":"nhs_app_usage_summary_record_views_day_count"
 			},
 			{
 				"metric":"nhs_app_usage_detail_coded_record_views_day_count",
-				"sink_table":"[nhs_app_usage_detail_coded_record_views_day_count]"
+				"sink_table":"nhs_app_usage_detail_coded_record_views_day_count"
 			},
 			{
 				"metric":"nhs_app_usage_organ_donation_registration_day_count",
-				"sink_table":"[nhs_app_usage_organ_donation_registration_day_count]"
+				"sink_table":"nhs_app_usage_organ_donation_registration_day_count"
 			},
 			{
 				"metric":"nhs_app_usage_organ_donation_withdrawal_day_count",
-				"sink_table":"[nhs_app_usage_organ_donation_withdrawal_day_count]"
+				"sink_table":"nhs_app_usage_organ_donation_withdrawal_day_count"
 			},
 			{
 				"metric":"nhs_app_usage_organ_donation_update_day_count",
-				"sink_table":"[nhs_app_usage_organ_donation_update_day_count]"
+				"sink_table":"nhs_app_usage_organ_donation_update_day_count"
 			},
 			{
 				"metric":"nhs_app_usage_organ_donation_lookup_day_count",
-				"sink_table":"[nhs_app_usage_organ_donation_lookup_day_count]"
+				"sink_table":"nhs_app_usage_organ_donation_lookup_day_count"
 			}			
 
 		]
