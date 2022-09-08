@@ -17,8 +17,8 @@ USAGE:
                 ...
 CONTRIBUTORS:   Craig Shenton, Mattia Ficarelli, Chris Todd
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        19 Oct 2021
-VERSION:        0.0.1
+CREATED:        08th of Sept. 2022
+VERSION:        0.0.2
 """
 
 # COMMAND ----------
@@ -45,16 +45,16 @@ import numpy as np
 import openpyxl
 from pathlib import Path
 from azure.storage.filedatalake import DataLakeServiceClient
-
+from openpyxl import load_workbook
 
 # Connect to Azure datalake
 # -------------------------------------------------------------------------
 # !env from databricks secrets
-CONNECTION_STRING = dbutils.secrets.get(scope="datalakefs", key="CONNECTION_STRING")
+CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONNECTION_STRING")
 
 # COMMAND ----------
 
-# MAGIC %run /Repos/prod/au-azure-databricks/functions/dbrks_helper_functions
+# MAGIC %run /Shared/databricks/au-azure-databricks-cicd/functions/dbrks_helper_functions
 
 # COMMAND ----------
 
@@ -62,7 +62,7 @@ CONNECTION_STRING = dbutils.secrets.get(scope="datalakefs", key="CONNECTION_STRI
 # -------------------------------------------------------------------------
 file_path_config = "/config/pipelines/nhsx-au-analytics/"
 file_name_config = "config_shared_care_record_dbrks.json"
-file_system_config = "nhsxdatalakesagen2fsprod"
+file_system_config = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
@@ -70,19 +70,16 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
 # Read parameters from JSON config
 # -------------------------------------------------------------------------
-file_system = config_JSON['pipeline']['adl_file_system']
+file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 source_path = config_JSON['pipeline']['raw']['source_path']
 sink_path = config_JSON['pipeline']['raw']['sink_path']
 historical_source_path = config_JSON['pipeline']['raw']['sink_path']
 
 # COMMAND ----------
 
-latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
-latestFolder
+# Functions required for data ingestion and processing 
+# ----------------------------------------------------
 
-# COMMAND ----------
-
-# Get list of all files in latest folder
 def datalake_listDirectory(CONNECTION_STRING, file_system, source_path):
     try:
         service_client = DataLakeServiceClient.from_connection_string(CONNECTION_STRING)
@@ -96,18 +93,23 @@ def datalake_listDirectory(CONNECTION_STRING, file_system, source_path):
         print(e)
     return directory, paths
   
-directory, paths = datalake_listDirectory(CONNECTION_STRING, file_system, source_path+latestFolder)
-directory
-
-# COMMAND ----------
-
-from openpyxl import load_workbook
-
 
 def get_sheetnames_xlsx(filepath):
     wb = load_workbook(filepath, read_only=True, keep_links=False)
     return wb.sheetnames
 
+# COMMAND ----------
+
+# Get LatestFolder and list of all files in latest folder
+# --------------------------------------------
+
+latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
+directory, paths = datalake_listDirectory(CONNECTION_STRING, file_system, source_path+latestFolder)
+
+# COMMAND ----------
+
+# Ingestion and processing of data from individual excel sheets.
+# -------------------------------------------------------------
 
 stp_df = pd.DataFrame()
 trust_df = pd.DataFrame()
@@ -281,6 +283,7 @@ trust_df['For Month'] = folder_date
 # COMMAND ----------
 
 ##Calculate aggregate numbers for Trusts
+#------------------------------------
 trust_count_df = trust_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].size().reset_index(name='Total')
 trust_count_df_2 = trust_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].sum().reset_index(name='Total')
 trust_count_df['Number Connected'] = trust_count_df_2['Total']
@@ -290,6 +293,7 @@ trust_count_df['Type'] = 'Trust'
 # COMMAND ----------
 
 ##Calculate aggregate numbers for PCNs
+#------------------------------------
 pcn_count_df = pcn_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].size().reset_index(name='Total')
 pcn_count_df2 = pcn_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].sum().reset_index(name='Total')
 pcn_count_df['Number Connected'] = pcn_count_df2['Total']
@@ -300,6 +304,7 @@ pcn_count_df['Type'] = 'PCN'
 
 #SNAPSHOT SUMMARY
 #Write pages to Excel file in iobytes
+#--------------------------------------------------
 files = [stp_df, trust_df, trust_count_df, pcn_df, pcn_count_df]
 sheets = ['STP', 'Trust', 'Trust Count', 'PCN', 'PCN Count']
 excel_sheet = io.BytesIO()
@@ -313,16 +318,17 @@ writer.save()
 
 #SNAPSHOT SUMMARY
 #Send Excel snapshot File to test Output in datalake
+#--------------------------------------------------
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
-
 file_contents = excel_sheet
-datalake_upload(file_contents, CONNECTION_STRING, "nhsxdatalakesagen2fsprod", "proc/projects/nhsx_slt_analytics/shcr/excel_summary/"+current_date_path, "excel_output.xlsx")
+datalake_upload(file_contents, CONNECTION_STRING, file_system, "proc/projects/nhsx_slt_analytics/shcr/excel_summary/"+current_date_path, "excel_output.xlsx")
 
 # COMMAND ----------
 
 #Pull historical files
-latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, historical_source_path)
+#------------------------------------
 
+latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, historical_source_path)
 file_name_list = datalake_listContents(CONNECTION_STRING, file_system, historical_source_path+latestFolder)
 for file in file_name_list:
   if 'stp' in file:
@@ -342,9 +348,11 @@ for file in file_name_list:
 
 # COMMAND ----------
 
-# # Append new data to historical data
-# # -----------------------------------------------------------------------
+# Append new data to historical data
+#-----------------------------------------------------------------------
+
 #STP
+#--------------------------------------------------------------
 dates_in_historic = stp_df_historic["For Month"].unique().tolist()
 dates_in_new = stp_df["For Month"].unique().tolist()[0]
 
@@ -356,7 +364,8 @@ else:
   stp_df_historic = stp_df_historic.reset_index(drop=True)
   stp_df_historic = stp_df_historic.astype(str)
   
-#PCN
+# PCN
+#--------------------------------------------------------------
 dates_in_historic = pcn_df_historic["For Month"].unique().tolist()
 dates_in_new = pcn_df["For Month"].unique().tolist()[0]
 
@@ -369,6 +378,7 @@ else:
   pcn_df_historic = pcn_df_historic.astype(str)
   
 #TRUST
+#--------------------------------------------------------------
 dates_in_historic = trust_df_historic["For Month"].unique().tolist()
 dates_in_new = trust_df["For Month"].unique().tolist()[0]
 
@@ -385,14 +395,20 @@ else:
 # Upload processed data to datalake
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.BytesIO()
-#pcn
+
+# PCN
+#-----------------
 pcn_df_historic.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_pcn_data_month_count.parquet")
-# #stp
+
+# STP
+#-----------------
 file_contents = io.BytesIO()
 stp_df_historic.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_stp_data_month_count.parquet")
-# #trust
+
+# NHS Trust
+#-----------------
 file_contents = io.BytesIO()
 trust_df_historic.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_trust_data_month_count.parquet")
