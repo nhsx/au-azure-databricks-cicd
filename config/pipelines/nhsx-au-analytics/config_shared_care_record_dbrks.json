@@ -40,57 +40,67 @@
 			"source_path": "land/sharepoint/Shared Documents/nhsx_au_ingestion/shcr/timestamp/xlsx/all_tables/",
 			"sink_path": "raw/sharepoint/timestamp/parquet/shcr/snapshot/"
 		},
-		"proc": {
-			"source_path": "raw/sharepoint/timestamp/parquet/shcr/snapshot/",
-			"sink_path": "proc/sources/shcr/sharepoint/parquet/all_tables/snapshot/",
-			"files": [
+		"proc": [
 				{
-				"file_name":"shcr_partners_stp_data_month_count.parquet"
+				"source_path": "raw/sharepoint/timestamp/parquet/shcr/snapshot/",
+				"source_file":"shcr_partners_stp_data_month_count.parquet",
+				"sink_path": "proc/sources/shcr/sharepoint/parquet/all_tables/snapshot/",
+				"sink_file":"shcr_partners_stp_data_month_count.parquet"
 				},
 				{
-				"file_name":"shcr_partners_trust_data_month_count.parquet"
+				"source_path": "raw/sharepoint/timestamp/parquet/shcr/snapshot/",
+				"source_file":"shcr_partners_trust_data_month_count.parquet",
+				"sink_path": "proc/sources/shcr/sharepoint/parquet/all_tables/snapshot/",
+				"sink_file":"shcr_partners_trust_data_month_count.parquet"
 				},
 				{
-				"file_name":"shcr_partners_pcn_data_month_count.parquet"
+				"source_path": "raw/sharepoint/timestamp/parquet/shcr/snapshot/",
+				"source_file":"shcr_partners_pcn_data_month_count.parquet",
+				"sink_path": "proc/sources/shcr/sharepoint/parquet/all_tables/snapshot/",
+				"sink_file":"shcr_partners_pcn_data_month_count.parquet"
 				}
-			]
-		},
-		"project": {
-			"source_path": "proc/sources/shcr/sharepoint/parquet/all_tables/snapshot/",
-			"sink_path": "proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
-			"files": [
+			],
+		"project": [
 				{
-				"file_name":"shcr_partners_stp_data_month_count.parquet"
+				"source_path": "proc/sources/shcr/sharepoint/parquet/all_tables/snapshot/",
+				"source_file":"shcr_partners_stp_data_month_count.parquet",
+				"sink_path": "proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
+				"sink_file":"shcr_partners_stp_data_month_count.parquet"
 				},
 				{
-				"file_name":"shcr_partners_trust_data_month_count.parquet"
+				"source_path": "proc/sources/shcr/sharepoint/parquet/all_tables/snapshot/",
+				"source_file":"shcr_partners_trust_data_month_count.parquet",
+				"sink_path": "proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
+				"sink_file":"shcr_partners_trust_data_month_count.parquet"
 				},
 				{
-				"file_name":"shcr_partners_pcn_data_month_count.parquet"
+				"source_path": "proc/sources/shcr/sharepoint/parquet/all_tables/snapshot/",
+				"source_file":"shcr_partners_pcn_data_month_count.parquet",
+				"sink_path": "proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
+				"sink_file":"shcr_partners_pcn_data_month_count.parquet",
 				}
-			]
-		},
+			],
 		"staging":[    
     			{
-					"metric":"shcr_partners_stp_data_month_count",
-					"stored_procedure":"[dbo].[stored_proc_shcr_partners_stp_data_month_count]",
-					"source_path":"proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
-					"source_file":"shcr_partners_stp_data_month_count.parquet",
-					"sink_table":"shcr_partners_stp_data_month_count"
+				"metric":"shcr_partners_stp_data_month_count",
+				"stored_procedure":"[dbo].[stored_proc_shcr_partners_stp_data_month_count]",
+				"source_path":"proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
+				"source_file":"shcr_partners_stp_data_month_count.parquet",
+				"sink_table":"shcr_partners_stp_data_month_count"
 				},    
     			{
-					"metric":"shcr_partners_trust_data_month_count",
-					"stored_procedure":"[dbo].[stored_proc_shcr_partners_trust_data_month_count]",
-					"source_path":"proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
-					"source_file":"shcr_partners_trust_data_month_count.parquet",
-					"sink_table":"shcr_partners_trust_data_month_count"
+				"metric":"shcr_partners_trust_data_month_count",
+				"stored_procedure":"[dbo].[stored_proc_shcr_partners_trust_data_month_count]",
+				"source_path":"proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
+				"source_file":"shcr_partners_trust_data_month_count.parquet",
+				"sink_table":"shcr_partners_trust_data_month_count"
 				},     
     			{
-					"metric":"shcr_partners_pcn_data_month_count",
-					"stored_procedure":"[dbo].[stored_proc_shcr_partners_pcn_data_month_count]",
-					"source_path":"proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
-					"source_file":"shcr_partners_pcn_data_month_count.parquet",
-					"sink_table":"shcr_partners_pcn_data_month_count"
+				"metric":"shcr_partners_pcn_data_month_count",
+				"stored_procedure":"[dbo].[stored_proc_shcr_partners_pcn_data_month_count]",
+				"source_path":"proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
+				"source_file":"shcr_partners_pcn_data_month_count.parquet",
+				"sink_table":"shcr_partners_pcn_data_month_count"
 				}      
 			]
 	}
