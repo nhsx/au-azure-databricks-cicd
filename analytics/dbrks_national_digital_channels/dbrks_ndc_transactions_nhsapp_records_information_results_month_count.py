@@ -13,10 +13,10 @@ DESCRIPTION:
                 Databricks notebook with processing code for the NHSX Analyticus unit metric M233: Records, Information and Results views via NHS App
 USAGE:
                 ...
-CONTRIBUTORS:   Mattia Ficarelli, Kabir Khan
+CONTRIBUTORS:   Mattia Ficarelli, Kabir Khan, Chris Todd
 CONTACT:        data@nhsx.nhs.uk
 CREATED:        14th June 2022
-VERSION:        0.0.2
+VERSION:        0.0.3
 """
 
 # COMMAND ----------
@@ -91,7 +91,7 @@ df_daily = pd.read_parquet(io.BytesIO(file_1), engine="pyarrow")
 
 #Numerator (Montly)
 # ---------------------------------------------------------------------------------------------------
-df_1 = df[["Monthly", "Substrakt_accountAdmin", "Substrakt_patientParticipationGroups", "Covid_Vaccine_Record_View","PKB_carePlans", "PKB_healthTrackers","PKB_sharedLinks", "PKB_testResults"]]
+df_1 = df[["Monthly", "Substrakt_accountAdmin", "Substrakt_patientParticipationGroups", "Covid_Vaccine_Record_View","PKB_carePlans", "PKB_healthTrackers","PKB_sharedLinks", "PKB_testResults", "PKB_messages", "Substrakt_messages", "PKB_recordSharing"]]
 df_1.iloc[:, 0] = df_1.iloc[:,0].dt.strftime('%Y-%m')
 df_2 = df_1.groupby(df_1.iloc[:,0]).sum().reset_index()
 
@@ -105,7 +105,7 @@ df_daily_2 = df_daily_1.groupby(df_daily_1.iloc[:,0]).sum().reset_index()
 # ---------------------------------------------------------------------------------------------------
 df_join = df_daily_2.merge(df_2, how = 'left', left_on = 'Daily', right_on  = 'Monthly').drop(columns = 'Monthly')
 col_list = ["Substrakt_accountAdmin", "Substrakt_patientParticipationGroups", "Covid_Vaccine_Record_View","PKB_carePlans", "PKB_healthTrackers","PKB_sharedLinks", 
-            "PKB_testResults", "RecordViews","UsersODRegistrations"]
+            "PKB_testResults", "PKB_messages", "Substrakt_messages", "PKB_recordSharing", "RecordViews","UsersODRegistrations"]
 df_join['Number of record, information and results views on the NHS App'] = df_join[col_list].sum(axis=1)
 df_join_1 = df_join.drop(columns = col_list)
 df_join_1.rename(columns  = {'Daily': 'Date'}, inplace = True)

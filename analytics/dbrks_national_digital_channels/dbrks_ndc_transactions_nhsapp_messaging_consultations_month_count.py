@@ -10,13 +10,13 @@
 """
 FILE:           dbrks_ndc_transactions_nhsapp_messaging_consultations_month_count.py
 DESCRIPTION:
-                Databricks notebook with processing code for the NHSX Analyticus unit metric M236: Messaging and Consultations
+                Databricks notebook with processing code for the NHSX Analyticus unit metric M236: OLC. Previously Messaging and Consultations. 
 USAGE:
                 ...
-CONTRIBUTORS:   Mattia Ficarelli, Kabir Khan
+CONTRIBUTORS:   Mattia Ficarelli, Kabir Khan, Chris Todd
 CONTACT:        data@nhsx.nhs.uk
 CREATED:        25th Aug 2022
-VERSION:        0.0.2
+VERSION:        0.0.3
 """
 
 # COMMAND ----------
@@ -91,7 +91,7 @@ df_econsult = pd.read_parquet(io.BytesIO(file_1), engine="pyarrow")
 
 #Numerator (Montly)
 # ---------------------------------------------------------------------------------------------------
-df_1 = df[["Monthly", "PKB_messages", "Engage_admin", "Engage_medical", "Substrakt_messages", "Engage_messages"]]
+df_1 = df[["Monthly", "accuRx_messages", "Engage_admin", "Engage_medical", "accuRx_medical", "Engage_messages"]]
 df_1.iloc[:, 0] = df_1.iloc[:,0].dt.strftime('%Y-%m')
 df_2 = df_1.groupby(df_1.iloc[:,0]).sum().reset_index()
 
@@ -104,13 +104,17 @@ df_econsult_2 = df_econsult_1.groupby(df_econsult_1.iloc[:,0]).sum().reset_index
 # Join Monthly and Daily Datasets
 # ---------------------------------------------------------------------------------------------------
 df_join = df_econsult_2.merge(df_2, how = 'left', left_on = 'day', right_on  = 'Monthly').drop(columns = 'Monthly')
-col_list = ["PKB_messages", "Engage_admin", "Engage_medical", "Substrakt_messages", "Engage_messages", "count"]
-df_join['Number of messages and consultations on the NHS App'] = df_join[col_list].sum(axis=1)
+col_list = ["accuRx_messages", "Engage_admin", "Engage_medical", "accuRx_medical", "Engage_messages", "count"]
+df_join['OLCs on the NHS App'] = df_join[col_list].sum(axis=1)
 df_join_1 = df_join.drop(columns = col_list)
 df_join_1.rename(columns  = {'day': 'Date'}, inplace = True)
 df_join_1.index.name = "Unique ID"
 df_join_1['Date'] = pd.to_datetime(df_join_1['Date'])
 df_processed = df_join_1.copy()
+
+# COMMAND ----------
+
+df_processed
 
 # COMMAND ----------
 
