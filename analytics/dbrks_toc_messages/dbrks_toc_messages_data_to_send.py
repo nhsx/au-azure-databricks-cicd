@@ -127,7 +127,7 @@ df_M030B = df_join_2.copy()
 #Add link to cover sheet
 d = {'Cover Sheet': ['For more information on the data within this file refer to cover_sheet_toc_messages_v001']}
 df_cover = pd.DataFrame(data = d)
-df_cover['Cover Sheet Link'] = '=HYPERLINK("shorturl.at/suwZ2", "Link")'
+df_cover['Cover Sheet Link'] = '=HYPERLINK("https://tinyurl.com/mwu4jzen", "Link")'
 
 # COMMAND ----------
 
