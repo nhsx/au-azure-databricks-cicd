@@ -210,6 +210,11 @@
 						"id": "M260",
 						"full_name": "Secondary Care Messages via NHS App",
 						"short_name": "ndc_transactions_secondary_care_messages_month_count"
+					},
+					{
+						"id": "M261",
+						"full_name": "NHSUK site section views: Services",
+						"short_name": "ndc_transactions_nhsuk_view_of_services_month_count"
 					}
 				]
 			}
@@ -506,6 +511,12 @@
 					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_secondary_care_messages_month_count/",
 					"sink_file": "ndc_transactions_secondary_care_messages_month_count.csv",
 					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_secondary_care_messages_month_count"
+				},
+				{
+					"metric": "ndc_transactions_nhsuk_view_of_services_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_nhsuk_view_of_services_month_count/",
+					"sink_file": "ndc_transactions_nhsuk_view_of_services_month_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_ndc_transactions_nhsuk_view_of_services_month_count"
 				}
 			]
 		},
@@ -673,6 +684,10 @@
 			{
 				"metric": "ndc_transactions_secondary_care_messages_month_count",
 				"sink_table": "ndc_transactions_secondary_care_messages_month_count"
+			},
+			{
+				"metric": "ndc_transactions_nhsuk_view_of_services_month_count",
+				"sink_table": "ndc_transactions_nhsuk_view_of_services_month_count"
 			}
 		]
 	}
