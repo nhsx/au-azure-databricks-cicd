@@ -105,8 +105,8 @@ new_dataframe.insert(0,'Collection end date','')
 new_dataframe.insert(0,'Collection start date','')
 date = str(latestFolder[0:10])
 new_dataframe["Date"] = date
-new_dataframe["Collection start date"] = "2021-01-01" #----------- Change values year-on-year. Please see SOP.
-new_dataframe["Collection end date"] = "2021-03-01" #----------- Change values year-on-year. Please see SOP.
+new_dataframe["Collection start date"] = "2022-01-01" #----------- Change values year-on-year. Please see SOP.
+new_dataframe["Collection end date"] = "2022-04-01" #----------- Change values year-on-year. Please see SOP.
 
 # COMMAND ----------
 
