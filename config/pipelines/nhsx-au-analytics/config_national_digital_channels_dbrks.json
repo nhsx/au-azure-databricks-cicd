@@ -128,7 +128,7 @@
 					},
 					{
 						"id": "M232",
-						"full_name": "Covid pass",
+						"full_name": "Covid pass Jumpoffs",
 						"short_name": "ndc_transactions_covid_pass_usage_month_count"
 					},
 					{
@@ -215,6 +215,11 @@
 						"id": "M261",
 						"full_name": "NHSUK site section views: Services",
 						"short_name": "ndc_transactions_nhsuk_view_of_services_month_count"
+					},
+					{
+						"id": "M269",
+						"full_name": "Covid Pass Transactions",
+						"short_name": "ndc_transactions_nhsapp_covid_pass_transactions_month_count"
 					}
 				]
 			}
@@ -517,7 +522,14 @@
 					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_transactions_nhsuk_view_of_services_month_count/",
 					"sink_file": "ndc_transactions_nhsuk_view_of_services_month_count.csv",
 					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_nhsuk_view_of_services_month_count"
+				},
+				{
+					"metric": "ndc_transactions_nhsapp_covid_pass_transactions_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_transactions_nhsapp_covid_pass_transactions_month_count/",
+					"sink_file": "ndc_transactions_nhsapp_covid_pass_transactions_month_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_nhsapp_covid_pass_transactions_month_count"
 				}
+				
 			]
 		},
 		"staging": [
@@ -688,7 +700,13 @@
 			{
 				"metric": "ndc_transactions_nhsuk_view_of_services_month_count",
 				"sink_table": "ndc_transactions_nhsuk_view_of_services_month_count"
+			},
+			{
+				"metric": "ndc_transactions_nhsapp_covid_pass_transactions_month_count",
+				"sink_table": "ndc_transactions_nhsapp_covid_pass_transactions_month_count"
 			}
 		]
 	}
 }
+
+
