@@ -13,10 +13,10 @@ DESCRIPTION:
                 Databricks notebook with processing code for the NHSX Analyticus unit metric M232: Number of covid pass uses
 USAGE:
                 ...
-CONTRIBUTORS:   Mattia Ficarelli, Kabir Khan
+CONTRIBUTORS:   Mattia Ficarelli, Kabir Khan, Chris Todd
 CONTACT:        data@nhsx.nhs.uk
 CREATED:        25th Aug 2022
-VERSION:        0.0.2
+VERSION:        0.0.3
 """
 
 # COMMAND ----------
@@ -85,12 +85,10 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 #Numerator
 # ---------------------------------------------------------------------------------------------------
-df_1 = df[["Monthly", "Covid_Pass", "Covid_Pass_P5"]]
+df_1 = df[["Monthly", "covid_pass_transactions"]]
 df_1.iloc[:, 0] = df_1.iloc[:,0].dt.strftime('%Y-%m')
 df_2 = df_1.groupby(df_1.iloc[:,0]).sum().reset_index()
-df_2["Number of NHS app covid pass uses"] = df_2["Covid_Pass"] + df_2["Covid_Pass_P5"]
-df_2 = df_2.drop(columns = ["Covid_Pass","Covid_Pass_P5"])
-df_2.rename(columns  = {'Monthly': 'Date'}, inplace = True)
+df_2.rename(columns  = {'Monthly': 'Date', "covid_pass_transactions": "Number of NHS app covid pass uses"}, inplace = True)
 df_2.index.name = "Unique ID"
 df_2['Date'] = pd.to_datetime(df_2['Date'])
 df_processed = df_2.copy()
