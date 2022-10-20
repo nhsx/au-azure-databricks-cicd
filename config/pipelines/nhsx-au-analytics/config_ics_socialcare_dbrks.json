@@ -1,0 +1,55 @@
+{
+	"metadata":  {
+		"products": [
+			{
+			"product_name": "Digitise, Connect, Transform (DCT) Dashboard",
+			"granularity": "National",
+			"topic": "Socialcare ICS's",
+			"metrics": [
+				{
+            		"id": "TBD",
+            		"full_name": "TBD",
+	 				"short_name":"TBD"
+        			}					
+			]
+			}			
+			]
+		},
+	"pipeline": {
+		"name": "trigger_ICS_socialcare",
+    	"folder": "nhsx-au-analytics/digital_socialcare/ICS_socialcare/",
+		"ingestion": {
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_ics_socialcare/dbrks_ics_socialcare_raw"
+		},
+		"raw": {		
+			"snapshot_source_path": "land/datainbox/email_attachment/TBD/TBD/",
+			"appended_path": "raw/digital_socialcare/email_attachment/parquet/ics_socialcare/historical/",
+			"appended_file": "ics_socialcare_historical.parquet"			
+		},
+		"proc": 
+			{
+			"metric": "ics_socialcare_count",
+			"source_path": "raw/digital_socialcare/email_attachment/parquet/ICS_socialcare/historical/",
+			"source_file": "ics_socialcare_historical.parquet",
+			"sink_path": "proc/sources/digital_socialcare/email_attachment/parquet/ics_socialcare/historical/",
+			"sink_file": "ics_socialcare_historical.parquet"
+			},
+		"project": {
+			"source_path": "proc/sources/digital_socialcare/email_attachment/parquet/ics_socialcare/historical/",
+			"source_file":"ICS_socialcare_historical.parquet",
+			"sink_path": "proc/projects/nhsx_slt_analytics/digital_socialcare/ics_socialcare/ics_socialcare_count/",
+			"sink_file": "ics_socialcare_count.csv",
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_icss_socialcare/dbrks_ics_socialcare_count"
+						
+		},
+		"staging":      			
+			{
+				"metric": "ics_socialcare_count",
+				"sink_table": "ics_socialcare_count"
+				}   
+    			
+			
+		
+	}
+
+}
