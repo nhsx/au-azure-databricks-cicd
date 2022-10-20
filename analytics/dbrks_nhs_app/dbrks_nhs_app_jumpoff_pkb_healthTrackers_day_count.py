@@ -85,10 +85,10 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 df1 = df[["Date", "OdsCode","Provider", "JumpOff","Clicks"]].copy()
 df1["Clicks"] = df1["Clicks"].astype(int)
 df1 = df1[((df1['JumpOff']=='healthTrackersCie')| (df1['JumpOff']=='healthTrackers'))  & (df1['Provider']=='Patients Know Best')]
-df1 = df1.groupby(['Date','OdsCode'], as_index=False).sum()
+df1 = df1.groupby(['Provider','Date','OdsCode'], as_index=False).sum()
 df1['Date'] = pd.to_datetime(df1['Date'], infer_datetime_format=True)
 df2 = df1[df1['Date'] >= '2021-01-01'].reset_index(drop = True)  #--------- remove rows pre 2021
-df3 = df2[['Date', 'OdsCode', 'Clicks']]
+df3 = df2[['Provider','Date', 'OdsCode', 'Clicks']]
 df4 = df3.rename(columns = {'OdsCode': 'Practice code', 'Clicks': 'Number of Health Trackers Jump Off Clicks'})
 df4.index.name = "Unique ID"
 df_processed = df4.copy()

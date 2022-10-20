@@ -87,7 +87,7 @@ df1['Clicks'] = df1['Clicks'].astype(int)
 df1 = df1[(df1['JumpOff']=='vaccineRecord') & (df1['Provider']=='NHS Digital')]
 df1['Date'] = pd.to_datetime(df1['Date'], infer_datetime_format=True)
 df2 = df1[df1['Date'] >= '2021-01-01'].reset_index(drop = True)  #--------- remove rows pre 2021
-df3 = df2[['Date', 'OdsCode', 'Clicks']]
+df3 = df2[['Provider','Date', 'OdsCode', 'Clicks']]
 # df2['vaccineRecord'] = pd.to_numeric(df2['vaccineRecord'],errors='coerce').fillna(0)
 # df3 = df2.groupby(['Date','OdsCode']).sum().reset_index()
 df4 = df3.rename(columns = {'OdsCode': 'Practice code', 'Clicks': 'Number of Covid Vaccine Record ViewJump Off Clicks'})
