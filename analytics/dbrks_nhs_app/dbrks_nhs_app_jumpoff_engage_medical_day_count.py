@@ -88,10 +88,11 @@ df1['Clicks'] = df1['Clicks'].astype(int)
 df1 = df1[(df1['JumpOff']=='medical' ) & (df1['Provider']=='Engage Health Systems Limited') ]
 df1['Date'] = pd.to_datetime(df1['Date'], infer_datetime_format=True)
 df2 = df1[df1['Date'] >= '2021-01-01'].reset_index(drop = True)  #--------- remove rows pre 2021
-df3 = df2[['Date', 'OdsCode', 'Clicks']]
+df3 = df2[['Provider','Date', 'OdsCode', 'Clicks']]
 df4 = df3.rename(columns = {'OdsCode': 'Practice code', 'Clicks': 'Number of Engage - medicalJump Off Clicks'})
 df4.index.name = "Unique ID"
 df_processed = df4.copy()
+print(df_processed.columns)
 
 # COMMAND ----------
 
