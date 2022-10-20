@@ -3,52 +3,55 @@
 		"products": [
 		{
 		"product_name": "NHS App Dashboard",
-		"Granularity": "GP Practice Level",
+		"Granularity": "National Level",
 		"topic": "NHS App",
 		"metrics": [
 			{
-            "id": "",
-            "full_name": "Number of NHS app downloads by device operating system",
+            "id": "M0160B",
+            "full_name": "Number of NHS app monthly downloads by device operating system",
 			"short_name":"nhs_app_device_os"
         	}
 		]
 	}]},
 	"pipeline": {
-		"name": "nhs_app_device_os",
-    	"folder": "nhsx-au-analytics/nhsdigital/nhs_app/",
+		"name": "nhs_app_monthly_device",
+    	"folder": "nhsx-au-analytics/nhsdigital/nhs_app_monthly_device/",
+	        "source_adl_file_system": "digitallandcontainer",
 		"ingestion": {
-			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_nhs_app/dbrks_nhs_app_device_raw"
+			"sink_path": "land/nhsdigital/nhs_app/timestamp/snapshot/",
+			"source_path": "/nhs_app/land/",
+                        "databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_nhs_app/dbrks_nhs_app_monthly_device_raw"
 		},
 		"raw": {
 			"snapshot_source_path": "land/nhsdigital/nhs_app/timestamp/snapshot/",
-			"appended_path": "raw/nhsdigital/adf_v2/parquet/nhs_app_device/historical/",
-			"appended_file": "nhs_app_device_historical.parquet"
+			"appended_path": "raw/nhsdigital/adf_v2/parquet/nhs_app_monthly_device/historical/",
+			"appended_file": "nhs_app_monthly_device_historical.parquet"
 		},
 		"proc": {
-			"source_path": "",
-			"source_file": "",
-			"sink_path": "",
-			"sink_file": ""
+			"source_path": "raw/nhsdigital/adf_v2/parquet/nhs_app_monthly_device/historical/",
+			"source_file": "nhs_app_mothly_device_historical.parquet",
+			"sink_path": "proc/sources/nhsdigital/adf_v2/parquet/nhs_app_monthly_device/historical/",
+			"sink_file": "nhs_app_monthly_device_historical.parquet"
 		},
 		"project": {
-			"source_path": "",
-			"source_file": "",
-			"reference_source_path": "",
-			"reference_source_file": "",
-			"databricks_orchestrator_notebook": "",
+			"source_path": "proc/sources/nhsdigital/adf_v2/parquet/nhs_app_monthly_device/historical/",
+			"source_file": "nhs_app_monthly_device_historical.parque",
+			"reference_source_path": "proc/sources/ncdr_etp/adf_v2/table/ons_population_demography/historical/",
+			"reference_source_file": "table_ons_population_demography_historical.parquet",
+			"databricks_orchestrator_notebook": "databricks/au-azure-databricks-cicd/orchestration/dbrks_nhs_app_monthly_device_orchestrator",
 			"databricks":[
 				{
-				"metric": "",
-				"sink_path": "",
-				"sink_file": "",
-				"databricks_notebook": ""
+				"metric": "nhs_app_downloads_month_count",
+				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_monthly_device/nhs_app_downloads_month_count/",
+				"sink_file": "nhs_app_downloads_month_count.csv",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app_monthly_device/dbrks_nhs_app_downloads_month_count"
 				}
 			]
 		},
 		"staging": [ 
 			{
-				"metric":"",
-				"sink_table":""
+				"metric":"nhs_app_downloads_month_count",
+				"sink_table":"nhs_app_downloads_month_count"
 			}
 		]
 
