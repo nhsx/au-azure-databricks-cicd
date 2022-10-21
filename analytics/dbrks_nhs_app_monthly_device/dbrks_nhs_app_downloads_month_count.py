@@ -8,7 +8,7 @@
 # -------------------------------------------------------------------------
 
 """
-FILE:           dbrks_nhs_app_device_week_count.py
+FILE:           dbrks_nhs_app_downloads_month_count.py
 DESCRIPTION:
                 Databricks notebook with processing code for the NHSX Analyticus unit metric: nhs app downloads month count (M0160A)
 USAGE:
