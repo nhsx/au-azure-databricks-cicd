@@ -15,9 +15,9 @@ DESCRIPTION:
                 topic
 USAGE:
                 ...
-CONTRIBUTORS:   Everistus Oputa
+CONTRIBUTORS:   Mattia Ficarelli, Chris Todd, Everistus Oputa
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        19 Oct. 2022
+CREATED:        11 Apr. 2022
 VERSION:        0.0.1
 """
 
