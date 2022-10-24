@@ -88,10 +88,6 @@ for new_source_file in file_name_list:
 
 # COMMAND ----------
 
-historical_source_path
-
-# COMMAND ----------
-
 #Pull historical dataset
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, historical_source_path)
 historical_dataset = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, historical_source_file)
