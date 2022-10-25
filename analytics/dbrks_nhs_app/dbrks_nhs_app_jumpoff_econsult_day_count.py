@@ -88,7 +88,7 @@ df1['Clicks'] = df1['Clicks'].astype(int)
 df1 = df1[(df1['JumpOff']=='onlineConsultation') & (df1['Provider']=='eConsult Health Ltd')]
 df1['Date'] = pd.to_datetime(df1['Date'], infer_datetime_format=True)
 df2 = df1[df1['Date'] >= '2021-01-01'].reset_index(drop = True)  #--------- remove rows pre 2021
-df4 = df1.rename(columns = {'OdsCode': 'Practice code', 'Clicks': 'Number of Covid Pass Jump Off Clicks'})
+df4 = df1.rename(columns = {'OdsCode': 'Practice code', 'Clicks': 'Number of Online Consultation Jump Off Clicks'})
 df4.index.name = "Unique ID"
 df_processed = df4.copy()
 
