@@ -88,6 +88,12 @@ for new_source_file in file_name_list:
 
 # COMMAND ----------
 
+#remove duplicates from new data
+# -------------------------
+new_dataframe = new_dataframe.groupby(by=['Date','OdsCode','Provider','JumpOff'], as_index=False).sum()
+
+# COMMAND ----------
+
 #Pull historical dataset
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, historical_source_path)
 historical_dataset = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, historical_source_file)
