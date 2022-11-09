@@ -18,7 +18,7 @@ jobs:
 
       - name: push config changes to azure
         # source: https://github.com/marketplace/actions/azure-blob-storage-upload
-        uses: bacongobbler/azure-blob-storage-upload@v2.0.0
+        uses: bacongobbler/azure-blob-storage-upload@main
         with:
           source_dir: config/
           container_name: ${{ secrets.AZURE_BLOB_CONTAINER }}
