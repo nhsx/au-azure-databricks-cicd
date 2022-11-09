@@ -3,7 +3,7 @@
 		"products": [
 			{
 			"product_name": "Reference Data",
-			"topic": "ccg icb region mapping",
+			"topic": "ccg to icb region mapping",
 			"metrics": [
 				{
             			"id": "",
