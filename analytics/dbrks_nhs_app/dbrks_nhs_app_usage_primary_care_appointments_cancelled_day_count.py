@@ -84,12 +84,11 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 # ---------------------------------------------------------------------------------------------------
 df1 = df[["Date", "OdsCode", "AppointmentsCancelled"]].copy()
 df1['Date'] = pd.to_datetime(df1['Date'], infer_datetime_format=True)
-df2 = df1[df1['Date'] >= '2021-01-01'].reset_index(drop = True)  #--------- remove rows pre 2021
-df2['AppointmentsCancelled'] = pd.to_numeric(df2['AppointmentsCancelled'],errors='coerce').fillna(0)
-df3 = df2.groupby(['Date','OdsCode']).sum().reset_index()
-df4 = df3.rename(columns = {'OdsCode': 'Practice code', 'AppointmentsCancelled': 'Number of primary care appointments cancelled'})
-df4.index.name = "Unique ID"
-df_processed = df4.copy()
+df1['AppointmentsCancelled'] = pd.to_numeric(df1['AppointmentsCancelled'],errors='coerce').fillna(0)
+df2 = df1.groupby(['Date','OdsCode']).sum().reset_index()
+df3 = df2.rename(columns = {'OdsCode': 'Practice code', 'AppointmentsCancelled': 'Number of primary care appointments cancelled'})
+df3.index.name = "Unique ID"
+df_processed = df3.copy()
 
 # COMMAND ----------
 
