@@ -96,6 +96,26 @@ def write_spark_df_to_sql(sparkDF, table_name, write_mode = str):
   except ValueError as error:
     return print("Connector write failed", error)
 
+# Read SQL Table ------------------
+def read_sql_server_table(table_name):
+  server_name = dbutils.secrets.get(scope="sqldatabase", key="SERVER_NAME")
+  database_name = dbutils.secrets.get(scope="sqldatabase", key="DATABASE_NAME")
+  url = server_name + ";" + "databaseName=" + database_name + ";"
+  username = dbutils.secrets.get(scope="sqldatabase", key="USER_NAME")
+  password = dbutils.secrets.get(scope="sqldatabase", key="PASSWORD")
+  try:
+    sparkDF = spark.read \
+    .format("com.microsoft.sqlserver.jdbc.spark") \
+    .option("url", url) \
+    .option("dbtable", table_name) \
+    .option("user", username) \
+    .option("password", password) \
+    .load()
+    print("Connector write succeed")
+    return sparkDF
+  except ValueError as error:
+    return print("Connector write failed", error)
+
 # COMMAND ----------
 
 # Ingestion and analytical functions
