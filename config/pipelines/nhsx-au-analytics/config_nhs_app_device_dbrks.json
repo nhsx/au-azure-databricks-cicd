@@ -35,7 +35,7 @@
 		},
 		"project": {
 			"source_path": "proc/sources/nhsdigital/adf_v2/parquet/nhs_app_device/historical/",
-			"source_file": "nhs_app_device_historical.parque",
+			"source_file": "nhs_app_device_historical.parquet",
 			"reference_source_path": "proc/sources/ncdr_etp/adf_v2/table/ons_population_demography/historical/",
 			"reference_source_file": "table_ons_population_demography_historical.parquet",
 			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_nhs_app_device_orchestrator",
