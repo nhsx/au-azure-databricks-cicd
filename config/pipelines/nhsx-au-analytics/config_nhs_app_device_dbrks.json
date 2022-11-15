@@ -38,7 +38,7 @@
 			"source_file": "nhs_app_device_historical.parque",
 			"reference_source_path": "proc/sources/ncdr_etp/adf_v2/table/ons_population_demography/historical/",
 			"reference_source_file": "table_ons_population_demography_historical.parquet",
-			"databricks_orchestrator_notebook": "databricks/au-azure-databricks-cicd/orchestration/dbrks_nhs_app_device_orchestrator",
+			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_nhs_app_device_orchestrator",
 			"databricks":[
 				{
 				"metric": "nhs_app_downloads_week_count",
