@@ -19,23 +19,24 @@
 		"name": "trigger_dscr",
 		"folder": "nhsx-au-analytics/digital_socialcare/dscr/",
 		"ingestion": {
-			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_dscr/dbrks_dscr_results_raw"
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_dscr/dbrks_dscr_results_raw_v3"
 		},
 		"raw": {
-			"sink_path": "land/digital_socialcare/webscrape/timestamp/csv/dscr/",
-			"sink_file": "dscr_data_snapshot.csv",
-			"appended_path": "raw/digital_socialcare/webscrape/parquet/dscr_data/historical/",
+			"snapshot_source_path": "land/digital_socialcare/manual_upload/timestamp/excel/dscr/",
+			"appended_path": "raw/digital_socialcare/manual_upload/parquet/dscr_data/historical/",
 			"appended_file": "dscr_data_historical.parquet"
 		},
 		"proc": {
-			"source_path": "raw/digital_socialcare/webscrape/parquet/dscr_data/historical/",
+			"source_path": "raw/digital_socialcare/manual_upload/parquet/dscr_data/historical/",
 			"source_file": "dscr_data_historical.parquet",
-			"sink_path": "proc/sources/digital_socialcare/webscrape/parquet/dscr_data/historical/",
+			"sink_path": "proc/sources/digital_socialcare/manual_upload/dscr_data/historical/",
 			"sink_file": "dscr_data_historical.parquet"
 		},
 		"project": {
-			"source_path": "proc/sources/digital_socialcare/webscrape/parquet/dscr_data/historical",
+			"source_path": "proc/sources/digital_socialcare/manual_upload/dscr_data/historical/",
 			"source_file": "dscr_data_historical.parquet",
+			"reference_source_path":"proc/sources/ncdr_etp/adf_v2/table/ccg_icb_region_mapping/snapshot/",
+			"reference_source_file": "table_ccg_icb_region_mapping_snapshot.parquet",
 			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_dscr_orchestrator",
 			"databricks": [				
 				{
@@ -54,3 +55,6 @@
 		]
 	}
 }
+
+
+
