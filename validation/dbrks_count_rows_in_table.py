@@ -8,17 +8,15 @@
 # -------------------------------------------------------------------------
 
 """
-FILE:           dbrks_nhs_app_jumpoff_raw.py
+FILE:           dbrks_count_rows_in_table.py
 DESCRIPTION:
-                Databricks notebook with code to append new raw data to historical
-                data for the NHSX Analyticus unit metrics within the NHS app
-                topic
+                Databricks notebook to count rows in a table
 USAGE:
                 ...
-CONTRIBUTORS:   Mattia Ficarelli, Chris Todd, Everistus Oputa
-CONTACT:        data@nhsx.nhs.uk
-CREATED:        07 Jun. 2022
-VERSION:        0.0.2
+CONTRIBUTORS:   Abdu Nuhu
+CONTACT:        nhsx.data@england.nhs.uk
+CREATED:        07 Nov. 2022
+VERSION:        0.0.1
 """
 
 # COMMAND ----------
