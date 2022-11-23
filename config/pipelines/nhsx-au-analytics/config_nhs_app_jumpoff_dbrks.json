@@ -95,6 +95,16 @@
 			"id": "M179",
 			"full_name": "eConsultJump Off Clicks",
 			"short_name":"nhs_app_jumpoff_econsult_day_count"
+			},
+			{
+			"id": "M180",
+			"full_name": "accurx - messagesJump Off Clicks",
+			"short_name":"nhs_app_jumpoff_accurx_messages_day_count"
+			},
+			{
+			"id": "M181",
+			"full_name": "accurx - medicalJump Off Clicks",
+			"short_name":"nhs_app_jumpoff_accurx_medical_day_count"
 			}
 		]
 	}]},
@@ -234,6 +244,18 @@
 				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_econsult_day_count/",
 				"sink_file": "nhs_app_jumpoff_econsult_day_count.csv",
 				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_econsult_day_count"
+				},
+				{
+				"metric": "nhs_app_jumpoff_accurx_messages_day_count",
+				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_accurx_messages_day_count/",
+				"sink_file": "nhs_app_jumpoff_accurx_messages_day_count.csv",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_accurx_messages_day_count"
+				},
+				{
+				"metric": "nhs_app_jumpoff_accurx_medical_day_count",
+				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_accurx_medical_day_count/",
+				"sink_file": "nhs_app_jumpoff_accurx_medical_day_count.csv",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_accurx_medical_day_count"
 				}
 			]
 		},
@@ -309,6 +331,14 @@
 			{
 				"metric":"nhs_app_jumpoff_econsult_day_count",
 				"sink_table":"nhs_app_jumpoff_econsult_day_count" 
+			},
+			{
+				"metric":"nhs_app_jumpoff_accurx_messages_day_count",
+				"sink_table":"nhs_app_jumpoff_accurx_messages_day_count" 
+			},
+			{
+				"metric":"nhs_app_jumpoff_accurx_medical_day_count",
+				"sink_table":"nhs_app_jumpoff_accurx_medical_day_count" 
 			}
 
 		         ]
