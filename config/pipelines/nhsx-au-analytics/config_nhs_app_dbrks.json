@@ -41,7 +41,7 @@
 			{
 			"id": "M148",
 			"full_name": "% of GP Patients Registered for NHS App",
-			"short_name":"nhs_app_uptake_registered_population_day_prop"
+			"short_name":"nhs_app_uptake_gp_registered_population_day_prop"
 			},
 			{
 			"id": "M149",
