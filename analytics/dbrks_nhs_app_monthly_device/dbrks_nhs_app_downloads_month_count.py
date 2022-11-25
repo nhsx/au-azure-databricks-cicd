@@ -13,10 +13,10 @@ DESCRIPTION:
                 Databricks notebook with processing code for the NHSX Analyticus unit metric: nhs app downloads month count (M0160A)
 USAGE:
                 ...
-CONTRIBUTORS:   Everistus Oputa
+CONTRIBUTORS:   Everistus Oputa, Kabir Khan
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        10 Oct 2022
-VERSION:        0.0.1
+CREATED:        25 Nov 2022
+VERSION:        0.0.2
 """
 
 # COMMAND ----------
@@ -78,9 +78,10 @@ table_name = config_JSON['pipeline']["staging"][0]['sink_table']
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 df = pd.read_parquet(io.BytesIO(file), engine="pyarrow", columns =['Date', 'Type', 'Count'])
-df.rename(columns = {'Date': 'Date', 'Type': 'Device Type', 'Count': 'No. of downloads per week'}, inplace = True)
+df.rename(columns = {'Date': 'Date', 'Type': 'Device Type', 'Count': 'No. of downloads per month'}, inplace = True)
 df.index.name = "Unique ID"
 df['Date'] = pd.to_datetime(df['Date'])
+df['No. of downloads per month'] = df['No. of downloads per month'].astype(np.int64)
 df_processed = df.copy()
 
 # COMMAND ----------
