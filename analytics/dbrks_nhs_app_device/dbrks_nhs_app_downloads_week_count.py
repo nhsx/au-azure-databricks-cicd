@@ -13,10 +13,10 @@ DESCRIPTION:
                 Databricks notebook with processing code for the NHSX Analyticus unit metric: nhs app downloads week count (M0160A)
 USAGE:
                 ...
-CONTRIBUTORS:   Everistus Oputa
+CONTRIBUTORS:   Everistus Oputa, Kabir Khan
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        10 Oct 2022
-VERSION:        0.0.1
+CREATED:        25 Nov 2022
+VERSION:        0.0.2
 """
 
 # COMMAND ----------
@@ -81,6 +81,7 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow", columns =['Date', 'Type
 df.rename(columns = {'Date': 'Date', 'Type': 'Device Type', 'Count': 'No. of downloads per week'}, inplace = True)
 df.index.name = "Unique ID"
 df['Date'] = pd.to_datetime(df['Date'])
+df['No. of downloads per week'] = df['No. of downloads per week'].astype(np.int64)
 df_processed = df.copy()
 
 # COMMAND ----------
