@@ -97,7 +97,6 @@ df['Date'] = pd.to_datetime(df['Date'], infer_datetime_format=True)
 df.rename(columns = {'AcceptedTermsAndConditions':'users'}, inplace = True)
 df2 = df[['Date','users']].copy()
 df2['users'] = pd.to_numeric(df2['users'],errors='coerce').fillna(0)
-df2.drop(df2[df2['Date'] < '2021-01-01'].index, inplace = True) #--------- remove rows pre 2021
 df2 = df2.groupby('Date').sum().resample('W').sum()
 df2['total_users'] = df2['users'].cumsum() #--------- add cumulative sum column
 
