@@ -40,17 +40,17 @@
 			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_dscr_orchestrator",
 			"databricks": [				
 				{
-					"metric": "dscr_whatever_month_count",
-					"sink_path": "proc/projects/nhsx_slt_analytics/digital_socialcare/dscr/dscr_whatever_month_count/",
-					"sink_file": "dscr_whatever_month_count.csv",
-					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dscr/dbrks_dscr_dscr_whatever_month_count"
+					"metric": "dscr_all_variables_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/digital_socialcare/dscr/dscr_all_variables_month_count/",
+					"sink_file": "dscr_all_variables_month_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dscr/dbrks_dscr_all_variables_month_count"
 				}
 			]
 		},
 		"staging": [	
 			{
-				"metric": "dscr_whatever_month_count",
-				"sink_table": "dscr_whatever_month_count"
+				"metric": "dscr_all_variables_month_count",
+				"sink_table": "dscr_all_variables_month_count"
 			}
 		]
 	}
