@@ -84,14 +84,13 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 # ---------------------------------------------------------------------------------------------------
 df1 = df[["Date", "OdsCode", "P9VerifiedNHSAppUsers"]].copy()
 df1['Date'] = pd.to_datetime(df1['Date'], infer_datetime_format=True)
-df2 = df1[df1['Date'] >= '2021-01-01'].reset_index(drop = True)  #--------- remove rows pre 2021
-df2['P9VerifiedNHSAppUsers'] = pd.to_numeric(df2['P9VerifiedNHSAppUsers'],errors='coerce').fillna(0)
-df2=df2.sort_values(['Date']).reset_index(drop=True)
-df2["Cumulative number of P9 NHS app registrations"]=df2.groupby(['OdsCode'])['P9VerifiedNHSAppUsers'].cumsum(axis=0)
-df3 = df2.drop(columns = ['P9VerifiedNHSAppUsers']).reset_index(drop = True)
-df4 = df3.rename(columns = {'OdsCode': 'Practice code'})
-df4.index.name = "Unique ID"
-df_processed = df4.copy()
+df1['P9VerifiedNHSAppUsers'] = pd.to_numeric(df1['P9VerifiedNHSAppUsers'],errors='coerce').fillna(0)
+df1=df1.sort_values(['Date']).reset_index(drop=True)
+df1["Cumulative number of P9 NHS app registrations"]=df1.groupby(['OdsCode'])['P9VerifiedNHSAppUsers'].cumsum(axis=0)
+df2 = df1.drop(columns = ['P9VerifiedNHSAppUsers']).reset_index(drop = True)
+df3 = df2.rename(columns = {'OdsCode': 'Practice code'})
+df3.index.name = "Unique ID"
+df_processed = df3.copy()
 
 # COMMAND ----------
 
