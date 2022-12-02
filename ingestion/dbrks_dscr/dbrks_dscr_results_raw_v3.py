@@ -87,12 +87,12 @@ file_name_list = datalake_listContents(CONNECTION_STRING, file_system, new_sourc
 file_name_list = [file for file in file_name_list if '.csv' in file]
 for new_source_file in file_name_list:
   new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, new_source_file)
-  header_list = ["Location ID","Dormant (Y/N)","Care home?","Location Inspection Directorate","Location Primary Inspection Category","Location Local Authority","Location ONSPD CCG Code","Location ONSPD CCG","Provider ID","Provider Inspection Directorate","Provider Primary Inspection Category","Provider Postal Code"]
+  header_list = ["Location ID","Dormant (Y/N)","Care home?","Location Inspection Directorate","Location Primary Inspection Category","Location Local Authority","Location ONSPD CCG Code","Location ONSPD CCG","Provider ID","Provider Inspection Directorate","Provider Primary Inspection Category","Provider Postal Code", "run_date"]
   new_date = datetime.now().strftime('%Y-%m-%d') + '/' 
   new_dataframe = pd.read_csv(io.BytesIO(new_dataset), encoding = "ISO-8859-1")
   df2 = new_dataframe[header_list]
-  df2["run_date"] = datetime.now().strftime('%Y-%m')   
-  display(df2)
+  df2["refreshed_date"] = datetime.now().strftime('%Y-%m-%d')   
+df2
 
 # COMMAND ----------
 
@@ -101,7 +101,7 @@ for new_source_file in file_name_list:
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, historical_source_path)
 historical_dataset = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, historical_source_file)
 historical_dataframe = pd.read_parquet(io.BytesIO(historical_dataset), engine="pyarrow")
-historical_dataframe['run_date'] = pd.to_datetime(historical_dataframe['run_date']).dt.strftime('%Y-%m')
+#historical_dataframe['run_date'] = pd.to_datetime(historical_dataframe['run_date']).dt.strftime('%Y-%m-%d')
 
 # COMMAND ----------
 
@@ -118,7 +118,7 @@ else:
 
 # COMMAND ----------
 
-display(historical_dataframe)
+historical_dataframe
 
 # COMMAND ----------
 
