@@ -126,8 +126,8 @@
 			"source_file": "nhs_app_historical.parquet",
 			"reference_source_path": "proc/sources/ncdr_etp/adf_v2/table/ons_population_demography/historical/",
 			"reference_source_file": "table_ons_population_demography_historical.parquet",
-			"reference_source_path_gp": "proc/sources/ncdr_etp/adf_v2/table/gp_practice_population/snapshot/",
-			"reference_source_file_gp": "table_gp_practice_population_snapshot.parquet",
+			"reference_source_path_gp": "proc/sources/ncdr_etp/adf_v2/table/gp_practice_population_single_age/snapshot/",
+			"reference_source_file_gp": "table_gp_practice_population_single_age_snapshot.parquet",
 			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_nhs_app_orchestrator",
 			"databricks":[
 				{
