@@ -82,9 +82,9 @@ latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 df_1 = df[['Location ID', 'Dormant (Y/N)','Care home?','Location Inspection Directorate','Location Primary Inspection Category','Location Local Authority','Location ONSPD CCG Code','Location ONSPD CCG','Provider ID','Provider Inspection Directorate','Provider Primary Inspection Category','Provider Postal Code','run_date']]
-df_1['run_date'] = pd.to_datetime(df_1['run_date']).dt.strftime('%Y-%m')
+#df_1['run_date'] = pd.to_datetime(df_1['run_date']).dt.strftime('%Y-%m')
 df_2 = df_1.drop_duplicates()
-df_3 = df_2.rename(columns = {'Location ID':'Location_Id','Dormant (Y/N)':'Is_Domant','Care home?':'Is_Care_Home','Location Inspection Directorate':'Location_Inspection_Directorate','Location Primary Inspection Category':'Location_Primary_Inspection_Category','Location Local Authority':'Location_Local_Authority','Location ONSPD CCG Code':'CCG_ONS_Code','Location ONSPD CCG':'Location_ONSPD_CCG_Name','Provider ID':'Provider_ID','Provider Inspection Directorate':'Provider_Inspection_Directorate','Provider Primary Inspection Category':'Provider_Primary_Inspection_Category','Provider Postal Code':'Provider_Postal_Code','run_date':'run_date'})
+df_3 = df_2.rename(columns = {'Location ID':'Location_Id','Dormant (Y/N)':'Is_Domant','Care home?':'Is_Care_Home','Location Inspection Directorate':'Location_Inspection_Directorate','Location Primary Inspection Category':'Location_Primary_Inspection_Category','Location Local Authority':'Location_Local_Authority','Location ONSPD CCG Code':'CCG_ONS_Code','Location ONSPD CCG':'Location_ONSPD_CCG_Name','Provider ID':'Provider_ID','Provider Inspection Directorate':'Provider_Inspection_Directorate','Provider Primary Inspection Category':'Provider_Primary_Inspection_Category','Provider Postal Code':'Provider_Postal_Code','run_date':'monthly_date'})
 
 
 # ref data Processing
@@ -101,30 +101,22 @@ df_2 = df_ref_1[~df_ref_1.duplicated(['CCG_ONS_Code', 'CCG_ODS_Code','CCG_Name',
 
 # Joint processing
 # -------------------------------------------------------------------------
-df_join_test = df_3.merge(df_2, how ='outer', on = 'CCG_ONS_Code')
+df_join = df_3.merge(df_2, how ='outer', on = 'CCG_ONS_Code')
 df_join.index.name = "Unique ID"
 df_join = df_join.round(4)
-# df_join["run_date"] = pd.to_datetime(df_join["run_date"])
+df_join["run_date"] = pd.to_datetime(df_join["run_date"])
 df_processed = df_join.copy()
-
-# COMMAND ----------
-
-display(df_3)
-
-# COMMAND ----------
-
-display(df_2)
 
 # COMMAND ----------
 
 # Upload processed data to datalake
 # -------------------------------------------------------------------------
-# file_contents = io.StringIO()
-# df_processed.to_csv(file_contents)
-# datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
+file_contents = io.StringIO()
+df_processed.to_csv(file_contents)
+datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
 
 # COMMAND ----------
 
 # Write data from databricks to dev SQL database
 # -------------------------------------------------------------------------
-write_to_sql(df_processed, table_name, "overwrite")
+ write_to_sql(df_processed, table_name, "overwrite")
