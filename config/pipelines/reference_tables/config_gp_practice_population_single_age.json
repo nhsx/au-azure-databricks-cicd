@@ -1,0 +1,57 @@
+{
+	"metadata":  {
+		"products": [
+			{
+			"product_name": "Reference Data",
+			"topic": "Demographics",
+			"metrics": [
+				{
+            			"id": "R012",
+            			"full_name": "Reference table with the latest snapshot of the registered population of patients for each GP practice by single year of age",
+	 			"short_name":"gp_practice_population_single_age"
+        			}
+				]
+			}
+		]
+	},
+	"pipeline": {
+		"name": "gp_practice_population_single_age",
+    	"folder": "reference_tables/gp_practice_population_single_age/",
+		"ingestion": {
+		},
+		"raw": {
+				"source_dbo": "dbo",
+				"source_table": "vw_no_of_patients_regd_at_gp_practice_by_single_age_band",
+				"source_query": "SELECT * FROM vw_no_of_patients_regd_at_gp_practice_by_single_age_band;",	
+				"sink_path": "raw/ncdr_etp/adf_v2/table/gp_practice_population_single_age/snapshot/",
+				"sink_file": "table_gp_practice_population_single_age_snapshot.parquet"
+			},
+		"proc": {
+				"source_path":"raw/ncdr_etp/adf_v2/table/gp_practice_population_single_age/snapshot/",
+				"source_file": "table_gp_practice_population_single_age_snapshot.parquet",
+				"source_schema": [
+					{"name": "GP_Practice_Code", "type": "String"},
+					{"name": "AGE", "type": "int"},
+					{"name": "Size", "type": "int"},		
+					{"name": "Effective_Snapshot_Date", "type": "datetime"}
+				],
+				"sink_path": "proc/sources/ncdr_etp/adf_v2/table/gp_practice_population_single_age/snapshot/",
+				"sink_file": "table_gp_practice_population_single_age_snapshot.parquet"
+        },
+		"project": {
+				"source_path": "proc/sources/ncdr_etp/adf_v2/table/gp_practice_population_single_age/snapshot/",
+				"source_file": "table_gp_practice_population_single_age_snapshot.parquet",
+				"sink_path": "proc/projects/reference_tables/demographies/gp_practice_population_single_age/",
+				"sink_file": "table_gp_practice_population_single_age_snapshot.parquet"
+		},
+		"staging":[    
+    			{
+				"metric": "gp_practice_population_single_age",
+				"stored_procedure": "[dbo].[stored_proc_gp_practice_population_single_age_snapshot]",
+				"source_path": "proc/projects/reference_tables/demographies/gp_practice_population_single_age/",
+				"source_file": "table_gp_practice_population_single_age_snapshot.parquet",
+				"sink_table": "gp_practice_population_single_age_snapshot"
+				}
+			]
+	}
+}
