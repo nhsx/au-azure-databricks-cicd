@@ -102,15 +102,25 @@ df3 = df2.rename(columns = {'OdsCode': 'Practice code'})
 
 #Denominator porcessing
 # ---------------------------------------------------------------------------------------------------
+#Filter patients for 13+ and group by GP
+# ---------------------------------------------------------------------------------------------------
+df_ref.loc[df_ref['AGE'] == '95+','AGE']=95
+df_ref['AGE'] = df_ref['AGE'].astype('int')
+df_ref = df_ref[df_ref['AGE']>12]
+df_ref = df_ref.groupby('GP_Practice_Code').agg({'Size': 'sum', 'Effective_Snapshot_Date': 'max'}).reset_index()
+
 #Get all dates from the NHS app data
 # ---------------------------------------------------------------------------------------------------
 df_date = pd.DataFrame({'Date': df3['Date'].unique()})
 df_date['join_code'] = 'X3003'
+
 # Add dates to most recent GP population snapshot
 # ----------------------------------------------------------------------------------------------------
-df_ref_1 = df_ref.rename(columns = {'GP_Practice_Code': 'Practice code', 'Registered_patient': 'Number of GP registered patients', 'Effective_Snapshot_Date': 'Snapshot date for GP Population data'})
+df_ref_1 = df_ref.rename(columns = {'GP_Practice_Code': 'Practice code', 'Size': 'Number of GP registered patients', 'Effective_Snapshot_Date': 'Snapshot date for GP Population data'})
 df_ref_1['join_code'] = 'X3003'
 df_ref_2 = df_date.merge(df_ref_1, how = 'outer', on = 'join_code').drop(columns = ['join_code'])
+
+# COMMAND ----------
 
 #Joint data processing
 # ---------------------------------------------------------------------------------------------------
