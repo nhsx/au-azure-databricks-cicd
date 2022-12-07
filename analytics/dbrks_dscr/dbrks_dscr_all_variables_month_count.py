@@ -61,6 +61,14 @@ file_system_config = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CO
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
+# Load PIR config file
+# -------------------------------------------------------------------------
+pir_file_path_config = "/config/pipelines/nhsx-au-analytics/"
+pir_file_name_config = "config_digitalrecords_socialcare_dbrks.json"
+pir_config_JSON = datalake_download(CONNECTION_STRING, file_system_config, pir_file_path_config, pir_file_name_config)
+pir_config_JSON = json.loads(io.BytesIO(pir_config_JSON).read())
+
+
 # COMMAND ----------
 
 #Get parameters from JSON config
@@ -73,6 +81,11 @@ file_system =  dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINE
 sink_path = config_JSON['pipeline']['project']['databricks'][0]['sink_path']
 sink_file = config_JSON['pipeline']['project']['databricks'][0]['sink_file']
 table_name = config_JSON['pipeline']["staging"][0]['sink_table']
+
+#Get parameters from PIR JSON config
+# -------------------------------------------------------------------------
+pir_source_path = pir_config_JSON['pipeline']['project']['source_path']
+pir_source_file = pir_config_JSON['pipeline']['project']['source_file']
 
 # COMMAND ----------
 
@@ -93,19 +106,41 @@ latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, reference_p
 file = datalake_download(CONNECTION_STRING, file_system,reference_path+latestFolder, reference_file)
 df_ref = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 df_ref_1 = df_ref[['CCG_ONS_Code','CCG_ODS_Code','CCG_Name','ICB_ONS_Code','ICB_Code','ICB_Name','Region_Code','Region_Name','Last_Refreshed']]
-df_2 = df_ref_1[~df_ref_1.duplicated(['CCG_ONS_Code', 'CCG_ODS_Code','CCG_Name','ICB_ONS_Code','ICB_Code','ICB_Name','Region_Code','Region_Name','Last_Refreshed'])].reset_index(drop = True)
-
+df_ref_2 = df_ref_1[~df_ref_1.duplicated(['CCG_ONS_Code', 'CCG_ODS_Code','CCG_Name','ICB_ONS_Code','ICB_Code','ICB_Name','Region_Code','Region_Name','Last_Refreshed'])].reset_index(drop = True)
 
 
 # COMMAND ----------
 
 # Joint processing
 # -------------------------------------------------------------------------
-df_join = df_3.merge(df_2, how ='outer', on = 'CCG_ONS_Code')
+df_join = df_3.merge(df_ref_2, how ='outer', on = 'CCG_ONS_Code')
 df_join.index.name = "Unique ID"
 df_join = df_join.round(4)
-df_join["run_date"] = pd.to_datetime(df_join["run_date"])
+df_join["monthly_date"] = pd.to_datetime(df_join["monthly_date"])
 df_processed = df_join.copy()
+
+# COMMAND ----------
+
+# Get PIR data
+# -------------------------------------------------------------------------
+pir_latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, pir_source_path)
+file = datalake_download(CONNECTION_STRING, file_system, pir_source_path+pir_latestFolder, pir_source_file)
+df_pir = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
+
+
+# COMMAND ----------
+
+# Calculate matrics
+# ------------------------------------------------------------
+
+display(df_3.head()) # Data dowloaded from CQC website
+display(df_ref_2) # Reference data from NCDR
+display(df_join.head()) # Data dowloaded from CQC website joined with reference data
+display(df_pir.head()) # PIR data receive monthly
+
+# Calculated matric destination is df_processed
+# ------------------------------------------------------------
+
 
 # COMMAND ----------
 
