@@ -154,4 +154,4 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestF
 
 # Write data from databricks to dev SQL database
 # -------------------------------------------------------------------------
- write_to_sql(df_processed, table_name, "overwrite")
+write_to_sql(df_processed, table_name, "overwrite")
