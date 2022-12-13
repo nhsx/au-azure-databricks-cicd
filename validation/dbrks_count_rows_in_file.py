@@ -79,7 +79,6 @@ latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, new_source_
 file_name_list = datalake_listContents(CONNECTION_STRING, file_system, new_source_path+latestFolder)
 
 file_name_list = [file for file in file_name_list]
-print(file_name_list)
 for new_source_file in file_name_list:
   new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, new_source_file)
   new_dataframe = pd.read_csv(io.BytesIO(new_dataset)) 
