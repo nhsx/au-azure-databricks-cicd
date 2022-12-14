@@ -78,7 +78,7 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 # -------------------------------------------------------------------------
 file_system = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
 new_source_path = config_JSON["pipeline"]['raw']["snapshot_source_path"]
-new_source_file = "HSCA_Active_test.csv"
+new_source_file = "HSCA_Active_Locations .csv"
 
 # COMMAND ----------
 
