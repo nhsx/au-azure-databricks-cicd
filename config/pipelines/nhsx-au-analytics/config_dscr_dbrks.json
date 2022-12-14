@@ -52,6 +52,12 @@
 				"metric": "dscr_all_variables_month_count",
 				"sink_table": "dscr_all_variables_month_count"
 			}
+		],
+		"validation": [
+			{
+				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_dscr_validation/dbrks_dscr_hsca_file_validation",
+				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
+		}
 		]
 	}
 }
