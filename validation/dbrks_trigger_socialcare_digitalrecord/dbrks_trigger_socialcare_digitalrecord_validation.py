@@ -107,9 +107,6 @@ for column, type_ in types.items():
     expect = validation_df.expect_column_values_to_be_of_type(column=column, type_=type_)
     assert expect.success  
     
-# expect = validation_df.expect_column_values_to_be_unique(column="Location ID")    # Location ID column contains duplicate value
-# assert expect.success
-
 expect = validation_df.expect_column_values_to_not_be_null("Location ID") # Check that has no null or blank values
 assert expect.success
 
