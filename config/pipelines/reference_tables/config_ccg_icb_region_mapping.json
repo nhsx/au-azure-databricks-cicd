@@ -59,7 +59,15 @@
 				"source_file": "table_ccg_icb_region_mapping_snapshot.parquet",
 				"sink_table": "ccg_icb_region_mapping_snapshot"
 				}
+			],
+		"validation": [
+				{
+					"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_dscr_validation/",
+					"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
+			}
 			]
+
+		
 	}
 }
 
