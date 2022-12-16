@@ -22,7 +22,7 @@
 			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_dscr/dbrks_dscr_results_raw"
 		},
 		"raw": {
-			"snapshot_source_path": "land/digital_socialcare/manual_upload/timestamp/excel/dscr/",
+			"snapshot_source_path": "land/digital_socialcare/manual_upload/timestamp/csv/dscr/",
 			"appended_path": "raw/digital_socialcare/manual_upload/parquet/dscr_data/historical/",
 			"appended_file": "dscr_data_historical.parquet"
 		},
