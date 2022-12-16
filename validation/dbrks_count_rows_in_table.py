@@ -68,7 +68,6 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 # Read parameters from JSON config
 # -------------------------------------------------------------------------
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
-new_source_path = config_JSON['pipeline']['raw']['snapshot_source_path']
 staging = config_JSON['pipeline']["staging"]
 
 
