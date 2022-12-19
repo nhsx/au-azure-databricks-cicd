@@ -60,13 +60,9 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 
 # Test
 # -------------------------------------------------------------------------
-#file_path_config = "config/pipelines/nhsx-au-analytics"
-#file_name_config = "config_dscr_dbrks.json"
-#log_table = "dbo.pre_load_log"
-
-file_path_config = dbutils.widgets.get("adf_file_path")
-file_name_config = dbutils.widgets.get("adf_file_name")
-log_table = dbutils.widgets.get("adf_log_table")
+file_path_config = "config/pipelines/nhsx-au-analytics"
+file_name_config = "config_dscr_dbrks.json"
+log_table = "dbo.pre_load_log"
 
 file_system_config = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
