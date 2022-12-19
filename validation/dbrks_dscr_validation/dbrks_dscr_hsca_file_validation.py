@@ -96,7 +96,7 @@ validation_df = ge.from_pandas(val_df) # Create great expectations dataframe fro
 
 # Validate columns in file
 #-----------------------------------------
-expect = validation_df.expect_column_values_to_not_be_null("Location ODS Code") # Check that has no null or blank values
+expect = validation_df.expect_column_values_to_not_be_null("Location ID") # Check that has no null or blank values
 assert expect.success
 
 expect = validation_df.expect_column_values_to_be_in_set(column="Dormant (Y/N)", value_set=["Y", "N", "y", "n"]) # Check that Dormant (Y/N) column only has "Y", "N", "y", "n"
