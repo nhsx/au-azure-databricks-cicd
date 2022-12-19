@@ -117,7 +117,7 @@ df_join = df_3.merge(df_ref_2, how ='outer', on = 'CCG_ONS_Code')
 df_join.index.name = "Unique ID"
 df_join = df_join.round(4)
 df_join["monthly_date"] = pd.to_datetime(df_join["monthly_date"])
-df_processed = df_join.copy()
+#df_processed = df_join.copy()
 
 # COMMAND ----------
 
@@ -140,7 +140,28 @@ display(df_pir.head()) # PIR data receive monthly
 
 # Calculated matric destination is df_processed
 # ------------------------------------------------------------
+# "Use a Digital Social Care Record system?"
+# "PIR submission date"
+#display(df_pir.head()) 
 
+df_pir["months"] = pd.to_datetime(df_pir["PIR submission date"]).dt.month
+df_pir["year"] = pd.to_datetime(df_pir["PIR submission date"]).dt.year
+df_pir["month_year"] = df_pir["months"].astype(str) + "-" + df_pir["year"].astype(str)
+
+df_period = df_pir[["month_year", "Use a Digital Social Care Record system?"]]
+
+df_yes = df_period[df_period["Use a Digital Social Care Record system?"] == "Yes"]
+df_grp_yes = df_yes.groupby("month_year",  as_index=False).agg({"Use a Digital Social Care Record system?": "count"})
+df_yes_renamed = df_grp_yes.rename(columns = {"Use a Digital Social Care Record system?": "dscr_yes"})
+
+df_grp_all = df_period.groupby("month_year",  as_index=False).agg({"Use a Digital Social Care Record system?": "count"})
+df_grp_all_renamed = df_grp_all.rename(columns = {"Use a Digital Social Care Record system?": "dscr_yes_no"})
+
+df_metric_1 = df_grp_all_renamed.merge(df_yes_renamed, how="inner", on="month_year")
+
+df_metric_1["metric"] = (df_metric_1["dscr_yes"] / df_metric_1["dscr_yes_no"]).round(2) 
+
+display(df_metric_1)
 
 # COMMAND ----------
 
@@ -154,4 +175,4 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestF
 
 # Write data from databricks to dev SQL database
 # -------------------------------------------------------------------------
-write_to_sql(df_processed, table_name, "overwrite")
+#write_to_sql(df_processed, table_name, "overwrite")
