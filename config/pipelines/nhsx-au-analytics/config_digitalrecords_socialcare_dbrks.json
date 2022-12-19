@@ -43,9 +43,9 @@
 					"metric":"socialcare_digitalrecord_month_count_prop",
 					"sink_table":"socialcare_digitalrecord_month_count_prop"
 		},
-        "validation": [
+		"validation": [
 			{
-				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_dscr_validation/dbrks_dscr_hsca_file_validation",
+				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_trigger_socialcare_digitalrecord/dbrks_trigger_socialcare_digitalrecord_validation",
 				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
 		}
 		]
