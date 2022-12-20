@@ -59,6 +59,14 @@ file_path_config = dbutils.widgets.get("adf_file_path")
 file_name_config = dbutils.widgets.get("adf_file_name")
 log_table = dbutils.widgets.get("adf_log_table")
 
+print('------------ Configuration -------------------')
+
+print(file_path_config)
+print(file_name_config)
+print(log_table)
+
+print('-----------------------------------------------')
+
 file_system_config = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
@@ -82,10 +90,16 @@ staging_tbl = ''
 for entry in staging:
   for key in entry:
     if key == 'sink_table':
+      print('----------- Table to count --------------')
+      print(entry[key])
+      print('------------------------------------------')
       staging_tbl = entry[key]
       spark_df = read_sql_server_table(staging_tbl)
       row_count = spark_df.count()
       in_row = {'load_date':[date], 'tbl_name':[staging_tbl], 'aggregation':'Count', 'aggregate_value':[row_count]}
+      print('----------- Record to write in table --------------')
+      print(in_row)
+      print('----------------------------------------------------')
       df = pd.DataFrame(in_row)
       write_to_sql(df, log_table, "append")
         
