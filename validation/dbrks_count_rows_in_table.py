@@ -78,6 +78,10 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 staging = config_JSON['pipeline']["staging"]
 
+print('----------------- Tables from config ---------------')
+print(staging)
+print('-----------------------------------------------------')
+
 
 # COMMAND ----------
 
