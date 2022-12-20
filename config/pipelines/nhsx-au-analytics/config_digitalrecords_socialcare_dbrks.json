@@ -39,10 +39,12 @@
 			"sink_file": "socialcare_digitalrecord_month_count_prop.csv",
 			"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_socialcare_digitalrecord/dbrks_socialcare_digitalrecord_month_count_prop"
 		},
-		"staging": {
+		"staging": [
+			{
 					"metric":"socialcare_digitalrecord_month_count_prop",
 					"sink_table":"socialcare_digitalrecord_month_count_prop"
-		},
+		    }
+	    ],
 		"validation": [
 			{
 				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_trigger_socialcare_digitalrecord/dbrks_trigger_socialcare_digitalrecord_validation",
