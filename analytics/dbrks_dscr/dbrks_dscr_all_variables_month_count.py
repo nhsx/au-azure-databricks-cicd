@@ -13,10 +13,10 @@ DESCRIPTION:
                 Databricks notebook with processing code for the CQC digital social care records : Monthly digital social care records mapping to icb_region
 USAGE:
                 ...
-CONTRIBUTORS:   Everistus Oputa
+CONTRIBUTORS:   Everistus Oputa, Martina Fonseca
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        30 Nov. 2022
-VERSION:        0.0.1
+CREATED:        21 Dec. 2022
+VERSION:        0.0.2
 """
 
 # COMMAND ----------
@@ -111,13 +111,23 @@ df_ref_2 = df_ref_1[~df_ref_1.duplicated(['CCG_ONS_Code', 'CCG_ODS_Code','CCG_Na
 
 # COMMAND ----------
 
+df_3.head()
+df_3.groupby(["Location_Id","monthly_date"],  as_index=False).agg({"Provider_ID": "count"})
+
+# COMMAND ----------
+
 # Joint processing
 # -------------------------------------------------------------------------
 df_join = df_3.merge(df_ref_2, how ='outer', on = 'CCG_ONS_Code')
 df_join.index.name = "Unique ID"
 df_join = df_join.round(4)
 df_join["monthly_date"] = pd.to_datetime(df_join["monthly_date"])
+df_join=df_join[df_join["monthly_date"]==max(df_join["monthly_date"])].reset_index() # MF: keep only latest months' CQC?
 #df_processed = df_join.copy()
+
+# COMMAND ----------
+
+df_join.shape
 
 # COMMAND ----------
 
@@ -130,7 +140,20 @@ df_pir = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 # COMMAND ----------
 
-# Calculate matrics
+# MAGIC %md
+# MAGIC Some checks of how the dataframes look like 
+
+# COMMAND ----------
+
+# Check on size
+print(df_3.info) # Data dowloaded from CQC website
+print(df_ref_2.info) # Reference data from NCDR
+print(df_join.info) # Data dowloaded from CQC website joined with reference data
+print(df_pir.info)
+
+# COMMAND ----------
+
+# Display
 # ------------------------------------------------------------
 
 display(df_3.head()) # Data dowloaded from CQC website
@@ -138,7 +161,123 @@ display(df_ref_2) # Reference data from NCDR
 display(df_join.head()) # Data dowloaded from CQC website joined with reference data
 display(df_pir.head()) # PIR data receive monthly
 
-# Calculated matric destination is df_processed
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC 
+# MAGIC ### Tab01-granular
+# MAGIC Calculation of metric Table1 - "monthly sampler", i.e. focusses on PIR responses (Tab01)
+# MAGIC - Does not track full Universe of locations* (given by df_join), but does bring in some useful fields from df_join (e.g. ICB, provider ID, if need be)
+# MAGIC - Does intend to keep individual responses (e.g. sometimes same location has two PIR submissions in a same month given different PIR type or re-submission)
+# MAGIC 
+# MAGIC * this is intended for Table2 - "patch" . i.e. it should have at least a row per CQC ASC provider and then where available add in PIR info. This can help track completion
+
+# COMMAND ----------
+
+df_join_keep = df_join[df_join["Last_Refreshed"]==max(df_join["Last_Refreshed"])]
+
+df_pir["months"] = pd.to_datetime(df_pir["PIR submission date"]).dt.month
+df_pir["year"] = pd.to_datetime(df_pir["PIR submission date"]).dt.year
+df_pir["month_year"] = df_pir["months"].astype(str) + "-" + df_pir["year"].astype(str)
+
+# columns needed from PIR (For Tab01)
+df_pir_keep = df_pir[["Location ID","PIR submission date","month_year","PIR type","Use a Digital Social Care Record system?"]] 
+df_pir_keep.rename(columns={"Location ID":"Location_Id"},inplace=True)
+
+# what to keep from enriched reference data (For Tab01) (that is useful for Tableau).
+df_join_keep = df_join[df_join["Last_Refreshed"]==max(df_join["Last_Refreshed"])][["Location_Id",
+                        "Location_Primary_Inspection_Category",
+                        "Location_Local_Authority",
+                        "CCG_ONS_Code","Location_ONSPD_CCG_Name",
+                        "ICB_ONS_Code","ICB_Name",
+                        "Region_Code","Region_Name",
+                        "Provider_ID"]].copy()   
+
+# Left join reference info to PIR (as it's a sampler)
+
+df_tab01_sampler = df_pir_keep.merge(df_join_keep, how ='left', on ="Location_Id")
+
+#df_tab01_sampler.head()
+#df_tab01_sampler.info
+
+# COMMAND ----------
+
+## Add some auxiliaries to indicate more than one submission in a month. Bear also in mind that some (a minority) may be submitting more than once yearly
+# https://stackoverflow.com/questions/59486029/python-how-to-groupby-and-count-without-aggregating-the-dataframe
+aux_group =df_tab01_sampler.groupby(['Location_Id','month_year'],as_index=False)
+
+df_tab01_sampler['PIRm_n']=aux_group['Use a Digital Social Care Record system?'].transform('count')  # this indicates for the given month-year and same location how many responses
+df_tab01_sampler
+
+# COMMAND ----------
+
+aux_PIRm_anyYES= aux_group['Use a Digital Social Care Record system?'].apply(lambda x: (x=="Yes").sum()).rename(columns={"Use a Digital Social Care Record system?":"PIRm_anyYES"})#['Use a Digital Social Care Record system?']
+
+aux_PIRm_anyYES["PIRm_anyYES"] = aux_PIRm_anyYES["PIRm_anyYES"]>0 # this indicates for the given month-year and same location if any response was "Yes" and attributes that location-month a TRUE if so.
+
+df_tab01_sampler = df_tab01_sampler.merge(aux_PIRm_anyYES, how ='left', on =["Location_Id","month_year"])  # join the PIRm_anyYES var to the main
+
+# COMMAND ----------
+
+aux=df_tab01_sampler.sort_values(by=['PIRm_n','Location_Id']) # sense check . #1-6805237133 as example as duplicate with mix in-month
+aux.iloc[-20:,];
+
+# COMMAND ----------
+
+#df_pir_keep.info
+df_tab01_sampler.info
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### Tab01-Agg01
+# MAGIC Some level of aggregation of Tab01 if need be (NOTE: this considers same-location submissions for a same PIR-month as valid to be counted as separate for the metric)
+# MAGIC Information of what is duplicate will get lost here since we collapse the location id dimension. We assume this is desired/acceptable in order to track submissions and have more granularity by PIR type.
+
+# COMMAND ----------
+
+#df_tab01_sampler_agg = df_tab01_sampler.groupby(["month_year",
+#                                                 "Location_Primary_Inspection_Category",
+#                                                 "Location_Local_Authority",
+#                                                 "CCG_ONS_Code","Location_ONSPD_CCG_Name",
+#                                                 "ICB_ONS_Code","ICB_Name",
+#                                                 "Region_Code","Region_Name"])["Use a Digital Social Care Record system?"].agg({'PIR_YES': lambda x: (x=="Yes").sum(),
+#                                                                                                                                'PIR_NO': lambda x: (x=="No").sum()})
+
+df_tab01_sampler_agg = df_tab01_sampler.groupby(["month_year",
+                                                 "PIR type",
+                                                 "Location_Primary_Inspection_Category",
+                                                 "Location_Local_Authority",
+                                                 "CCG_ONS_Code","Location_ONSPD_CCG_Name",
+                                                 "ICB_ONS_Code","ICB_Name",
+                                                 "Region_Code","Region_Name"]).agg(PIR_YES=("Use a Digital Social Care Record system?", lambda x: (x=="Yes").sum()),
+                                                                                   PIR_NO=("Use a Digital Social Care Record system?", lambda x: (x=="No").sum()),
+                                                                                   PIR_n=("Use a Digital Social Care Record system?", "count")) # done dif from yes and no but should add up. Change to Yes+No if better
+
+df_tab01_sampler_agg = df_tab01_sampler_agg.reset_index()
+
+df_tab01_sampler_agg['PIR_perc']=df_tab01_sampler_agg['PIR_YES']/(df_tab01_sampler_agg['PIR_YES']+df_tab01_sampler_agg['PIR_NO'])
+
+df_tab01_sampler_agg.head()
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC 
+# MAGIC ### Tab02 - "patch" - TBA
+# MAGIC 
+# MAGIC Of the sort : df_join.merge(df_pir,how="left",on="location_id")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC 
+# MAGIC ### Tab00 - initial iteration of the metric
+
+# COMMAND ----------
+
+# Calculated matric destination is df_processed (previous ver)
 # ------------------------------------------------------------
 # "Use a Digital Social Care Record system?"
 # "PIR submission date"
