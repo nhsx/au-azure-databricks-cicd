@@ -111,7 +111,6 @@ df_ref_2 = df_ref_1[~df_ref_1.duplicated(['CCG_ONS_Code', 'CCG_ODS_Code','CCG_Na
 
 # COMMAND ----------
 
-df_3.head()
 df_3.groupby(["Location_Id","monthly_date"],  as_index=False).agg({"Provider_ID": "count"})
 
 # COMMAND ----------
@@ -127,39 +126,11 @@ df_join=df_join[df_join["monthly_date"]==max(df_join["monthly_date"])].reset_ind
 
 # COMMAND ----------
 
-df_join.shape
-
-# COMMAND ----------
-
 # Get PIR data
 # -------------------------------------------------------------------------
 pir_latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, pir_source_path)
 file = datalake_download(CONNECTION_STRING, file_system, pir_source_path+pir_latestFolder, pir_source_file)
 df_pir = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
-
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC Some checks of how the dataframes look like 
-
-# COMMAND ----------
-
-# Check on size
-print(df_3.info) # Data dowloaded from CQC website
-print(df_ref_2.info) # Reference data from NCDR
-print(df_join.info) # Data dowloaded from CQC website joined with reference data
-print(df_pir.info)
-
-# COMMAND ----------
-
-# Display
-# ------------------------------------------------------------
-
-display(df_3.head()) # Data dowloaded from CQC website
-display(df_ref_2) # Reference data from NCDR
-display(df_join.head()) # Data dowloaded from CQC website joined with reference data
-display(df_pir.head()) # PIR data receive monthly
 
 
 # COMMAND ----------
@@ -198,7 +169,6 @@ df_join_keep = df_join[df_join["Last_Refreshed"]==max(df_join["Last_Refreshed"])
 
 df_tab01_sampler = df_pir_keep.merge(df_join_keep, how ='left', on ="Location_Id")
 
-#df_tab01_sampler.head()
 #df_tab01_sampler.info
 
 # COMMAND ----------
@@ -208,7 +178,6 @@ df_tab01_sampler = df_pir_keep.merge(df_join_keep, how ='left', on ="Location_Id
 aux_group =df_tab01_sampler.groupby(['Location_Id','month_year'],as_index=False)
 
 df_tab01_sampler['PIRm_n']=aux_group['Use a Digital Social Care Record system?'].transform('count')  # this indicates for the given month-year and same location how many responses
-df_tab01_sampler
 
 # COMMAND ----------
 
@@ -253,13 +222,12 @@ df_tab01_sampler_agg = df_tab01_sampler.groupby(["month_year",
                                                  "ICB_ONS_Code","ICB_Name",
                                                  "Region_Code","Region_Name"]).agg(PIR_YES=("Use a Digital Social Care Record system?", lambda x: (x=="Yes").sum()),
                                                                                    PIR_NO=("Use a Digital Social Care Record system?", lambda x: (x=="No").sum()),
-                                                                                   PIR_n=("Use a Digital Social Care Record system?", "count")) # done dif from yes and no but should add up. Change to Yes+No if better
+                                                                                   PIR_COUNT=("Use a Digital Social Care Record system?", "count")) # done dif from yes and no but should add up. Change to Yes+No if better
 
 df_tab01_sampler_agg = df_tab01_sampler_agg.reset_index()
 
-df_tab01_sampler_agg['PIR_perc']=df_tab01_sampler_agg['PIR_YES']/(df_tab01_sampler_agg['PIR_YES']+df_tab01_sampler_agg['PIR_NO'])
-
-df_tab01_sampler_agg.head()
+df_tab01_sampler_agg['PIR_PERCENTAGE']=df_tab01_sampler_agg['PIR_YES']/(df_tab01_sampler_agg['PIR_YES']+df_tab01_sampler_agg['PIR_NO'])
+display(df_tab01_sampler_agg)
 
 # COMMAND ----------
 
@@ -307,11 +275,11 @@ display(df_metric_1)
 # Upload processed data to datalake
 # -------------------------------------------------------------------------
 file_contents = io.StringIO()
-df_processed.to_csv(file_contents)
+df_tab01_sampler_agg.to_csv(file_contents)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
 
 # COMMAND ----------
 
-# Write data from databricks to dev SQL database
+# Write metrics to database
 # -------------------------------------------------------------------------
-#write_to_sql(df_processed, table_name, "overwrite")
+#write_to_sql(df_tab01_sampler_agg, table_name, "overwrite")
