@@ -282,4 +282,4 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestF
 
 # Write metrics to database
 # -------------------------------------------------------------------------
-#write_to_sql(df_tab01_sampler_agg, table_name, "overwrite")
+write_to_sql(df_tab01_sampler_agg, table_name, "overwrite")
