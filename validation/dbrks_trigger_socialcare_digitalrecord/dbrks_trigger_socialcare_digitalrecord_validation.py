@@ -13,10 +13,10 @@ DESCRIPTION:
                 To reduce manual checks and improve quality validations need to added to trigger_socialcare_digitalrecord pipeline for digital social care
 USAGE:
                 ...
-CONTRIBUTORS:   Abdu Nuhu, Kabir Khan
+CONTRIBUTORS:   Abdu Nuhu, Kabir Khan, Faaiz Shanawas
 CONTACT:        nhsx.data@england.nhs.uk
 CREATED:        14 Dec. 2022
-VERSION:        0.0.1
+VERSION:        0.0.3
 """
 
 # COMMAND ----------
@@ -97,27 +97,58 @@ validation_df = df1.drop_duplicates(subset = ['Location ID', 'Use a Digital Soci
 
 # COMMAND ----------
 
-# Validate columns in file
-#-----------------------------------------
-   
+# MAGIC %md
+# MAGIC ## Tests Begin
+
+# COMMAND ----------
+
+#Test that location bed capacity data type are all int
+
 types = {
     "Location bed capacity": "int"
 }
+info = "Checking that 'Location bed capacity' column data are all int\n"
 for column, type_ in types.items():
     expect = validation_df.expect_column_values_to_be_of_type(column=column, type_=type_)
-    assert expect.success  
-    
+    assert expect.success
+    test_result(expect, info)
+
+# COMMAND ----------
+
+#Test that the location ID column contains no nulls
+
+info = 'Checking that Location ID has no Nulls\n'
 expect = validation_df.expect_column_values_to_not_be_null("Location ID") # Check that has no null or blank values
+test_result(expect, info)
 assert expect.success
 
+
+# COMMAND ----------
+
+#Check for only Yes or No values in the digital social care record system column
+
+info = 'Checking that Use a Digital Social Care Record system? only has YES and NO\n'
 expect = validation_df.expect_column_values_to_be_in_set(column="Use a Digital Social Care Record system?", value_set=["Yes", "No", "yes", "no"]) # Check that Dormant (Y/N) column only has "Y", "N", "y", "n"
+test_result(expect, info)
 assert expect.success
 
+
+# COMMAND ----------
+
+#Check that the PIR type only contains the correct specified values in the value set
+
+info = 'Checking that PIR type only has Residential, Community, Shared Lives\n'
 expect = validation_df.expect_column_values_to_be_in_set(
     column="PIR type",
     value_set=["Residential", "Community", "Shared Lives"],
 )
+test_result(expect, info)
 assert expect.success
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Tests End
 
 # COMMAND ----------
 
