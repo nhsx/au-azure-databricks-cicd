@@ -13,10 +13,10 @@ DESCRIPTION:
                 Helper functons needed for the databricks processing step of ETL pipelines
 USAGE:
                 ...
-CONTRIBUTORS:   Craig Shenton, Mattia Ficarelli
+CONTRIBUTORS:   Craig Shenton, Mattia Ficarelli, Kabir Khan, Faaiz Shanawas
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        01 Sept 2021
-VERSION:        0.0.1
+CREATED:        11 Jan 2023
+VERSION:        0.0.2
 """
 
 
@@ -202,3 +202,21 @@ def contains_digits(input_string):
   return flag #returns a true value if the status has got digits and false otherwise
 
 
+
+# COMMAND ----------
+
+# Validation Helper Function
+#-----------------------------------------
+def test_result(great_expectation_result, test_info):
+    test_outcome = 'DID NOT RUN SUCCESSFULLY'
+    expectation_result = str(great_expectation_result)
+    test_result = json.loads(expectation_result)
+    result = test_result['SUCCESS']
+    if result == True:
+      test_outcome = 'PASS'
+    elif result == False:
+      test_outcome = 'FAILED'
+        
+    print('#############################################################################')
+    print(test_info + ' Result: ' + test_outcome)
+    print('##############################-----END-----##################################')
