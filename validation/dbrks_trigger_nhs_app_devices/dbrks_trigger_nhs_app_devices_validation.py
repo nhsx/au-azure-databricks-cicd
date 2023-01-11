@@ -8,14 +8,14 @@
 # -------------------------------------------------------------------------
 
 """
-FILE:           dbrks_trigger_socialcare_digitalrecord_validation.py
+FILE:           dbrks_trigger_nhs_app_devices_validation.py
 DESCRIPTION:
-                To reduce manual checks and improve quality validations need to added to trigger_socialcare_digitalrecord pipeline for digital social care
+                To reduce manual checks and improve quality validations need to added to dbrks_trigger_nhs_app_devices_validation pipeline for digital social care
 USAGE:
                 ...
 CONTRIBUTORS:   Abdu Nuhu, Kabir Khan, Faaiz Shanawas
 CONTACT:        nhsx.data@england.nhs.uk
-CREATED:        11 Jan. 2023
+CREATED:        11 Jan 2023
 VERSION:        0.0.3
 """
 
@@ -59,7 +59,7 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 # -------------------------------------------------------------------------
 
 file_path_config = "config/pipelines/nhsx-au-analytics"
-file_name_config = "config_digitalrecords_socialcare_dbrks.json"
+file_name_config = "config_nhs_app_device_dbrks.json"
 log_table = "dbo.pre_load_log"
 
 file_system_config = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
@@ -75,14 +75,15 @@ new_source_path = config_JSON["pipeline"]['raw']["snapshot_source_path"]
 
 # COMMAND ----------
 
-# Get latest folder and read file
-# ----------------------------------
+# Pull new snapshot dataset
+# -------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, new_source_path)
 file_name_list = datalake_listContents(CONNECTION_STRING, file_system, new_source_path+latestFolder)
-file_name_list = [file for file in file_name_list if '.xlsx' in file]
+file_name_list = [file for file in file_name_list if 'WeeklyDownloads' in file]
 for new_source_file in file_name_list:
   new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, new_source_file)
-  new_dataframe = pd.read_excel(io.BytesIO(new_dataset), sheet_name='PIR responses', engine  = 'openpyxl')
+  new_dataframe = pd.read_csv(io.BytesIO(new_dataset))
+  new_dataframe['Date'] = pd.to_datetime(new_dataframe['Date']).dt.strftime("%Y-%m-%d")
 
 # COMMAND ----------
 
@@ -92,8 +93,9 @@ for new_source_file in file_name_list:
 val_df = new_dataframe.mask(new_dataframe == " ") # convert all blanks to NaN for validtion
 df1 = ge.from_pandas(val_df) # Create great expectations dataframe from pandas datafarme
 
-# drop rows which have same 'Location ID' and 'Use a Digital Social Care Record system?' and keep latest entry
-validation_df = df1.drop_duplicates(subset = ['Location ID', 'Use a Digital Social Care Record system?'],keep = 'last').reset_index(drop = True)
+# COMMAND ----------
+
+df1
 
 # COMMAND ----------
 
@@ -105,45 +107,23 @@ validation_df = df1.drop_duplicates(subset = ['Location ID', 'Use a Digital Soci
 #Test that location bed capacity data type are all int
 
 types = {
-    "Location bed capacity": "int"
+    "Count": "int"
 }
-info = "Checking that 'Location bed capacity' column data are all int\n"
+info = "Checking that 'Count' column data are all int\n"
 for column, type_ in types.items():
-    expect = validation_df.expect_column_values_to_be_of_type(column=column, type_=type_)
+    expect = df1.expect_column_values_to_be_of_type(column=column, type_=type_)
     assert expect.success
     test_result(expect, info)
 
 # COMMAND ----------
 
-#Test that the location ID column contains no nulls
+#Test that the Type column only contains Apple or Google
 
-info = 'Checking that Location ID has no Nulls\n'
-expect = validation_df.expect_column_values_to_not_be_null("Location ID") # Check that has no null or blank values
+info = 'Checking that the Type column only contains Google or Apple\n'
+expect = df1.expect_column_values_to_be_in_set(column="Type", value_set=["Google", "Apple"]) # Check the values in the columns are either Apple or Google only
 test_result(expect, info)
 assert expect.success
 
-
-# COMMAND ----------
-
-#Check for only Yes or No values in the digital social care record system column
-
-info = 'Checking that Use a Digital Social Care Record system? only has YES and NO\n'
-expect = validation_df.expect_column_values_to_be_in_set(column="Use a Digital Social Care Record system?", value_set=["Yes", "No", "yes", "no"]) # Check that Dormant (Y/N) column only has "Y", "N", "y", "n"
-test_result(expect, info)
-assert expect.success
-
-
-# COMMAND ----------
-
-#Check that the PIR type only contains the correct specified values in the value set
-
-info = 'Checking that PIR type only has Residential, Community, Shared Lives\n'
-expect = validation_df.expect_column_values_to_be_in_set(
-    column="PIR type",
-    value_set=["Residential", "Community", "Shared Lives"],
-)
-test_result(expect, info)
-assert expect.success
 
 # COMMAND ----------
 
@@ -161,3 +141,7 @@ date = datetime.strptime(today, '%Y-%m-%d %H:%M:%S')
 in_row = {'row_count':[row_count], 'load_date':[date], 'file_to_load':[full_path]}
 df = pd.DataFrame(in_row)  
 write_to_sql(df, log_table, "append")
+
+# COMMAND ----------
+
+
