@@ -22,7 +22,7 @@ VERSION:        0.0.3
 # COMMAND ----------
 
 # Install libs
-# ------------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------------
 %pip install pandas pathlib azure-storage-file-datalake numpy pyarrow==5.0.* great_expectations openpyxl 
 
 # COMMAND ----------
