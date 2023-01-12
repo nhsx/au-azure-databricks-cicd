@@ -54,6 +54,7 @@
 				"sink_table":"nhs_app_downloads_week_count"
 			}
 		],
+      
         "validation": [
 			{
 				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_trigger_nhs_app_devices/dbrks_trigger_nhs_app_devices_validation",
