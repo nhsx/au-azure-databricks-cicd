@@ -19,7 +19,6 @@ CREATED:        11 Jan 2023
 VERSION:        0.0.2
 """
 
-
 # COMMAND ----------
 
 # Helper functions
@@ -201,8 +200,6 @@ def contains_digits(input_string):
       flag = True
   return flag #returns a true value if the status has got digits and false otherwise
 
-
-
 # COMMAND ----------
 
 # Validation Helper Function
@@ -211,7 +208,7 @@ def test_result(great_expectation_result, test_info):
     test_outcome = 'DID NOT RUN SUCCESSFULLY'
     expectation_result = str(great_expectation_result)
     test_result = json.loads(expectation_result)
-    result = test_result['SUCCESS']
+    result = test_result['success']
     if result == True:
       test_outcome = 'PASS'
     elif result == False:

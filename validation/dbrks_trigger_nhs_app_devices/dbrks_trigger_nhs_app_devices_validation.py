@@ -48,7 +48,6 @@ import great_expectations as ge
 # !env from databricks secrets
 CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONNECTION_STRING")
 
-
 # COMMAND ----------
 
 # MAGIC %run /Shared/databricks/au-azure-databricks-cicd/functions/dbrks_helper_functions
@@ -95,10 +94,6 @@ df1 = ge.from_pandas(val_df) # Create great expectations dataframe from pandas d
 
 # COMMAND ----------
 
-df1
-
-# COMMAND ----------
-
 # MAGIC %md
 # MAGIC ## Tests Begin
 
@@ -141,7 +136,3 @@ date = datetime.strptime(today, '%Y-%m-%d %H:%M:%S')
 in_row = {'row_count':[row_count], 'load_date':[date], 'file_to_load':[full_path]}
 df = pd.DataFrame(in_row)  
 write_to_sql(df, log_table, "append")
-
-# COMMAND ----------
-
-
