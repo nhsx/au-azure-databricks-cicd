@@ -99,7 +99,25 @@ df1 = ge.from_pandas(val_df) # Create great expectations dataframe from pandas d
 
 # COMMAND ----------
 
-#Test that location bed capacity data type are all int
+#Test that the Date column do not contain any null values
+
+info = "Checking that the Date column do not contain any null values\n"
+expect = df1.expect_column_values_to_not_be_null(column='Date')
+assert expect.success
+test_result(expect, info)
+
+# COMMAND ----------
+
+#Test that there are 7 records for the weekly data
+
+info = 'Checking there are 7 records for the weekly data\n'
+expect = df1.expect_table_row_count_to_equal(7)
+assert expect.success
+test_result(expect, info)
+
+# COMMAND ----------
+
+#Test that the count only contains ints
 
 types = {
     "Count": "int"
