@@ -231,6 +231,20 @@ display(df_tab01_sampler_agg)
 
 # COMMAND ----------
 
+# QA - chec that sums add up
+df_tab01_sampler_agg["CheckDQ"]=df_tab01_sampler_agg["PIR_YES"]+df_tab01_sampler_agg["PIR_NO"]-df_tab01_sampler_agg["PIR_COUNT"]
+df_tab01_sampler_agg[df_tab01_sampler_agg["CheckDQ"]>0] # check where there's discrepancies
+
+# COMMAND ----------
+
+df_tab01_sampler_agg.groupby("CheckDQ").agg("count") # all instances have CheckDQ=0
+
+# COMMAND ----------
+
+df_tab01_sampler_agg.agg("sum") # Check that sum(PIR_YES)+sum(PIR_NO) same as sum(PIR_COUNT)
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC 
 # MAGIC ### Tab02 - "patch" - TBA

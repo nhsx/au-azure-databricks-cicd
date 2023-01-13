@@ -78,9 +78,9 @@ source_file = config_JSON['pipeline']['project']['source_file']
 reference_path = config_JSON['pipeline']['project']['reference_source_path']
 reference_file = config_JSON['pipeline']['project']['reference_source_file']
 file_system =  dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
-sink_path = config_JSON['pipeline']['project']['databricks'][0]['sink_path']
-sink_file = config_JSON['pipeline']['project']['databricks'][0]['sink_file']
-table_name = config_JSON['pipeline']["staging"][0]['sink_table']
+sink_path = config_JSON['pipeline']['project']['databricks'][1]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][1]['sink_file']
+table_name = config_JSON['pipeline']["staging"][1]['sink_table']
 
 #Get parameters from PIR JSON config
 # -------------------------------------------------------------------------
@@ -112,6 +112,7 @@ df_ref_2 = df_ref_1[~df_ref_1.duplicated(['CCG_ONS_Code', 'CCG_ODS_Code','CCG_Na
 # COMMAND ----------
 
 df_3.groupby(["Location_Id","monthly_date"],  as_index=False).agg({"Provider_ID": "count"})
+df_3
 
 # COMMAND ----------
 
@@ -176,7 +177,7 @@ df_join_keep = df_join[df_join["Last_Refreshed"]==max(df_join["Last_Refreshed"])
                         "Region_Code","Region_Name",
                         "Provider_ID"]].copy()   
 
-
+df_join_keep
 
 # COMMAND ----------
 
@@ -202,6 +203,7 @@ df_pir_keep.sort_values(['PIR type','Use a Digital Social Care Record system?'])
 
 df_pir_keep_unit2 = df_pir_keep_unit.sort_values('Use a Digital Social Care Record system?').groupby(["Location_Id"]).tail(1)
 
+
 # COMMAND ----------
 
 df_pir_keep_unit2
@@ -224,18 +226,14 @@ df_tab02_patch
 
 # COMMAND ----------
 
-## MPBF : NOT RUN
-
 # Upload processed data to datalake
 # -------------------------------------------------------------------------
 file_contents = io.StringIO()
-df_tab01_sampler_agg.to_csv(file_contents)
+df_tab02_patch.to_csv(file_contents)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
 
 # COMMAND ----------
 
-## MPBF : NOT RUN
-
 # Write metrics to database
 # -------------------------------------------------------------------------
-write_to_sql(df_tab01_sampler_agg, table_name, "overwrite")
+write_to_sql(df_tab02_patch, table_name, "overwrite")
