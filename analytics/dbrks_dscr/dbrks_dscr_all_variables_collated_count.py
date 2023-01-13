@@ -8,15 +8,15 @@
 # -------------------------------------------------------------------------
 
 """
-FILE:           dbrks_dscr_all_variables_month_count.py
+FILE:           dbrks_dscr_all_variables_collated_count.py
 DESCRIPTION:
-                Databricks notebook with processing code for the CQC digital social care records : Monthly digital social care records mapping to icb_region
+                Databricks notebook with processing code for the CQC digital social care records metric M324-M326 : Collated CQC database with info on a) digital social care records mapping and b) icb_region.
 USAGE:
                 ...
 CONTRIBUTORS:   Everistus Oputa, Martina Fonseca
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        21 Dec. 2022
-VERSION:        0.0.2
+CREATED:        11 Jan. 2022
+VERSION:        0.0.1
 """
 
 # COMMAND ----------
@@ -78,9 +78,9 @@ source_file = config_JSON['pipeline']['project']['source_file']
 reference_path = config_JSON['pipeline']['project']['reference_source_path']
 reference_file = config_JSON['pipeline']['project']['reference_source_file']
 file_system =  dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
-sink_path = config_JSON['pipeline']['project']['databricks'][0]['sink_path']
-sink_file = config_JSON['pipeline']['project']['databricks'][0]['sink_file']
-table_name = config_JSON['pipeline']["staging"][0]['sink_table']
+sink_path = config_JSON['pipeline']['project']['databricks'][1]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][1]['sink_file']
+table_name = config_JSON['pipeline']["staging"][1]['sink_table']
 
 #Get parameters from PIR JSON config
 # -------------------------------------------------------------------------
@@ -94,8 +94,8 @@ pir_source_file = pir_config_JSON['pipeline']['project']['source_file']
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
-df_1 = df[['Location ID', 'Dormant (Y/N)','Care home?','Location Inspection Directorate','Location Primary Inspection Category','Location Local Authority','Location ONSPD CCG Code','Location ONSPD CCG','Provider ID','Provider Inspection Directorate','Provider Primary Inspection Category','Provider Postal Code', 'run_date']]
-#df_1['run_date'] = datetime.now().strftime('%d-%m-%Y')
+df_1 = df[['Location ID', 'Dormant (Y/N)','Care home?','Location Inspection Directorate','Location Primary Inspection Category','Location Local Authority','Location ONSPD CCG Code','Location ONSPD CCG','Provider ID','Provider Inspection Directorate','Provider Primary Inspection Category','Provider Postal Code','run_date']]
+
 df_2 = df_1.drop_duplicates()
 df_3 = df_2.rename(columns = {'Location ID':'Location_Id','Dormant (Y/N)':'Is_Domant','Care home?':'Is_Care_Home','Location Inspection Directorate':'Location_Inspection_Directorate','Location Primary Inspection Category':'Location_Primary_Inspection_Category','Location Local Authority':'Location_Local_Authority','Location ONSPD CCG Code':'CCG_ONS_Code','Location ONSPD CCG':'Location_ONSPD_CCG_Name','Provider ID':'Provider_ID','Provider Inspection Directorate':'Provider_Inspection_Directorate','Provider Primary Inspection Category':'Provider_Primary_Inspection_Category','Provider Postal Code':'Provider_Postal_Code','run_date':'monthly_date'})
 
@@ -113,7 +113,6 @@ df_ref_2 = df_ref_1[~df_ref_1.duplicated(['CCG_ONS_Code', 'CCG_ODS_Code','CCG_Na
 
 df_3.groupby(["Location_Id","monthly_date"],  as_index=False).agg({"Provider_ID": "count"})
 
-
 # COMMAND ----------
 
 # Joint processing
@@ -124,7 +123,6 @@ df_join = df_join.round(4)
 df_join["monthly_date"] = pd.to_datetime(df_join["monthly_date"])
 df_join=df_join[df_join["monthly_date"]==max(df_join["monthly_date"])].reset_index() # MF: keep only latest months' CQC?
 #df_processed = df_join.copy()
-
 
 # COMMAND ----------
 
@@ -138,13 +136,17 @@ df_pir = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 # COMMAND ----------
 
 # MAGIC %md
+# MAGIC ### Tab02 ("path" / "collated")
+# MAGIC Calculation of metric Table2 - "collated", i.e. focusses on CQC universe and which submitted PIR responses
+# MAGIC - Does track full Universe of current locations, i.e. those in latest CQC file (given by df_join)
+# MAGIC - Does intend to keep individual responses but only so far as an individual CQC location level, i.e.:
 # MAGIC 
-# MAGIC ### Tab01-granular
-# MAGIC Calculation of metric Table1 - "monthly sampler", i.e. focusses on PIR responses (Tab01)
-# MAGIC - Does not track full Universe of locations* (given by df_join), but does bring in some useful fields from df_join (e.g. ICB, provider ID, if need be)
-# MAGIC - Does intend to keep individual responses (e.g. sometimes same location has two PIR submissions in a same month given different PIR type or re-submission)
-# MAGIC 
-# MAGIC * this is intended for Table2 - "patch" . i.e. it should have at least a row per CQC ASC provider and then where available add in PIR info. This can help track completion
+# MAGIC  a) A step is done to only keep the most recent PIR submission per location and per PIR type (residential / community) - so old submissions or error duplicates are removed
+# MAGIC  
+# MAGIC  b) Since the aim is to simplify on the view of whether a location has a DSCR at all, the PIR DSCR metric is simplified to capture "Does any PIR type from this location report having a DSCR?". If any of the latest PIR type forms indicates "Yes", one of these is retained against the CQC location.
+# MAGIC  
+# MAGIC  caveats:
+# MAGIC  - since the latest CQC file is used, organisations that have since closed won't be considered in terms of their PIR responses.
 
 # COMMAND ----------
 
@@ -158,7 +160,13 @@ df_pir["month_year"] = df_pir["months"].astype(str) + "-" + df_pir["year"].astyp
 df_pir_keep = df_pir[["Location ID","PIR submission date","month_year","PIR type","Use a Digital Social Care Record system?"]] 
 df_pir_keep.rename(columns={"Location ID":"Location_Id"},inplace=True)
 
-# what to keep from enriched reference data (For Tab01) (that is useful for Tableau).
+## Add some auxiliaries to indicate more than one submission in a month. Bear also in mind that some (a minority) may be submitting more than once yearly
+# https://stackoverflow.com/questions/59486029/python-how-to-groupby-and-count-without-aggregating-the-dataframe
+aux_group =df_pir_keep.groupby(['Location_Id'],as_index=False)
+
+df_pir_keep['PIRm_n']=aux_group['Use a Digital Social Care Record system?'].transform('count')  # this indicates for the same location how many responses
+
+# what to keep from enriched reference data (For Tab02) (that is useful for Tableau).
 df_join_keep = df_join[df_join["Last_Refreshed"]==max(df_join["Last_Refreshed"])][["Location_Id",
                         "Location_Primary_Inspection_Category",
                         "Location_Local_Authority",
@@ -167,82 +175,56 @@ df_join_keep = df_join[df_join["Last_Refreshed"]==max(df_join["Last_Refreshed"])
                         "Region_Code","Region_Name",
                         "Provider_ID", "monthly_date"]].copy()   
 
-# Left join reference info to PIR (as it's a sampler)
 
-df_tab01_sampler = df_pir_keep.merge(df_join_keep, how ='left', on ="Location_Id")
+# COMMAND ----------
+
+df_pir_keep[df_pir_keep["PIRm_n"]>1].sort_values("Location_Id")
+
+# COMMAND ----------
+
+# For PIR, keep only most recent submission per location x type (remove earlier responses)
+
+df_pir_keep_unit = df_pir_keep.sort_values('PIR submission date').groupby(["Location_Id","PIR type"]).tail(1)
+
+# COMMAND ----------
+
+df_pir_keep_unit[df_pir_keep_unit["PIRm_n"]>1].sort_values("Location_Id")
+
+# COMMAND ----------
+
+df_pir_keep.sort_values(['PIR type','Use a Digital Social Care Record system?'])
+
+# COMMAND ----------
+
+# For PIR, keep only one submission per location - if any PIR type says yes, conserve a 'yes' submission (the sort ensures that the tail would capture a yes, if present at all)
+
+df_pir_keep_unit2 = df_pir_keep_unit.sort_values('Use a Digital Social Care Record system?').groupby(["Location_Id"]).tail(1)
 
 
 # COMMAND ----------
 
-## Add some auxiliaries to indicate more than one submission in a month. Bear also in mind that some (a minority) may be submitting more than once yearly
-# https://stackoverflow.com/questions/59486029/python-how-to-groupby-and-count-without-aggregating-the-dataframe
-aux_group =df_tab01_sampler.groupby(['Location_Id','month_year'],as_index=False)
+# Left join PIR to reference info (since it means to collate)
 
-df_tab01_sampler['PIRm_n']=aux_group['Use a Digital Social Care Record system?'].transform('count')  # this indicates for the given month-year and same location how many responses
-
-# COMMAND ----------
-
-aux_PIRm_anyYES= aux_group['Use a Digital Social Care Record system?'].apply(lambda x: (x=="Yes").sum()).rename(columns={"Use a Digital Social Care Record system?":"PIRm_anyYES"})#['Use a Digital Social Care Record system?']
-
-aux_PIRm_anyYES["PIRm_anyYES"] = aux_PIRm_anyYES["PIRm_anyYES"]>0 # this indicates for the given month-year and same location if any response was "Yes" and attributes that location-month a TRUE if so.
-
-df_tab01_sampler = df_tab01_sampler.merge(aux_PIRm_anyYES, how ='left', on =["Location_Id","month_year"])  # join the PIRm_anyYES var to the main
-
-
-# COMMAND ----------
-
-aux=df_tab01_sampler.sort_values(by=['PIRm_n','Location_Id']) # sense check . #1-6805237133 as example as duplicate with mix in-month
-aux.iloc[-20:,];
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ### Tab01-Agg01
-# MAGIC Some level of aggregation of Tab01 if need be (NOTE: this considers same-location submissions for a same PIR-month as valid to be counted as separate for the metric)
-# MAGIC Information of what is duplicate will get lost here since we collapse the location id dimension. We assume this is desired/acceptable in order to track submissions and have more granularity by PIR type.
-
-# COMMAND ----------
-
-df_tab01_sampler_agg = df_tab01_sampler.groupby(["month_year",
-                                                 "PIR type",
-                                                 "Location_Primary_Inspection_Category",
-                                                 "Location_Local_Authority",
-                                                 "CCG_ONS_Code","Location_ONSPD_CCG_Name",
-                                                 "ICB_ONS_Code","ICB_Name",
-                                                 "Region_Code","Region_Name"]).agg(PIR_YES=("Use a Digital Social Care Record system?", lambda x: (x=="Yes").sum()),
-                                                                                   PIR_NO=("Use a Digital Social Care Record system?", lambda x: (x=="No").sum()),
-                                                                                   PIR_COUNT=("Use a Digital Social Care Record system?", "count")) # done dif from yes and no but should add up. Change to Yes+No if better
-
-df_tab01_sampler_agg = df_tab01_sampler_agg.reset_index()
-
-df_tab01_sampler_agg['PIR_PERCENTAGE']=df_tab01_sampler_agg['PIR_YES']/(df_tab01_sampler_agg['PIR_YES']+df_tab01_sampler_agg['PIR_NO'])
+df_tab02_patch = df_join_keep.merge(df_pir_keep_unit2, how ='left', on ="Location_Id")
 
 
 # COMMAND ----------
 
 # Add run date
 # ---------------------------------------------------------------------
-df_tab01_sampler_agg["run_date"] = df_tab01_sampler["monthly_date"]
+df_tab02_patch["run_date"] = df_join_keep["monthly_date"]
 
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC 
-# MAGIC ### Tab02 - "patch" - TBA
-# MAGIC 
-# MAGIC Of the sort : df_join.merge(df_pir,how="left",on="location_id")
 
 # COMMAND ----------
 
 # Upload processed data to datalake
 # -------------------------------------------------------------------------
 file_contents = io.StringIO()
-df_tab01_sampler_agg.to_csv(file_contents)
+df_tab02_patch.to_csv(file_contents)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
 
 # COMMAND ----------
 
 # Write metrics to database
 # -------------------------------------------------------------------------
-write_to_sql(df_tab01_sampler_agg, table_name, "overwrite")
+write_to_sql(df_tab02_patch, table_name, "overwrite")
