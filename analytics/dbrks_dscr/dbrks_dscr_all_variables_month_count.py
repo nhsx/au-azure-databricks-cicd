@@ -222,7 +222,7 @@ df_tab01_sampler_agg['PIR_PERCENTAGE']=df_tab01_sampler_agg['PIR_YES']/(df_tab01
 
 # Add run date
 # ---------------------------------------------------------------------
-df_tab01_sampler_agg["run_date"] = df_tab01_sampler["monthly_date"]
+df_tab01_sampler_agg["date_ran"] = datetime.now().strftime('%d-%m-%Y') 
 
 
 # COMMAND ----------
