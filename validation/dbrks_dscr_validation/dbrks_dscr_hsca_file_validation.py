@@ -117,10 +117,3 @@ date = datetime.strptime(today, '%Y-%m-%d %H:%M:%S')
 in_row = {'row_count':[row_count], 'load_date':[date], 'file_to_load':[full_path]}
 df = pd.DataFrame(in_row)  
 write_to_sql(df, log_table, "append")
-
-# COMMAND ----------
-
-# The columns needed from the file
-# -------------------------------------
-#["Location ID", "Dormant (Y/N)","Care home?","Location Inspection Directorate","Location Primary Inspection Category","Location ONSPD CCG Code","Provider ID","Provider Inspection Directorate","Provider Primary Inspection Category","Provider Postal Code","Active"]
-
