@@ -133,7 +133,7 @@ assert expect.success
 #Test that the count only contains ints
 
 types = {
-    "Count": "int",  
+    "Count": "int"
 }
 info = "Checking that 'Count' column data are all int\n"
 for column, type_ in types.items():
