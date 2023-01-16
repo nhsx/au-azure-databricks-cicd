@@ -217,3 +217,16 @@ def test_result(great_expectation_result, test_info):
     print('#############################################################################')
     print(test_info + ' Result: ' + test_outcome)
     print('##############################-----END-----##################################')
+
+# COMMAND ----------
+
+# Function to get the latest row count from the log table dbo.pre_load_log
+#----------------------------------------------------------------------
+def get_latest_count(log_count_tbl, file_path):
+    spark_count_df = read_sql_server_table(log_count_tbl)
+    count_df = spark_count_df.toPandas()
+    count_df_2 = count_df[count_df["file_to_load"].str.contains(file_path)]
+    last_run_date = count_df_2["load_date"].max()
+    count_df_3 = count_df_2[count_df_2["load_date"] == last_run_date]
+    return count_df_3
+

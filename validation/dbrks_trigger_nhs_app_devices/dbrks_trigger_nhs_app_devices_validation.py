@@ -103,8 +103,9 @@ df1 = ge.from_pandas(val_df) # Create great expectations dataframe from pandas d
 
 info = "Checking that the Date column do not contain any null values\n"
 expect = df1.expect_column_values_to_not_be_null(column='Date')
-assert expect.success
 test_result(expect, info)
+assert expect.success
+
 
 # COMMAND ----------
 
@@ -112,8 +113,20 @@ test_result(expect, info)
 
 info = 'Checking there are 7 records for the weekly data\n'
 expect = df1.expect_table_row_count_to_equal(7)
-assert expect.success
 test_result(expect, info)
+assert expect.success
+
+
+# COMMAND ----------
+
+#Test that the 7 rows have unique dates
+
+info = 'Checking the Dates for the 7 records for the week are unique data\n'
+expect = df1.expect_column_values_to_be_unique(column="Date")
+test_result(expect, info)
+assert expect.success
+
+
 
 # COMMAND ----------
 
@@ -125,8 +138,9 @@ types = {
 info = "Checking that 'Count' column data are all int\n"
 for column, type_ in types.items():
     expect = df1.expect_column_values_to_be_of_type(column=column, type_=type_)
-    assert expect.success
     test_result(expect, info)
+    assert expect.success
+    
 
 # COMMAND ----------
 
