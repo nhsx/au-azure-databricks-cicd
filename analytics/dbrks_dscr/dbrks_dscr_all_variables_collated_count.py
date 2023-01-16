@@ -123,6 +123,7 @@ df_join.index.name = "Unique ID"
 df_join = df_join.round(4)
 df_join["monthly_date"] = pd.to_datetime(df_join["monthly_date"])
 df_join=df_join[df_join["monthly_date"]==max(df_join["monthly_date"])].reset_index() # MF: keep only latest months' CQC?
+df_join = df_join[df_join["Location_Inspection_Directorate"]=="Adult social care"] # keep only Adult Social Care Primary Inspection Directorate
 #df_processed = df_join.copy()
 
 # COMMAND ----------
@@ -138,7 +139,7 @@ df_pir = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 # MAGIC %md
 # MAGIC 
-# MAGIC ### Tab02 ("path" / "collated")
+# MAGIC ### Tab02 ("patch" / "collated")
 # MAGIC Calculation of metric Table2 - "collated", i.e. focusses on CQC universe and which submitted PIR responses
 # MAGIC - Does track full Universe of current locations, i.e. those in latest CQC file (given by df_join)
 # MAGIC - Does intend to keep individual responses but only so far as an individual CQC location level, i.e.:
