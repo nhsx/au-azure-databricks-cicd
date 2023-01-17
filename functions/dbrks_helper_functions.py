@@ -230,3 +230,16 @@ def get_latest_count(log_count_tbl, file_path):
     count_df_3 = count_df_2[count_df_2["load_date"] == last_run_date]
     return count_df_3
 
+
+# COMMAND ----------
+
+# Function to get the latest aggregationfrom the log table dbo.pre_load_agg_log
+#-------------------------------------------------------------------------------
+def get_last_agg(agg_log_tbl, full_file_path, agg_name, col_info):
+    spark_count_agg_df = read_sql_server_table(agg_log_tbl) 
+    agg_df = spark_count_agg_df.toPandas() 
+    agg_df_2 = agg_df[(agg_df["file_name"].str.contains(full_file_path)) & (agg_df["aggregation"] == "sum") & (agg_df["comment"] == col_info)] 
+    last_run_date = agg_df_2["load_date"].max()    
+    agg_df_3 = agg_df_2[agg_df_2["load_date"] == last_run_date]
+    return agg_df_3
+  
