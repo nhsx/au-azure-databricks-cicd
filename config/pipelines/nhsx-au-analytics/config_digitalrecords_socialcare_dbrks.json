@@ -47,7 +47,7 @@
 	    ],
 		"validation": [
 			{
-				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_trigger_socialcare_digitalrecord/dbrks_trigger_socialcare_digitalrecord_validation",
+				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_socialcare_digitalrecord/dbrks_trigger_socialcare_digitalrecord_validation",
 				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
 		}
 		]
