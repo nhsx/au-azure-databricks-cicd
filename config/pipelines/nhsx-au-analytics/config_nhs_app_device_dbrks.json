@@ -57,7 +57,7 @@
       
         "validation": [
 			{
-				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_nhs_app_devices/dbrks_nhs_app_devices_validation",
+				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_nhs_app_validation/dbrks_nhs_app_devices_validation",
 				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
 		}
 		]
