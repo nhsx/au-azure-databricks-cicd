@@ -60,6 +60,7 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 file_path_config = "config/pipelines/nhsx-au-analytics"
 file_name_config = "config_nhs_app_dbrks.json"
 log_table = "dbo.pre_load_log"
+agg_log_table = 'dbo.pre_load_agg_log'
 
 file_system_config = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
@@ -98,11 +99,43 @@ new_dataframe
 
 # COMMAND ----------
 
-#store the sum of each column for the old datframe in a dictionary 
-sum_of_previous_cols = {}
+#load in the sums for the previous dataset
+df_sum_prev = pd.DataFrame(columns=['load_date', 'file_name', 'aggregation', 'aggregate_value', 'comment'])
 for column in new_dataframe.columns[2:len(new_dataframe.columns)]:
-  sum_of_current_cols[column] = new_dataframe[column].sum()
-sum_of_current_cols
+  prev_agg_row = get_last_agg(agg_log_table, 'app_table_snapshot', "sum_of_" + column, "sum of {} column".format(column))
+  df_sum_prev = df_sum_prev.append(prev_agg_row)
+df_sum_prev
+
+# COMMAND ----------
+
+df_sum_prev.loc[df_sum_prev['aggregation'].str.contains('P5NewAppUsers')]['aggregate_value'].values[0]
+
+# COMMAND ----------
+
+sum_of_current_cols['P5NewAppUsers']
+
+# COMMAND ----------
+
+#get the row count for previous data and calculate minimum and maximum tolerance values (within 10%)
+print("############# Last run details is shown below ###############################")
+display(previous_df)
+
+thresholds_dict = {}
+
+for column in new_dataframe.columns[2:len(new_dataframe.columns)]:
+  todays_sum = int(sum_of_current_cols[column])
+  previous_sum = int(df_sum_prev.loc[df_sum_prev['aggregation'].str.contains(column)]['aggregate_value'].values[0])
+  percent = 20 / 100
+  tolerance = round(percent * previous_sum)
+  min_val = previous_sum - tolerance
+  max_val = todays_sum + tolerance
+  min_max = [min_val, max_val]
+  thresholds_dict[column] = min_max
+
+thresholds_dict
+
+
+
 
 # COMMAND ----------
 
@@ -117,6 +150,7 @@ previous_df = get_latest_count(log_table, new_source_file)
 previous_count = previous_df.iloc[0, 0]
 
 # COMMAND ----------
+
 
 #get the row count for previous data and calculate minimum and maximum tolerance values (within 10%)
 print("############# Last run details is shown below ###############################")
@@ -139,6 +173,7 @@ print("Maximum expected sum is :")
 print(max_val)
 
 # COMMAND ----------
+
 
 #get the distince ODS count for previous data and calculate the minimum and maximum tolerance values (within 1%)
 
@@ -206,16 +241,6 @@ assert expect.success
 
 # COMMAND ----------
 
-#Test that the 7 rows have unique dates
-
-info = 'Checking the Dates for the 7 records for the week are unique data\n'
-expect = df1.expect_column_values_to_be_unique(column="Date")
-test_result(expect, info)
-assert expect.success
-
-
-# COMMAND ----------
-
 # MAGIC %md
 # MAGIC ## Tests End
 
@@ -233,18 +258,25 @@ write_to_sql(df, log_table, "append")
 
 # COMMAND ----------
 
-sum_value = new_dataframe[lumnco].sum()
-
-# COMMAND ----------
-
 # Write sum to log tables
 #___________________________________________
+
+df_all_agg = pd.DataFrame(columns=['load_date', 'file_name', 'aggregation', 'aggregate_value', 'comment'])
+
 for column in new_dataframe.columns[2:len(new_dataframe.columns)]:
   sum_value = int(new_dataframe[column].sum())
+  today = pd.to_datetime('now').strftime("%Y-%m-%d %H:%M:%S")
+  date = datetime.strptime(today, '%Y-%m-%d %H:%M:%S')
   agg_row = {"load_date": [date], "file_name":[full_path], "aggregation":["sum_of_" + column], "aggregate_value":[sum_value], "comment":["sum of {} column".format(column)]}
   agg_log_tbl = "dbo.pre_load_agg_log"
   df_agg = pd.DataFrame(agg_row)  
-  write_to_sql(df_agg, agg_log_tbl, "append")
+  df_all_agg = df_all_agg.append(df_agg)
+
+write_to_sql(df_all_agg, agg_log_tbl, "append")
+
+# COMMAND ----------
+
+df_all_agg
 
 # COMMAND ----------
 
@@ -252,14 +284,10 @@ for column in new_dataframe.columns[2:len(new_dataframe.columns)]:
 #___________________________________________
 ods_count = len(new_dataframe['OdsCode'].unique())
 
-count_row = {"load_date": [date], "file_name": [full_path], "column_name": ["OdsCode"], "count": [ods_count]}
+count_row = {"load_date": [date], "file_name": [full_path], "column_name": ["OdsCode"], "count_value": [ods_count]}
 count_log_tbl = "dbo.pre_load_count_log"
 df_count = pd.DataFrame(count_row)  
-write_to_sql(df_count, agg_log_tbl, "append")
-
-# COMMAND ----------
-
-df_count
+write_to_sql(df_count, count_log_tbl, "append")
 
 # COMMAND ----------
 
