@@ -89,18 +89,15 @@ for new_source_file in file_name_list:
 today_count = len(new_dataframe)
 sum_clicks = new_dataframe["Count"].sum()
 print("Today' row count is: " + str(today_count))
-print("Today' row sum is: " + str(today_count))
+print("Today' row sum is: " + str(sum_clicks))
+
 
 
 # COMMAND ----------
 
 # Calculate tolerence using prevous run data
 # ------------------------------------------------
-full_path = new_source_path + latestFolder + new_source_file
-column_info = "sum of the count column"
-
-last_run = get_last_agg(agg_log_tbl, full_path, "sum", column_info)
-#previous_sum = last_run["aggregate_value"]
+last_run = get_last_agg(agg_log_tbl, "MonthlyDownloads", "sum", "sum of the count column")
 previous_sum = last_run.iloc[0,3]
 
 print("############# Last run details is shown below ###############################")
@@ -154,26 +151,40 @@ assert expect.success
 
 # COMMAND ----------
 
+info = 'Checking that row count matches number of days in that month\n'
+expect = df1.expect_table_row_count_to_equal(7)
+test_result(expect, info)
+assert expect.success
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC ## Tests End
 
 # COMMAND ----------
 
-# Count rows in file and write to log table
-#___________________________________________
-
+# Get todays date
+#------------------------------------------------------
 today = pd.to_datetime("now").strftime("%Y-%m-%d %H:%M:%S")
 date = datetime.strptime(today, "%Y-%m-%d %H:%M:%S")
+
+# COMMAND ----------
+
+# Write row count to log tables
+#___________________________________________
 
 in_row = {"row_count":[today_count], "load_date":[date], "file_to_load":[full_path]}
 df = pd.DataFrame(in_row)  
 write_to_sql(df, log_table, "append")
 
+
+
+# COMMAND ----------
+
+# Write sum to log tables
+#___________________________________________
+
 agg_row = {"load_date": [date], "file_name": [full_path], "aggregation": ["sum"], "aggregate_value": [sum_clicks], "comment": ["sum of the count column"]}
 agg_log_tbl = "dbo.pre_load_agg_log"
 df_agg = pd.DataFrame(agg_row)  
 write_to_sql(df_agg, agg_log_tbl, "append")
-
-# COMMAND ----------
-
-
