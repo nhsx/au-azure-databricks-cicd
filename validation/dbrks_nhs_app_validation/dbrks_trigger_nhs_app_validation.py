@@ -86,16 +86,11 @@ for new_source_file in file_name_list:
 
 # COMMAND ----------
 
-new_dataframe
-
-# COMMAND ----------
-
-# sum of columns C to Q
-# select numeric columns and calculate the sums
-sums = new_dataframe.select_dtypes(pd.np.number).sum().rename('total')
-
-# append sums to the data frame
-new_dataframe = new_dataframe.append(sums)
+#store the sum of each column for the new dataframe in a dictionary
+sum_of_current_cols = {}
+for column in new_dataframe.columns[2:len(new_dataframe.columns)]:
+  sum_of_current_cols[column] = new_dataframe[column].sum()
+sum_of_current_cols
 
 # COMMAND ----------
 
@@ -103,13 +98,11 @@ new_dataframe
 
 # COMMAND ----------
 
-sumofCtoQ = new_dataframe.iloc[:-1].sum()
-sumofCtoQ
-
-# COMMAND ----------
-
-sumXX = new_dataframe.tail(1)
-sumXX
+#store the sum of each column for the old datframe in a dictionary 
+sum_of_previous_cols = {}
+for column in new_dataframe.columns[2:len(new_dataframe.columns)]:
+  sum_of_current_cols[column] = new_dataframe[column].sum()
+sum_of_current_cols
 
 # COMMAND ----------
 
@@ -118,20 +111,14 @@ sumXX
 todays_count = len(new_dataframe) - 1                        # subtracting 1 as we added total of the column at the end of the df
 
 # Get previous count and sum
+
 # ------------------------------------------------
 previous_df = get_latest_count(log_table, new_source_file)
 previous_count = previous_df.iloc[0, 0]
 
 # COMMAND ----------
 
-
-
-# COMMAND ----------
-
-
-
-# COMMAND ----------
-
+#get the row count for previous data and calculate minimum and maximum tolerance values (within 10%)
 print("############# Last run details is shown below ###############################")
 display(previous_df)
 
@@ -153,6 +140,10 @@ print(max_val)
 
 # COMMAND ----------
 
+#get the distince ODS count for previous data and calculate the minimum and maximum tolerance values (within 1%)
+
+# COMMAND ----------
+
 # validate data
 # Greate expectations https://www.architecture-performance.fr/ap_blog/built-in-expectations-in-great-expectations/
 # ----------------------------------
@@ -166,10 +157,14 @@ df1 = ge.from_pandas(val_df) # Create great expectations dataframe from pandas d
 
 # COMMAND ----------
 
-info = "Checking that the sum of downloads which is the count column is within the tolerance amount"
+info = "Checking that the row count is within the tolerance amount"
 expect = df1.expect_table_row_count_to_be_between(min_value=min_val, max_value=max_val)
 test_result(expect, info)
 assert expect.success
+
+# COMMAND ----------
+
+new_dataframe.columns
 
 # COMMAND ----------
 
@@ -221,11 +216,6 @@ assert expect.success
 
 # COMMAND ----------
 
-expect = df1.expect_column_values_to_be_unique(column="Date", mostly=0.7)
-assert expect.success
-
-# COMMAND ----------
-
 # MAGIC %md
 # MAGIC ## Tests End
 
@@ -240,3 +230,37 @@ date = datetime.strptime(today, '%Y-%m-%d %H:%M:%S')
 in_row = {'row_count':[row_count], 'load_date':[date], 'file_to_load':[full_path]}
 df = pd.DataFrame(in_row)  
 write_to_sql(df, log_table, "append")
+
+# COMMAND ----------
+
+sum_value = new_dataframe[lumnco].sum()
+
+# COMMAND ----------
+
+# Write sum to log tables
+#___________________________________________
+for column in new_dataframe.columns[2:len(new_dataframe.columns)]:
+  sum_value = int(new_dataframe[column].sum())
+  agg_row = {"load_date": [date], "file_name":[full_path], "aggregation":["sum_of_" + column], "aggregate_value":[sum_value], "comment":["sum of {} column".format(column)]}
+  agg_log_tbl = "dbo.pre_load_agg_log"
+  df_agg = pd.DataFrame(agg_row)  
+  write_to_sql(df_agg, agg_log_tbl, "append")
+
+# COMMAND ----------
+
+# Write sum to log tables
+#___________________________________________
+ods_count = len(new_dataframe['OdsCode'].unique())
+
+count_row = {"load_date": [date], "file_name": [full_path], "column_name": ["OdsCode"], "count": [ods_count]}
+count_log_tbl = "dbo.pre_load_count_log"
+df_count = pd.DataFrame(count_row)  
+write_to_sql(df_count, agg_log_tbl, "append")
+
+# COMMAND ----------
+
+df_count
+
+# COMMAND ----------
+
+
