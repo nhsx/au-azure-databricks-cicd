@@ -121,6 +121,14 @@ print(max_val)
 
 # COMMAND ----------
 
+#get the number of days in the current month
+month_df = new_dataframe.copy()
+month_df['Date'] = pd.to_datetime(month_df['Date']) #convert the Date column to datetime to get the number of days
+number_of_days = month_df['Date'][0].daysinmonth
+
+
+# COMMAND ----------
+
 # validate data
 # Greate expectations https://www.architecture-performance.fr/ap_blog/built-in-expectations-in-great-expectations/
 # ----------------------------------
@@ -152,7 +160,7 @@ assert expect.success
 # COMMAND ----------
 
 info = 'Checking that row count matches number of days in that month\n'
-expect = df1.expect_table_row_count_to_equal(7)
+expect = df1.expect_table_row_count_to_equal(number_of_days)
 test_result(expect, info)
 assert expect.success
 
