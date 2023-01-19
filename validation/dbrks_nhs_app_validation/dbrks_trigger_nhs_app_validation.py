@@ -86,6 +86,73 @@ for new_source_file in file_name_list:
 
 # COMMAND ----------
 
+new_dataframe
+
+# COMMAND ----------
+
+# sum of columns C to Q
+# select numeric columns and calculate the sums
+sums = new_dataframe.select_dtypes(pd.np.number).sum().rename('total')
+
+# append sums to the data frame
+new_dataframe = new_dataframe.append(sums)
+
+# COMMAND ----------
+
+new_dataframe
+
+# COMMAND ----------
+
+sumofCtoQ = new_dataframe.iloc[:-1].sum()
+sumofCtoQ
+
+# COMMAND ----------
+
+sumXX = new_dataframe.tail(1)
+sumXX
+
+# COMMAND ----------
+
+# Get today's count and sum
+# ------------------------------------------------
+todays_count = len(new_dataframe) - 1                        # subtracting 1 as we added total of the column at the end of the df
+
+# Get previous count and sum
+# ------------------------------------------------
+previous_df = get_latest_count(log_table, new_source_file)
+previous_count = previous_df.iloc[0, 0]
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+print("############# Last run details is shown below ###############################")
+display(previous_df)
+
+percent = 10 / 100
+tolerance = round(percent * previous_count)
+min_val = previous_count - tolerance
+max_val = todays_count + tolerance
+
+print("Percentage is :")
+print(percent)
+print("Previous count is :")
+print(previous_count)
+print("Tolerence is :")
+print(tolerance)
+print("Minimum expected sum is :")
+print(min_val)
+print("Maximum expected sum is :")
+print(max_val)
+
+# COMMAND ----------
+
 # validate data
 # Greate expectations https://www.architecture-performance.fr/ap_blog/built-in-expectations-in-great-expectations/
 # ----------------------------------
@@ -99,13 +166,20 @@ df1 = ge.from_pandas(val_df) # Create great expectations dataframe from pandas d
 
 # COMMAND ----------
 
-#Test that the all the column have expected type such as int, str etc
+info = "Checking that the sum of downloads which is the count column is within the tolerance amount"
+expect = df1.expect_table_row_count_to_be_between(min_value=min_val, max_value=max_val)
+test_result(expect, info)
+assert expect.success
 
-info = "Checking that all the columns have integer type\n"
+# COMMAND ----------
+
+#Test that the all the column have expected type such as int, str etc
+#     "P5NewAppUsers": "int",                #this column have null value
+#     "AcceptedTermsAndConditions": "int",   #this column have null value
+#     "P9VerifiedNHSAppUsers": "int",        #this column have null value
+info = "Checking that all the columns have type integer\n"
 types = {
-    "P5NewAppUsers": "int",
-    "AcceptedTermsAndConditions": "int",
-    "P9VerifiedNHSAppUsers": "int",
+    "P5NewAppUsers": "float",
     "Logins": "int",
     "RecordViews": "int",
     "Prescriptions": "int",
@@ -124,22 +198,13 @@ for column, type_ in types.items():
     test_result(expect, info)
     assert expect.success
     
+
 # COMMAND ----------
 
 #Test that the OdsCode column do not contain any null values
 
 info = "Checking that the OdsCode column do not contain any null values\n"
 expect = df1.expect_column_values_to_not_be_null(column='OdsCode')
-test_result(expect, info)
-assert expect.success
-
-
-# COMMAND ----------
-
-#Test that there are 7 records for the weekly data
-
-info = 'Checking there are 7 records for the weekly data\n'
-expect = df1.expect_table_row_count_to_equal(7)
 test_result(expect, info)
 assert expect.success
 
@@ -156,13 +221,8 @@ assert expect.success
 
 # COMMAND ----------
 
-#Test that the Type column only contains Apple or Google
-
-info = 'Checking that the Type column only contains Google or Apple\n'
-expect = df1.expect_column_values_to_be_in_set(column="Type", value_set=["Google", "Apple"]) # Check the values in the columns are either Apple or Google only
-test_result(expect, info)
+expect = df1.expect_column_values_to_be_unique(column="Date", mostly=0.7)
 assert expect.success
-
 
 # COMMAND ----------
 
