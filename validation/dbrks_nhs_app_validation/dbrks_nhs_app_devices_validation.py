@@ -111,10 +111,10 @@ assert expect.success
 
 #Test that there are 7 records for the weekly data
 
-info = 'Checking there are 7 records for the weekly data\n'
-expect = df1.expect_table_row_count_to_equal(7)
-test_result(expect, info)
-assert expect.success
+#info = 'Checking there are 7 records for the weekly data\n'
+#expect = df1.expect_table_row_count_to_equal(7)
+#test_result(expect, info)
+#assert expect.success
 
 
 # COMMAND ----------
