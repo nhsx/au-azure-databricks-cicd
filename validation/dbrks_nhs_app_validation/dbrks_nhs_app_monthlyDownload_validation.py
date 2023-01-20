@@ -88,40 +88,26 @@ for new_source_file in file_name_list:
 # ------------------------------------------------
 today_count = len(new_dataframe)
 sum_clicks = new_dataframe["Count"].sum()
-print("Today' row count is: " + str(today_count))
-print("Today' row sum is: " + str(sum_clicks))
+print("Today's row count is: " + str(today_count))
+print("Today's row sum is: " + str(sum_clicks))
 
 
 
 # COMMAND ----------
 
-# Calculate tolerence using prevous run data
-# ------------------------------------------------
+# Get the sum of the count column from the previous weeks data and calculate the 20% thresholds
+# ---------------------------------------------------------------------------------------------
 last_run = get_last_agg(agg_log_tbl, "MonthlyDownloads", "sum", "sum of the count column")
 previous_sum = last_run.iloc[0,3]
-
 print("############# Last run details is shown below ###############################")
 display(last_run)
 
-percent = 20 / 100
-tolerance = round(percent * previous_sum)
-min_val = previous_sum - tolerance
-max_val = sum_clicks + tolerance
-
-print("Percentage is :")
-print(percent)
-print("Previous sum is :")
-print(previous_sum)
-print("Tolerence is :")
-print(tolerance)
-print("Minimum expected sum is :")
-print(min_val)
-print("Maximum expected sum is :")
-print(max_val)
+#calculate thresholds using function from helper functions
+min_sum_clicks, max_sum_clicks = get_thresholds(previous_sum, 20)
 
 # COMMAND ----------
 
-#get the number of days in the current month
+#get the number of days in the current month and calculate the number of days
 month_df = new_dataframe.copy()
 month_df['Date'] = pd.to_datetime(month_df['Date']) #convert the Date column to datetime to get the number of days
 number_of_days = month_df['Date'][0].daysinmonth
@@ -144,7 +130,7 @@ df1 = ge.from_pandas(val_df) # Create great expectations dataframe from pandas d
 # COMMAND ----------
 
 info = "Checking that the sum of downloads which is the count column is within the tolerance amount"
-expect = df1.expect_table_row_count_to_be_between(min_value=min_val, max_value=max_val)
+expect = df1.expect_column_sum_to_be_between(column='Count', min_value=min_sum_clicks, max_value=max_sum_clicks)
 test_result(expect, info)
 assert expect.success
 
@@ -180,7 +166,10 @@ date = datetime.strptime(today, "%Y-%m-%d %H:%M:%S")
 
 # Write row count to log tables
 #___________________________________________
-
+full_path = new_source_path + latestFolder + new_source_file
+row_count = len(new_dataframe)
+today = pd.to_datetime('now').strftime("%Y-%m-%d %H:%M:%S")
+date = datetime.strptime(today, '%Y-%m-%d %H:%M:%S')
 in_row = {"row_count":[today_count], "load_date":[date], "file_to_load":[full_path]}
 df = pd.DataFrame(in_row)  
 write_to_sql(df, log_table, "append")
