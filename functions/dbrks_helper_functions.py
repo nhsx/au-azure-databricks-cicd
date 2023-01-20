@@ -15,8 +15,8 @@ USAGE:
                 ...
 CONTRIBUTORS:   Craig Shenton, Mattia Ficarelli, Kabir Khan, Faaiz Shanawas
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        11 Jan 2023
-VERSION:        0.0.2
+CREATED:        20 Jan 2023
+VERSION:        0.0.3
 """
 
 # COMMAND ----------
@@ -222,10 +222,10 @@ def test_result(great_expectation_result, test_info):
 
 # Function to get the latest row count from the log table dbo.pre_load_log
 #----------------------------------------------------------------------
-def get_latest_count(log_count_tbl, file_nane):
+def get_latest_count(log_count_tbl, source_file):
     spark_count_df = read_sql_server_table(log_count_tbl)
     count_df = spark_count_df.toPandas()
-    count_df_2 = count_df[count_df["file_to_load"].str.contains(file_nane)]
+    count_df_2 = count_df[count_df["file_to_load"].str.contains(source_file)]
     last_run_date = count_df_2["load_date"].max()
     count_df_3 = count_df_2[count_df_2["load_date"] == last_run_date]
     return count_df_3
@@ -235,14 +235,31 @@ def get_latest_count(log_count_tbl, file_nane):
 
 # Function to get the latest aggregationfrom the log table dbo.pre_load_agg_log
 #-------------------------------------------------------------------------------
-def get_last_agg(agg_log_tbl, file_nane, agg_name, col_info):
+def get_last_agg(agg_log_tbl, source_file, agg_name, col_info):
     spark_count_agg_df = read_sql_server_table(agg_log_tbl) 
     agg_df = spark_count_agg_df.toPandas() 
-    agg_df_2 = agg_df[(agg_df["file_name"].str.contains(file_nane)) & (agg_df["aggregation"] == agg_name) & (agg_df["comment"] == col_info)] 
+    agg_df_2 = agg_df[(agg_df["file_name"].str.contains(source_file)) & (agg_df["aggregation"] == agg_name) & (agg_df["comment"] == col_info)] 
     last_run_date = agg_df_2["load_date"].max()    
     agg_df_3 = agg_df_2[agg_df_2["load_date"] == last_run_date]
     return agg_df_3
+
+# COMMAND ----------
+
+# Function to get the minimum and maximum tolerance thresholds for metrics from previous datasets
+#-------------------------------------------------------------------------------------------------
+def get_thresholds(previous_value, percentage):
+  percent = percentage / 100
+  tolerance = round(percent * previous_value)
+  min_val = previous_value - tolerance
+  max_val = previous_value + tolerance
+
+  print("Percentage is : {}%".format(percent))
+  print("Previous value is : {}".format(previous_value))
+  print("Tolerence is : {}".format(tolerance))
+  print("Minimum expected value is : {}".format(min_val))
+  print("Maximum expected sum is : {}".format(max_val))
   
+  return min_val, max_val
 
 # COMMAND ----------
 
