@@ -151,7 +151,7 @@ previous_ods_count = get_last_agg(agg_log_table, 'app_table_snapshot', "count", 
 display(previous_ods_count)
 
 #calculate minimum and maximum tolerance values (within 1%)
-min_ods_count, max_ods_count = get_thresholds(previous_ods_count['aggregate_value'].values[0], 10)
+min_ods_count, max_ods_count = get_thresholds(previous_ods_count['aggregate_value'].values[0], 1)
 
 # COMMAND ----------
 

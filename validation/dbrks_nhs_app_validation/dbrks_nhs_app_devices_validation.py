@@ -60,6 +60,7 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 file_path_config = "config/pipelines/nhsx-au-analytics"
 file_name_config = "config_nhs_app_device_dbrks.json"
 log_table = "dbo.pre_load_log"
+agg_log_table = "dbo.pre_load_agg_log"
 
 file_system_config = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
@@ -86,6 +87,27 @@ for new_source_file in file_name_list:
 
 # COMMAND ----------
 
+# Get today's count and sum
+# ------------------------------------------------
+today_count = len(new_dataframe)
+sum_clicks = new_dataframe["Count"].sum()
+print("Today's row count is: " + str(today_count))
+print("Today's row sum is: " + str(sum_clicks))
+
+# COMMAND ----------
+
+# Get the sum of the count column from the previous weeks data and calculate the 20% thresholds
+# ---------------------------------------------------------------------------------------------
+last_run = get_last_agg(agg_log_table, 'WeeklyDownloads', "sum", "sum of the count column")
+previous_sum = last_run.iloc[0,3]
+print("############# Last run details is shown below ###############################")
+display(last_run)
+
+#calculate thresholds using function from helper functions
+min_sum_clicks, max_sum_clicks = get_thresholds(previous_sum, 20)
+
+# COMMAND ----------
+
 # validate data
 # Greate expectations https://www.architecture-performance.fr/ap_blog/built-in-expectations-in-great-expectations/
 # ----------------------------------
@@ -96,6 +118,15 @@ df1 = ge.from_pandas(val_df) # Create great expectations dataframe from pandas d
 
 # MAGIC %md
 # MAGIC ## Tests Begin
+
+# COMMAND ----------
+
+#checking that the sum of downloads is within 20% of the previous weeks sum
+
+info = "Checking that the sum of downloads which is the count column is within the tolerance amount"
+expect = df1.expect_column_sum_to_be_between(column='Count', min_value=min_sum_clicks, max_value=max_sum_clicks)
+test_result(expect, info)
+assert expect.success
 
 # COMMAND ----------
 
@@ -168,3 +199,13 @@ date = datetime.strptime(today, '%Y-%m-%d %H:%M:%S')
 in_row = {'row_count':[row_count], 'load_date':[date], 'file_to_load':[full_path]}
 df = pd.DataFrame(in_row)  
 write_to_sql(df, log_table, "append")
+
+# COMMAND ----------
+
+# Write sum to log tables
+#___________________________________________
+
+agg_row = {"load_date": [date], "file_name": [full_path], "aggregation": ["sum"], "aggregate_value": [sum_clicks], "comment": ["sum of the count column"]}
+agg_log_tbl = "dbo.pre_load_agg_log"
+df_agg = pd.DataFrame(agg_row)  
+write_to_sql(df_agg, agg_log_tbl, "append")
