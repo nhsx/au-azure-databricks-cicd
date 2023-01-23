@@ -137,7 +137,7 @@ assert expect.success
 
 # COMMAND ----------
 
-info = 'Checking that all dates are uniquie \n'
+info = 'Checking that all dates are unique \n'
 expect = df1.expect_column_values_to_be_unique(column="Date")
 test_result(expect, info)
 assert expect.success
