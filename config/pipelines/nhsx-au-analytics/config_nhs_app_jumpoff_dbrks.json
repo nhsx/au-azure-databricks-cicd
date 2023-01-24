@@ -341,7 +341,14 @@
 				"sink_table":"nhs_app_jumpoff_accurx_medical_day_count" 
 			}
 
-		         ]
+		         ],
+      
+        "validation": [
+			{
+				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_nhs_app_validation/dbrks_nhs_app_monthlyDownload_validation",
+				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
+		}
+		]
 
 		}
 	}
