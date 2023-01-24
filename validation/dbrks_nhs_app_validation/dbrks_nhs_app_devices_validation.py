@@ -123,7 +123,7 @@ df1 = ge.from_pandas(val_df) # Create great expectations dataframe from pandas d
 
 #checking that the sum of downloads is within 20% of the previous weeks sum
 
-info = "Checking that the sum of downloads which is the count column is within the tolerance amount"
+info = "Checking that the sum of downloads (Count column) is within the tolerance amount"
 expect = df1.expect_column_sum_to_be_between(column='Count', min_value=min_sum_clicks, max_value=max_sum_clicks)
 test_result(expect, info)
 assert expect.success
@@ -142,17 +142,17 @@ assert expect.success
 
 #Test that there are 7 records for the weekly data
 
-#info = 'Checking there are 7 records for the weekly data\n'
-#expect = df1.expect_table_row_count_to_equal(7)
-#test_result(expect, info)
-#assert expect.success
+info = 'Checking there are 7 records for the weekly data\n'
+expect = df1.expect_table_row_count_to_equal(7)
+test_result(expect, info)
+assert expect.success
 
 
 # COMMAND ----------
 
 #Test that the 7 rows have unique dates
 
-info = 'Checking the Dates for the 7 records for the week are unique data\n'
+info = 'Checking the Dates are unique\n'
 expect = df1.expect_column_values_to_be_unique(column="Date")
 test_result(expect, info)
 assert expect.success
