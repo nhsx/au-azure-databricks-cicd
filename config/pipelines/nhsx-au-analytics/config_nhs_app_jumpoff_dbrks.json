@@ -345,7 +345,7 @@
       
         "validation": [
 			{
-				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_nhs_app_validation/dbrks_nhs_app_monthlyDownload_validation",
+				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_nhs_app_validation/dbrks_trigger_nhs_app_jumpoff_validation",
 				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
 		}
 		]
