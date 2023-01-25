@@ -84,7 +84,7 @@ for new_source_file in file_name_list:
   new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, new_source_file)
   new_dataframe = pd.read_excel(io.BytesIO(new_dataset), engine  = 'openpyxl')
   
-display(new_dataframe)
+
 
 # COMMAND ----------
 
@@ -93,7 +93,8 @@ display(new_dataframe)
 # ----------------------------------
 val_df = new_dataframe.mask(new_dataframe == " ") # convert all blanks to NaN for validtion
 df1 = ge.from_pandas(val_df) # Create great expectations dataframe from pandas datafarme
-
+print("############################## Content of the file under test ############################################") 
+display(df1)
 
 # COMMAND ----------
 
@@ -105,15 +106,17 @@ df1 = ge.from_pandas(val_df) # Create great expectations dataframe from pandas d
 #Test that location bed capacity data type are all int
 
 types = {
-    "Objective_No": "int",
+    "Objective_No": "str",
     "Objective_Name": "str",
-    "Month": "Date",
+    "Month": "datetime64[ns]",
+    "Measure": "float",
     "Measure_desc": "str",
     "Commitment_Version": "float"
   
 }
 info = "Checking column data types\n"
 for column, type_ in types.items():
+    print(column)
     expect = df1.expect_column_values_to_be_of_type(column=column, type_=type_)
     test_result(expect, info)
     assert expect.success
