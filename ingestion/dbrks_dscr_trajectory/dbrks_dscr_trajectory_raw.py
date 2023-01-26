@@ -14,7 +14,7 @@ DESCRIPTION:
                 data for the NHSX Analytics unit metrics within the topic of patients recieving digitally supported care at home
 USAGE:
                 ...
-CONTRIBUTORS:   Abdu Nuhu
+CONTRIBUTORS:   Abdu Nuhu, Everistus Oputa
 CONTACT:        nhsx.data@england.nhs.uk
 CREATED:        24 Jan. 2023
 VERSION:        0.0.1
@@ -97,8 +97,8 @@ for new_source_file in file_name_list:
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, historical_source_path)
 print(historical_source_path)
 historical_dataset = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, historical_source_file)
-historical_dataframe = pd.read_csv(io.BytesIO(historical_dataset))
-historical_dataframe['Date'] = pd.to_datetime(historical_dataframe['Date']).dt.strftime('%Y-%m')
+historical_dataframe = pd.read_parquet(io.BytesIO(historical_dataset), engine="pyarrow")
+historical_dataframe['Date'] = pd.to_datetime(historical_dataframe['Month']).dt.strftime('%Y-%m')
 
 # Append new data to historical data
 # -----------------------------------------------------------------------
@@ -115,6 +115,6 @@ else:
 
 # Upload hsitorical appended data to datalake
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
-file_contents = io.StringIO()
-historical_dataframe.to_csv(file_contents, index=False)
+file_contents = io.BytesIO()
+historical_dataframe.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, sink_file)
