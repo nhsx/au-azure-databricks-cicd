@@ -13,7 +13,7 @@ DESCRIPTION:
                 
 USAGE:
                 ...
-CONTRIBUTORS:   Abdu Nuhu
+CONTRIBUTORS:   Abdu Nuhu, Everistus Oputa
 CONTACT:        nhsx.data@england.nhs.uk
 CREATED:        24 Jan 2023
 VERSION:        0.0.2
@@ -79,7 +79,7 @@ table_name = config_JSON['pipeline']["staging"][0]['sink_table']
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 print(source_path+latestFolder)
-df = pd.read_csv(io.BytesIO(file))
+df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 #df = pd.read_csv(io.BytesIO(file), engine="pyarrow")
 
