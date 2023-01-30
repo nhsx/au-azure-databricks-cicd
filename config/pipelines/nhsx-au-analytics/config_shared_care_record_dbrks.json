@@ -80,7 +80,7 @@
 				"sink_file":"shcr_partners_pcn_data_month_count.parquet",
 				}
 			],
-		"staging":[    
+		"staging":[
     			{
 				"metric":"shcr_partners_stp_data_month_count",
 				"stored_procedure":"[dbo].[stored_proc_shcr_partners_stp_data_month_count]",
