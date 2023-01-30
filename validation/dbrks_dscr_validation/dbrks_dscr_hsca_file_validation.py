@@ -63,6 +63,7 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 file_path_config = "config/pipelines/nhsx-au-analytics"
 file_name_config = "config_dscr_dbrks.json"
 log_table = "dbo.pre_load_log"
+agg_log_table = 'dbo.pre_load_agg_log'
 
 file_system_config = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
@@ -86,6 +87,26 @@ print(new_source_path+latestFolder, new_source_file)
 new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, new_source_file)
 new_dataframe = pd.read_csv(io.BytesIO(new_dataset), encoding = "ISO-8859-1")
 
+
+# COMMAND ----------
+
+# Date
+today = pd.to_datetime('now').strftime("%Y-%m-%d %H:%M:%S")
+date = datetime.strptime(today, '%Y-%m-%d %H:%M:%S')
+
+# COMMAND ----------
+
+# Count today's Location and Location Inspection Directorate
+location_count = new_dataframe["Location ID"].count()
+print("########### Number of Location is Shown Below ###########################################")
+print(location_count)
+
+adult_social_care = new_dataframe[new_dataframe["Location Inspection Directorate"] == "Adult social care"]
+location_insp_dir_count = adult_social_care["Location Inspection Directorate"].count()
+print("########### Number of Location Inspection Directorate is Shown Below #######################")
+print(location_insp_dir_count)
+
+
 # COMMAND ----------
 
 # validate data
@@ -94,15 +115,54 @@ new_dataframe = pd.read_csv(io.BytesIO(new_dataset), encoding = "ISO-8859-1")
 val_df = new_dataframe.mask(new_dataframe == " ") # convert all blanks to NaN for validtion
 validation_df = ge.from_pandas(val_df) # Create great expectations dataframe from pandas datafarme
 
+
+# COMMAND ----------
+
+# Get the previous Count for Location, if there is no previous count log today's count
+location_agg = get_last_agg(agg_log_table, new_source_file, "Count", "Count of Location ID for CQC file")
+print(new_source_file)
+if not location_agg.empty:
+  print("############# Last run details is shown below #############################################")
+  display(location_agg)
+  
+  location_previous_count = location_agg['aggregate_value'].values[0] 
+  
+  print("############# Location ID previous count is shown below ######################################")
+  print(location_previous_count)
+  print("##############################################################################################")
+  
+  location_min, location_max = get_thresholds(location_previous_count, 5)
+  
+  # Test
+  info = "Checking that the row count for Location ID is within the tolerance amount"
+  expect = validation_df.expect_table_row_count_to_be_between(min_value=location_min, max_value=location_max)
+  test_result(expect, info)
+  assert expect.success
+else:
+  print("############# No previous run found, this is taken to be the first ever run for this #######")
+
+
+# COMMAND ----------
+
+# Get the previous Count for Location Inspevtion Directorate, if there is no previous count log today's count
+
+# COMMAND ----------
+
 # Validate columns in file
 #-----------------------------------------
+info = "Checking that Location ID column does not have NULLs"
 expect = validation_df.expect_column_values_to_not_be_null("Location ID") # Check that has no null or blank values
+test_result(expect, info)
 assert expect.success
 
+info = "Checking that Dormant (Y/N) column has only Y and N"
 expect = validation_df.expect_column_values_to_be_in_set(column="Dormant (Y/N)", value_set=["Y", "N", "y", "n"]) # Check that Dormant (Y/N) column only has "Y", "N", "y", "n"
+test_result(expect, info)
 assert expect.success
 
+info = "Checking that Care home column has only Y and N"
 expect = validation_df.expect_column_values_to_be_in_set(column="Care home?", value_set=["Y", "N", "y", "n"])  # Check that Care home? column only has "Y", "N", "y", "n"
+test_result(expect, info)
 assert expect.success
 
 
@@ -117,3 +177,13 @@ date = datetime.strptime(today, '%Y-%m-%d %H:%M:%S')
 in_row = {'row_count':[row_count], 'load_date':[date], 'file_to_load':[full_path]}
 df = pd.DataFrame(in_row)  
 write_to_sql(df, log_table, "append")
+
+# COMMAND ----------
+
+# Log Location ID row count for today's file
+cqc_full_path = new_source_path + new_source_file
+location_agg_row = {"load_date": [date], "file_name": [cqc_full_path], "aggregation": ["Count"], "aggregate_value": [location_count], "comment": ["Count of Location ID for CQC file"]}
+location_df = pd.DataFrame(location_agg_row) 
+print("############# Log the follow to dbo.pre_load_agg_log table ######################################")
+display(location_df)
+write_to_sql(location_df, agg_log_table, "append")
