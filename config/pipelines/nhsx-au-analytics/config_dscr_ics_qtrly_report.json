@@ -30,7 +30,7 @@
 			"source_path": "raw/digital_socialcare/manual_upload/parquet/dscr_ics_qrtly_report/historical/",
 			"source_file": "dscr_ics_qrtly_report_historical.parquet",
 			"sink_path": "proc/sources/digital_socialcare/manual_upload/dscr_ics_qrtly_report/historical/",
-			"sink_file": "dscr_ics_qrtly_report.parquet"
+			"sink_file": "dscr_ics_qrtly_report_historical.parquet"
 		},
 		"project": {
 			"source_path": "proc/sources/digital_socialcare/manual_upload/dscr_ics_qrtly_report/historical/",

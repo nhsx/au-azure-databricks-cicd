@@ -253,7 +253,7 @@ def get_thresholds(previous_value, percentage):
   min_val = previous_value - tolerance
   max_val = previous_value + tolerance
 
-  print("Percentage is : {}%".format(percentage))
+  print("Percentage is : {}%".format(percent))
   print("Previous value is : {}".format(previous_value))
   print("Tolerence is : {}".format(tolerance))
   print("Minimum expected value is : {}".format(min_val))

@@ -77,7 +77,7 @@
 				"source_path": "proc/sources/shcr/sharepoint/parquet/all_tables/snapshot/",
 				"source_file":"shcr_partners_pcn_data_month_count.parquet",
 				"sink_path": "proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
-				"sink_file":"shcr_partners_pcn_data_month_count.parquet"
+				"sink_file":"shcr_partners_pcn_data_month_count.parquet",
 				}
 			],
 		"staging":[    
