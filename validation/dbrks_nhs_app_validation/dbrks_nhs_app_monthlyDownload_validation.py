@@ -77,7 +77,11 @@ new_source_path = config_JSON["pipeline"]['raw']["snapshot_source_path"]
 # ----------------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, new_source_path)
 file_name_list = datalake_listContents(CONNECTION_STRING, file_system, new_source_path+latestFolder)
-file_name_list = [file for file in file_name_list if 'MonthlyDownloads' in file]
+file_name_list = [file for file in file_name_list if "MonthlyDownloads" in file] 
+if not file_name_list:
+    print("MonthlyDownloads file has not arrived")
+    dbutils.notebook.exit("MonthlyDownloads file has not arrived")
+
 for new_source_file in file_name_list:
   new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, new_source_file)
   new_dataframe = pd.read_csv(io.BytesIO(new_dataset))
@@ -92,15 +96,15 @@ print("Today's row count is: " + str(today_count))
 print("Today's row sum is: " + str(sum_clicks))
 
 
-
 # COMMAND ----------
 
 # Get the sum of the count column from the previous weeks data and calculate the 20% thresholds
 # ---------------------------------------------------------------------------------------------
 last_run = get_last_agg(agg_log_tbl, "MonthlyDownloads", "sum", "sum of the count column")
-previous_sum = last_run.iloc[0,3]
 print("############# Last run details is shown below ###############################")
 display(last_run)
+
+previous_sum = last_run.iloc[0,3]
 
 #calculate thresholds using function from helper functions
 min_sum_clicks, max_sum_clicks = get_thresholds(previous_sum, 20)
