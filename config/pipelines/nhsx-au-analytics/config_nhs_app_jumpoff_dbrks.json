@@ -1,117 +1,119 @@
 {
 	"metadata": {
 		"products": [
-		{
-		"product_name": "NHS App Dashboard",
-		"Granularity": "GP Practice Level",
-		"topic": "NHS App",
-		"metrics": [
 			{
-            "id": "165",
-            "full_name": "Covid Vaccine Record ViewJump Off Clicks",
-			"short_name":"nhs_app_jumpoff_covid_vaccine_record_view_day_count"
-        	},
-		{
-			"id": "M171",
-			"full_name": "PKB carePlansJump Off Clicks",
-			"short_name":"nhs_app_jumpoff_PKB_carePlans_day_count"
-			},
-			{
-			"id": "M174",
-			"full_name": "Engage - adminJump Off Clicks",
-			"short_name":"nhs_app_jumpoff_engage_admin_day_count"
-			},
-			{
-			"id": "M162",
-			"full_name": "Covid Pass Jump Off Clicks",
-			"short_name":"nhs_app_jumpoff_covid_pass_count"
-			},
-			{
-			"id": "M163",
-			"full_name": "Covid Pass P5 Jump Off Clicks",
-			"short_name":"nhs_app_jumpoff_covid_pass_p5_count"
-			},
-			{
-			"id": "M172",
-			"full_name": "Engage - Messages Jump Off Clicks",
-			"short_name":"nhs_app_jumpoff_engage_messages_count"
-			},
-			{
-			"id": "M173",
-			"full_name": "PKB - sharedLinks Jump Off Clicks",
-			"short_name":"nhs_app_jumpoff_pkb_sharedlinks_count"
-			},
-			{
-			"id": "M175",
-			"full_name": "Engage - medicalJump Off Clicks",
-			"short_name":"nhs_app_jumpoff_engage_medical_day_count"
-			},
-			{
-			"id": "M177",
-			"full_name": "Substrakt - accountAdminJump Off Clicks",
-			"short_name":"nhs_app_jumpoff_substrakt_accountAdmin_day_count"
-			},
-			{
-			"id": "M176",
-			"full_name": "Substrakt - messages Jump Off Clicks",
-			"short_name":"nhs_app_jumpoff_substrakt_messages_day_count"
-			},
-			{
-			"id": "M178",
-			"full_name": "Substrakt - Patient Participation Group Jump Off Clicks",
-			"short_name":"nhs_app_jumpoff_substrakt_patientparticipationgroup_day_count"
-			},
-			{
-			"id": "M169",
-			"full_name": "PKB - medicinesJump Off Clicks",
-			"short_name":"nhs_app_jumpoff_pkb_medicines_day_count"
-			},
-			{
-			"id": "M170",
-			"full_name": "PKB - healthTrackersJump Off Clicks",
-			"short_name":"nhs_app_jumpoff_pkb_healthTrackers_day_count"
-      		},
-     		{
-			"id": "M164",
-			"full_name": "Manage Your Referral Jump Off Clicks",
-			"short_name":"nhs_app_jumpoff_esr_manageYourReferra_day_count"
-			},
-			{
-			"id": "M166",
-			"full_name": "PKB - messagesJump Off Clickss",
-			"short_name":"nhs_app_jumpoff_PKB_messages_day_count"
-			},
-			{
-			"id": "M167",
-			"full_name": "PKB - appointmentsJump Off Clicks",
-			"short_name":"nhs_app_jumpoff_pkb_appointments_day_count"
-			},
-			{
-			"id": "M168",
-			"full_name": "PKB - testResultsJump Off Clicks",
-			"short_name":"nhs_app_jumpoff_pkb_test_results_day_count"
-			},
-			{
-			"id": "M179",
-			"full_name": "eConsultJump Off Clicks",
-			"short_name":"nhs_app_jumpoff_econsult_day_count"
-			},
-			{
-			"id": "M180",
-			"full_name": "accurx - messagesJump Off Clicks",
-			"short_name":"nhs_app_jumpoff_accurx_messages_day_count"
-			},
-			{
-			"id": "M181",
-			"full_name": "accurx - medicalJump Off Clicks",
-			"short_name":"nhs_app_jumpoff_accurx_medical_day_count"
+				"product_name": "NHS App Dashboard",
+				"Granularity": "GP Practice Level",
+				"topic": "NHS App",
+				"metrics": [
+					{
+						"id": "165",
+						"full_name": "Covid Vaccine Record ViewJump Off Clicks",
+						"short_name": "nhs_app_jumpoff_covid_vaccine_record_view_day_count"
+					},
+					{
+						"id": "M171",
+						"full_name": "PKB carePlansJump Off Clicks",
+						"short_name": "nhs_app_jumpoff_PKB_carePlans_day_count"
+					},
+					{
+						"id": "M174",
+						"full_name": "Engage - adminJump Off Clicks",
+						"short_name": "nhs_app_jumpoff_engage_admin_day_count"
+					},
+					{
+						"id": "M162",
+						"full_name": "Covid Pass Jump Off Clicks",
+						"short_name": "nhs_app_jumpoff_covid_pass_count"
+					},
+					{
+						"id": "M163",
+						"full_name": "Covid Pass P5 Jump Off Clicks",
+						"short_name": "nhs_app_jumpoff_covid_pass_p5_count"
+					},
+					{
+						"id": "M172",
+						"full_name": "Engage - Messages Jump Off Clicks",
+						"short_name": "nhs_app_jumpoff_engage_messages_count"
+					},
+					{
+						"id": "M173",
+						"full_name": "PKB - sharedLinks Jump Off Clicks",
+						"short_name": "nhs_app_jumpoff_pkb_sharedlinks_count"
+					},
+					{
+						"id": "M175",
+						"full_name": "Engage - medicalJump Off Clicks",
+						"short_name": "nhs_app_jumpoff_engage_medical_day_count"
+					},
+					{
+						"id": "M177",
+						"full_name": "Substrakt - accountAdminJump Off Clicks",
+						"short_name": "nhs_app_jumpoff_substrakt_accountAdmin_day_count"
+					},
+					{
+						"id": "M176",
+						"full_name": "Substrakt - messages Jump Off Clicks",
+						"short_name": "nhs_app_jumpoff_substrakt_messages_day_count"
+					},
+					{
+						"id": "M178",
+						"full_name": "Substrakt - Patient Participation Group Jump Off Clicks",
+						"short_name": "nhs_app_jumpoff_substrakt_patientparticipationgroup_day_count"
+					},
+					{
+						"id": "M169",
+						"full_name": "PKB - medicinesJump Off Clicks",
+						"short_name": "nhs_app_jumpoff_pkb_medicines_day_count"
+					},
+					{
+						"id": "M170",
+						"full_name": "PKB - healthTrackersJump Off Clicks",
+						"short_name": "nhs_app_jumpoff_pkb_healthTrackers_day_count"
+					},
+					{
+						"id": "M164",
+						"full_name": "Manage Your Referral Jump Off Clicks",
+						"short_name": "nhs_app_jumpoff_esr_manageYourReferra_day_count"
+					},
+					{
+						"id": "M166",
+						"full_name": "PKB - messagesJump Off Clickss",
+						"short_name": "nhs_app_jumpoff_PKB_messages_day_count"
+					},
+					{
+						"id": "M167",
+						"full_name": "PKB - appointmentsJump Off Clicks",
+						"short_name": "nhs_app_jumpoff_pkb_appointments_day_count"
+					},
+					{
+						"id": "M168",
+						"full_name": "PKB - testResultsJump Off Clicks",
+						"short_name": "nhs_app_jumpoff_pkb_test_results_day_count"
+					},
+					{
+						"id": "M179",
+						"full_name": "eConsultJump Off Clicks",
+						"short_name": "nhs_app_jumpoff_econsult_day_count"
+					},
+					{
+						"id": "M180",
+						"full_name": "accurx - messagesJump Off Clicks",
+						"short_name": "nhs_app_jumpoff_accurx_messages_day_count"
+					},
+					{
+						"id": "M181",
+						"full_name": "accurx - medicalJump Off Clicks",
+						"short_name": "nhs_app_jumpoff_accurx_medical_day_count"
+					}
+				]
 			}
 		]
-	}]},
+	},
 	"pipeline": {
 		"name": "nhs_app_jumpoff",
-    	"folder": "nhsx-au-analytics/nhsdigital/nhs_app/",
-	        "source_adl_file_system": "digitallandcontainer",
+		"folder": "nhsx-au-analytics/nhsdigital/nhs_app/",
+		"source_adl_file_system": "digitallandcontainer",
 		"ingestion": {
 			"sink_path": "land/nhsdigital/nhs_app/timestamp/snapshot/",
 			"source_path": "/nhs_app/land/",
@@ -136,217 +138,216 @@
 			"reference_source_path_gp": "proc/sources/ncdr_etp/adf_v2/table/gp_practice_population/snapshot/",
 			"reference_source_file_gp": "table_gp_practice_population_snapshot.parquet",
 			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_nhs_app_jumpoff_orchestrator",
-			"databricks":[
+			"databricks": [
 				{
-				"metric": "nhs_app_jumpoff_covid_vaccine_record_view_day_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_covid_vaccine_record_view_day_count/",
-				"sink_file": "nhs_app_jumpoff_covid_vaccine_record_view_day_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_covid_vaccine_record_view_day_count"
+					"metric": "nhs_app_jumpoff_covid_vaccine_record_view_day_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_covid_vaccine_record_view_day_count/",
+					"sink_file": "nhs_app_jumpoff_covid_vaccine_record_view_day_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_covid_vaccine_record_view_day_count"
 				},
 				{
-				"metric": "nhs_app_jumpoff_PKB_carePlans_day_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_PKB_carePlans_day_count/",
-				"sink_file": "nhs_app_jumpoff_PKB_carePlans_day_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_PKB_carePlans_day_count"
+					"metric": "nhs_app_jumpoff_PKB_carePlans_day_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_PKB_carePlans_day_count/",
+					"sink_file": "nhs_app_jumpoff_PKB_carePlans_day_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_PKB_carePlans_day_count"
 				},
 				{
-				"metric": "nhs_app_jumpoff_engage_admin_day_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_engage_admin_day_count/",
-				"sink_file": "nhs_app_jumpoff_engage_admin_day_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_engage_admin_day_count"
+					"metric": "nhs_app_jumpoff_engage_admin_day_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_engage_admin_day_count/",
+					"sink_file": "nhs_app_jumpoff_engage_admin_day_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_engage_admin_day_count"
 				},
 				{
-				"metric": "nhs_app_jumpoff_covid_pass_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_covid_pass_p5_count/",
-				"sink_file": "nhs_app_jumpoff_covid_pass_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_covid_pass_count"
+					"metric": "nhs_app_jumpoff_covid_pass_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_covid_pass_p5_count/",
+					"sink_file": "nhs_app_jumpoff_covid_pass_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_covid_pass_count"
 				},
 				{
-				"metric": "nhs_app_jumpoff_covid_pass_p5_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_covid_pass_p5_count/",
-				"sink_file": "nhs_app_jumpoff_covid_pass_p5_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_covid_pass_p5_count"
+					"metric": "nhs_app_jumpoff_covid_pass_p5_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_covid_pass_p5_count/",
+					"sink_file": "nhs_app_jumpoff_covid_pass_p5_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_covid_pass_p5_count"
 				},
 				{
-				"metric": "nhs_app_jumpoff_engage_messages_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_engage_messages_count/",
-				"sink_file": "nhs_app_jumpoff_engage_messages_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_engage_messages_count"
+					"metric": "nhs_app_jumpoff_engage_messages_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_engage_messages_count/",
+					"sink_file": "nhs_app_jumpoff_engage_messages_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_engage_messages_count"
 				},
 				{
-				"metric": "nhs_app_jumpoff_pkb_sharedlinks_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_pkb_sharedlinks_count/",
-				"sink_file": "nhs_app_jumpoff_pkb_sharedlinks_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_pkb_sharedlinks_count"
+					"metric": "nhs_app_jumpoff_pkb_sharedlinks_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_pkb_sharedlinks_count/",
+					"sink_file": "nhs_app_jumpoff_pkb_sharedlinks_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_pkb_sharedlinks_count"
 				},
 				{
-				"metric": "nhs_app_jumpoff_engage_medical_day_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_engage_medical_day_count/",
-				"sink_file": "nhs_app_jumpoff_engage_medical_day_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_engage_medical_day_count"
+					"metric": "nhs_app_jumpoff_engage_medical_day_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_engage_medical_day_count/",
+					"sink_file": "nhs_app_jumpoff_engage_medical_day_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_engage_medical_day_count"
 				},
 				{
-				"metric": "nhs_app_jumpoff_substrakt_accountAdmin_day_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_substrakt_accountAdmin_day_count/",
-				"sink_file": "nhs_app_jumpoff_engage_medical_day_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_substrakt_accountAdmin_day_count"
+					"metric": "nhs_app_jumpoff_substrakt_accountAdmin_day_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_substrakt_accountAdmin_day_count/",
+					"sink_file": "nhs_app_jumpoff_engage_medical_day_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_substrakt_accountAdmin_day_count"
 				},
 				{
-				"metric": "nhs_app_jumpoff_substrakt_messages_day_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_substrakt_messages_day_count/",
-				"sink_file": "nhs_app_jumpoff_substrakt_messages_day_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_substrakt_messages_day_count"
+					"metric": "nhs_app_jumpoff_substrakt_messages_day_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_substrakt_messages_day_count/",
+					"sink_file": "nhs_app_jumpoff_substrakt_messages_day_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_substrakt_messages_day_count"
 				},
 				{
-				"metric": "nhs_app_jumpoff_substrakt_patientparticipationgroup_day_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_substrakt_patientparticipationgroup_day_count/",
-				"sink_file": "nhs_app_jumpoff_substrakt_patientparticipationgroup_day_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_substrakt_patientparticipationgroup_day_count"
+					"metric": "nhs_app_jumpoff_substrakt_patientparticipationgroup_day_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_substrakt_patientparticipationgroup_day_count/",
+					"sink_file": "nhs_app_jumpoff_substrakt_patientparticipationgroup_day_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_substrakt_patientparticipationgroup_day_count"
 				},
 				{
-				"metric": "nhs_app_jumpoff_pkb_medicines_day_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_pkb_medicines_day_count/",
-				"sink_file": "nhs_app_jumpoff_pkb_medicines_day_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_pkb_medicines_day_count"
+					"metric": "nhs_app_jumpoff_pkb_medicines_day_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_pkb_medicines_day_count/",
+					"sink_file": "nhs_app_jumpoff_pkb_medicines_day_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_pkb_medicines_day_count"
 				},
 				{
-				"metric": "nhs_app_jumpoff_pkb_healthTrackers_day_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_pkb_healthTrackers_day_count/",
-				"sink_file": "nhs_app_jumpoff_pkb_healthTrackers_day_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_pkb_healthTrackers_day_count"
+					"metric": "nhs_app_jumpoff_pkb_healthTrackers_day_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_pkb_healthTrackers_day_count/",
+					"sink_file": "nhs_app_jumpoff_pkb_healthTrackers_day_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_pkb_healthTrackers_day_count"
 				},
 				{
-				"metric": "nhs_app_jumpoff_esr_manageYourReferra_day_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_esr_manageYourReferra_day_count/",
-				"sink_file": "nhs_app_jumpoff_esr_manageYourReferra_day_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_esr_manageYourReferra_day_count"
+					"metric": "nhs_app_jumpoff_esr_manageYourReferra_day_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_esr_manageYourReferra_day_count/",
+					"sink_file": "nhs_app_jumpoff_esr_manageYourReferra_day_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_esr_manageYourReferra_day_count"
 				},
 				{
-				"metric": "nhs_app_jumpoff_PKB_messages_day_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_PKB_messages_day_count/",
-				"sink_file": "nhs_app_jumpoff_PKB_messages_day_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_PKB_messages_day_count"
+					"metric": "nhs_app_jumpoff_PKB_messages_day_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_PKB_messages_day_count/",
+					"sink_file": "nhs_app_jumpoff_PKB_messages_day_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_PKB_messages_day_count"
 				},
 				{
-				"metric": "nhs_app_jumpoff_pkb_appointments_day_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_pkb_appointments_day_count/",
-				"sink_file": "nhs_app_jumpoff_pkb_appointments_day_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_pkb_appointments_day_count"
+					"metric": "nhs_app_jumpoff_pkb_appointments_day_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_pkb_appointments_day_count/",
+					"sink_file": "nhs_app_jumpoff_pkb_appointments_day_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_pkb_appointments_day_count"
 				},
 				{
-				"metric": "nhs_app_jumpoff_pkb_test_results_day_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_pkb_test_results_day_count/",
-				"sink_file": "nhs_app_jumpoff_pkb_test_results_day_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_pkb_test_results_day_count"
+					"metric": "nhs_app_jumpoff_pkb_test_results_day_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_pkb_test_results_day_count/",
+					"sink_file": "nhs_app_jumpoff_pkb_test_results_day_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_pkb_test_results_day_count"
 				},
 				{
-				"metric": "nhs_app_jumpoff_econsult_day_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_econsult_day_count/",
-				"sink_file": "nhs_app_jumpoff_econsult_day_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_econsult_day_count"
+					"metric": "nhs_app_jumpoff_econsult_day_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_econsult_day_count/",
+					"sink_file": "nhs_app_jumpoff_econsult_day_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_econsult_day_count"
 				},
 				{
-				"metric": "nhs_app_jumpoff_accurx_messages_day_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_accurx_messages_day_count/",
-				"sink_file": "nhs_app_jumpoff_accurx_messages_day_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_accurx_messages_day_count"
+					"metric": "nhs_app_jumpoff_accurx_messages_day_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_accurx_messages_day_count/",
+					"sink_file": "nhs_app_jumpoff_accurx_messages_day_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_accurx_messages_day_count"
 				},
 				{
-				"metric": "nhs_app_jumpoff_accurx_medical_day_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_accurx_medical_day_count/",
-				"sink_file": "nhs_app_jumpoff_accurx_medical_day_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_accurx_medical_day_count"
+					"metric": "nhs_app_jumpoff_accurx_medical_day_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_jumpoff/nhs_app_jumpoff_accurx_medical_day_count/",
+					"sink_file": "nhs_app_jumpoff_accurx_medical_day_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app/dbrks_nhs_app_jumpoff_accurx_medical_day_count"
 				}
 			]
 		},
-		"staging": [ 
+		"staging": [
 			{
-				"metric":"nhs_app_jumpoff_covid_vaccine_record_view_day_count",
-				"sink_table":"nhs_app_jumpoff_covid_vaccine_record_view_day_count"
+				"metric": "nhs_app_jumpoff_covid_vaccine_record_view_day_count",
+				"sink_table": "nhs_app_jumpoff_covid_vaccine_record_view_day_count"
 			},
 			{
-				"metric":"nhs_app_jumpoff_PKB_carePlans_day_count",
-				"sink_table":"nhs_app_jumpoff_PKB_carePlans_day_count"
+				"metric": "nhs_app_jumpoff_PKB_carePlans_day_count",
+				"sink_table": "nhs_app_jumpoff_PKB_carePlans_day_count"
 			},
 			{
-				"metric":"nhs_app_jumpoff_engage_admin_day_count",
-				"sink_table":"nhs_app_jumpoff_engage_admin_day_count" 
+				"metric": "nhs_app_jumpoff_engage_admin_day_count",
+				"sink_table": "nhs_app_jumpoff_engage_admin_day_count"
 			},
 			{
-				"metric":"nhs_app_jumpoff_covid_pass_count",
-				"sink_table":"nhs_app_jumpoff_covid_pass_count" 
+				"metric": "nhs_app_jumpoff_covid_pass_count",
+				"sink_table": "nhs_app_jumpoff_covid_pass_count"
 			},
 			{
-				"metric":"nhs_app_jumpoff_covid_pass_p5_count",
-				"sink_table":"nhs_app_jumpoff_covid_pass_p5_count" 
+				"metric": "nhs_app_jumpoff_covid_pass_p5_count",
+				"sink_table": "nhs_app_jumpoff_covid_pass_p5_count"
 			},
 			{
-				"metric":"nhs_app_jumpoff_engage_messages_count",
-				"sink_table":"nhs_app_jumpoff_engage_messages_count" 
+				"metric": "nhs_app_jumpoff_engage_messages_count",
+				"sink_table": "nhs_app_jumpoff_engage_messages_count"
 			},
 			{
-				"metric":"nhs_app_jumpoff_pkb_sharedlinks_count",
-				"sink_table":"nhs_app_jumpoff_pkb_sharedlinks_count" 
+				"metric": "nhs_app_jumpoff_pkb_sharedlinks_count",
+				"sink_table": "nhs_app_jumpoff_pkb_sharedlinks_count"
 			},
 			{
-				"metric":"nhs_app_jumpoff_engage_medical_day_count",
-				"sink_table":"nhs_app_jumpoff_engage_medical_day_count" 
+				"metric": "nhs_app_jumpoff_engage_medical_day_count",
+				"sink_table": "nhs_app_jumpoff_engage_medical_day_count"
 			},
 			{
-				"metric":"nhs_app_jumpoff_substrakt_accountAdmin_day_count",
-				"sink_table":"nhs_app_jumpoff_substrakt_accountAdmin_day_count" 
+				"metric": "nhs_app_jumpoff_substrakt_accountAdmin_day_count",
+				"sink_table": "nhs_app_jumpoff_substrakt_accountAdmin_day_count"
 			},
 			{
-				"metric":"nhs_app_jumpoff_substrakt_messages_day_count",
-				"sink_table":"nhs_app_jumpoff_substrakt_messages_day_count" 
+				"metric": "nhs_app_jumpoff_substrakt_messages_day_count",
+				"sink_table": "nhs_app_jumpoff_substrakt_messages_day_count"
 			},
 			{
-				"metric":"nhs_app_jumpoff_substrakt_patientparticipationgroup_day_count",
-				"sink_table":"nhs_app_jumpoff_substrakt_patientparticipationgroup_day_count" 
+				"metric": "nhs_app_jumpoff_substrakt_patientparticipationgroup_day_count",
+				"sink_table": "nhs_app_jumpoff_substrakt_patientparticipationgroup_day_count"
 			},
 			{
-				"metric":"nhs_app_jumpoff_pkb_medicines_day_count",
-				"sink_table":"nhs_app_jumpoff_pkb_medicines_day_count" 
+				"metric": "nhs_app_jumpoff_pkb_medicines_day_count",
+				"sink_table": "nhs_app_jumpoff_pkb_medicines_day_count"
 			},
 			{
-				"metric":"nhs_app_jumpoff_pkb_healthTrackers_day_count",
-				"sink_table":"nhs_app_jumpoff_pkb_healthTrackers_day_count"
+				"metric": "nhs_app_jumpoff_pkb_healthTrackers_day_count",
+				"sink_table": "nhs_app_jumpoff_pkb_healthTrackers_day_count"
 			},
 			{
-				"metric":"nhs_app_jumpoff_esr_manageYourReferra_day_count",
-				"sink_table":"nhs_app_jumpoff_esr_manageYourReferra_day_count" 
+				"metric": "nhs_app_jumpoff_esr_manageYourReferra_day_count",
+				"sink_table": "nhs_app_jumpoff_esr_manageYourReferra_day_count"
 			},
 			{
-				"metric":"nhs_app_jumpoff_PKB_messages_day_count",
-				"sink_table":"nhs_app_jumpoff_PKB_messages_day_count" 
+				"metric": "nhs_app_jumpoff_PKB_messages_day_count",
+				"sink_table": "nhs_app_jumpoff_PKB_messages_day_count"
 			},
 			{
-				"metric":"nhs_app_jumpoff_pkb_appointments_day_count",
-				"sink_table":"nhs_app_jumpoff_pkb_appointments_day_count" 
+				"metric": "nhs_app_jumpoff_pkb_appointments_day_count",
+				"sink_table": "nhs_app_jumpoff_pkb_appointments_day_count"
 			},
 			{
-				"metric":"nhs_app_jumpoff_pkb_test_results_day_count",
-				"sink_table":"nhs_app_jumpoff_pkb_test_results_day_count" 
+				"metric": "nhs_app_jumpoff_pkb_test_results_day_count",
+				"sink_table": "nhs_app_jumpoff_pkb_test_results_day_count"
 			},
 			{
-				"metric":"nhs_app_jumpoff_econsult_day_count",
-				"sink_table":"nhs_app_jumpoff_econsult_day_count" 
+				"metric": "nhs_app_jumpoff_econsult_day_count",
+				"sink_table": "nhs_app_jumpoff_econsult_day_count"
 			},
 			{
-				"metric":"nhs_app_jumpoff_accurx_messages_day_count",
-				"sink_table":"nhs_app_jumpoff_accurx_messages_day_count" 
+				"metric": "nhs_app_jumpoff_accurx_messages_day_count",
+				"sink_table": "nhs_app_jumpoff_accurx_messages_day_count"
 			},
 			{
-				"metric":"nhs_app_jumpoff_accurx_medical_day_count",
-				"sink_table":"nhs_app_jumpoff_accurx_medical_day_count" 
+				"metric": "nhs_app_jumpoff_accurx_medical_day_count",
+				"sink_table": "nhs_app_jumpoff_accurx_medical_day_count"
 			}
-
-		         ]
-
-		}
+		],
+		"validation": [
+			{
+				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_nhs_app_validation/dbrks_trigger_nhs_app_jumpoff_validation",
+				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
+			}
+		]
 	}
-
-
-
-
-	
+}

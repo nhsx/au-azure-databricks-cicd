@@ -1,26 +1,28 @@
 {
 	"metadata": {
 		"products": [
-		{
-		"product_name": "NHS App Dashboard",
-		"Granularity": "National Level",
-		"topic": "NHS App",
-		"metrics": [
 			{
-            "id": "M0160B",
-            "full_name": "Number of NHS app monthly downloads by device operating system",
-			"short_name":"nhs_app_device_os"
-        	}
+				"product_name": "NHS App Dashboard",
+				"Granularity": "National Level",
+				"topic": "NHS App",
+				"metrics": [
+					{
+						"id": "M0160B",
+						"full_name": "Number of NHS app monthly downloads by device operating system",
+						"short_name": "nhs_app_device_os"
+					}
+				]
+			}
 		]
-	}]},
+	},
 	"pipeline": {
 		"name": "nhs_app_monthly_device",
-    	"folder": "nhsx-au-analytics/nhsdigital/nhs_app_monthly_device/",
-	        "source_adl_file_system": "digitallandcontainer",
+		"folder": "nhsx-au-analytics/nhsdigital/nhs_app_monthly_device/",
+		"source_adl_file_system": "digitallandcontainer",
 		"ingestion": {
 			"sink_path": "land/nhsdigital/nhs_app/timestamp/snapshot/",
 			"source_path": "/nhs_app/land/",
-                        "databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_nhs_app/dbrks_nhs_app_monthly_device_raw"
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_nhs_app/dbrks_nhs_app_monthly_device_raw"
 		},
 		"raw": {
 			"snapshot_source_path": "land/nhsdigital/nhs_app/timestamp/snapshot/",
@@ -39,21 +41,26 @@
 			"reference_source_path": "proc/sources/ncdr_etp/adf_v2/table/ons_population_demography/historical/",
 			"reference_source_file": "table_ons_population_demography_historical.parquet",
 			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_nhs_app_monthly_device_orchestrator",
-			"databricks":[
+			"databricks": [
 				{
-				"metric": "nhs_app_downloads_month_count",
-				"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_monthly_device/nhs_app_downloads_month_count/",
-				"sink_file": "nhs_app_downloads_month_count.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app_monthly_device/dbrks_nhs_app_downloads_month_count"
+					"metric": "nhs_app_downloads_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/nhs_app_monthly_device/nhs_app_downloads_month_count/",
+					"sink_file": "nhs_app_downloads_month_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_nhs_app_monthly_device/dbrks_nhs_app_downloads_month_count"
 				}
 			]
 		},
-		"staging": [ 
+		"staging": [
 			{
-				"metric":"nhs_app_downloads_month_count",
-				"sink_table":"nhs_app_downloads_month_count"
+				"metric": "nhs_app_downloads_month_count",
+				"sink_table": "nhs_app_downloads_month_count"
+			}
+		],
+		"validation": [
+			{
+				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_nhs_app_validation/dbrks_nhs_app_monthlyDownload_validation",
+				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
 			}
 		]
-
-		}
 	}
+}
