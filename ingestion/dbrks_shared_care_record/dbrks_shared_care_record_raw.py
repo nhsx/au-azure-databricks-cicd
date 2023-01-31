@@ -184,7 +184,7 @@ for filename in directory:
                 list(xls_file[key])[2]: "Trust Name",
                 list(xls_file[key])[3]: "Partner Organisation connected to ShCR?",
                 #extra column
-                list(xls_file[key])[4]: "Partner Organisation plans to be connected by March 2023?",
+                list(xls_file[key])[5]: "Partner Organisation plans to be connected by March 2023?",
             },
             inplace=True,
         )
@@ -210,7 +210,7 @@ for filename in directory:
                 list(xls_file[key])[2]: "PCN Name",
                 list(xls_file[key])[3]: "Partner Organisation connected to ShCR?",
                 #extra column
-                list(xls_file[key])[4]: "Partner Organisation plans to be connected by March 2023?",
+                list(xls_file[key])[5]: "Partner Organisation plans to be connected by March 2023?",
             },
             inplace=True,
         )
@@ -235,7 +235,7 @@ for filename in directory:
                 list(xls_file[key])[2]: "LA Name",
                 list(xls_file[key])[3]: "Partner Organisation connected to ShCR?",
                 #extra column
-                list(xls_file[key])[4]: "Partner Organisation plans to be connected by March 2023?",
+                list(xls_file[key])[5]: "Partner Organisation plans to be connected by March 2023?",
             },
             inplace=True,
         )
@@ -260,7 +260,7 @@ for filename in directory:
                 list(xls_file[key])[2]: "Community Provider Name",
                 list(xls_file[key])[3]: "Partner Organisation connected to ShCR?",
                 #extra column
-                list(xls_file[key])[4]: "Partner Organisation plans to be connected by March 2023?",
+                list(xls_file[key])[5]: "Partner Organisation plans to be connected by March 2023?",
             },
             inplace=True,
         )
@@ -285,7 +285,7 @@ for filename in directory:
                 list(xls_file[key])[2]: "Other Partner Name",
                 list(xls_file[key])[3]: "Partner Organisation connected to ShCR?",
                 #extra column
-                list(xls_file[key])[4]: "Partner Organisation plans to be connected by March 2023?",
+                list(xls_file[key])[5]: "Partner Organisation plans to be connected by March 2023?",
             },
             inplace=True,
         )
@@ -298,7 +298,7 @@ for filename in directory:
         
 
     
-#Remove any non-required columns from final output
+# #Remove any non-required columns from final output
 stp_df= stp_df[['For Month', 'ODS STP Code', 'STP Name', 'ICS Name (if applicable)', 'ShCR Programme Name', 'Name of ShCR System', 'Number of users with access to the ShCR', 'Number of ShCR views in the past month', 'Number of unique user ShCR views in the past month', 'Completed by (email)', 'Date completed']]
 
 trust_df = trust_df[['For Month', 'ODS STP Code', 'STP Name', 'ICS Name (if applicable)', 'ODS Trust Code', 'Trust Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
@@ -310,23 +310,64 @@ other_partner_df = other_partner_df[['For Month', 'ODS STP Code', 'STP Name', 'I
 
 # COMMAND ----------
 
-folder_date = pd.to_datetime(latestFolder) - pd.DateOffset(months=1)
+#Force data from folder name
+# folder_date = pd.to_datetime(latestFolder) - pd.DateOffset(months=1)
 
-stp_df['For Month'] = folder_date
-stp_df['Date completed'] = pd.to_datetime(stp_df['Date completed'],errors='coerce')
+# stp_df['For Month'] = folder_date
+# stp_df['Date completed'] = pd.to_datetime(stp_df['Date completed'],errors='coerce')
 
-pcn_df['For Month'] = folder_date
-trust_df['For Month'] = folder_date
+# pcn_df['For Month'] = folder_date
+# trust_df['For Month'] = folder_date
+
+# COMMAND ----------
+
+#len(trust_df[trust_df["STP Name"]=='Buckinghamshire, Oxfordshire and Berkshire West STP'])
+len(trust_df['ODS STP Code'].unique())
 
 # COMMAND ----------
 
 ### check for duplicates
-# import collections
-# a = [item for item, count in collections.Counter(trust_df['ODS Trust Code']).items() if count > 1]
-# trust_df[trust_df['ODS Trust Code'].isin(a)].sort_values(by='ODS Trust Code')
+import collections
 
-# #a = [item for item, count in collections.Counter(pcn_df['ODS PCN Code']).items() if count > 1]
-# #pcn_df[pcn_df['ODS PCN Code'].isin(a)].sort_values(by='ODS Trust Code')
+trust_dupes = [item for item, count in collections.Counter(trust_df['ODS Trust Code']).items() if count > 1]
+trust_dupes = trust_df[trust_df['ODS Trust Code'].isin(trust_dupes)].sort_values(by='ODS Trust Code')
+
+pcn_dupes = [item for item, count in collections.Counter(pcn_df['ODS PCN Code']).items() if count > 1]
+pcn_dupes = pcn_df[pcn_df['ODS PCN Code'].isin(pcn_dupes)].sort_values(by='ODS PCN Code')
+
+la_dupes = [item for item, count in collections.Counter(la_df['ODS LA Code']).items() if count > 1]
+la_dupes = la_df[la_df['ODS LA Code'].isin(la_dupes)].sort_values(by='ODS LA Code')
+
+community_dupes = [item for item, count in collections.Counter(community_provider_df['ODS Community Provider Code']).items() if count > 1]
+community_dupes = community_provider_df[community_provider_df['ODS Community Provider Code'].isin(community_dupes)].sort_values(by='ODS Community Provider Code')
+
+other_dupes = [item for item, count in collections.Counter(other_partner_df['ODS Community Provider Code']).items() if count > 1]
+other_dupes = other_partner_df[other_partner_df['ODS Community Provider Code'].isin(community_dupes)].sort_values(by='ODS Community Provider Code')
+
+#a = a[a["ODS STP Code"]=="E54000044"]
+
+
+# COMMAND ----------
+
+#DUPLICATE REPORT
+#Write pages to Excel file in iobytes
+#--------------------------------------------------
+files = [stp_df, trust_df, trust_count_df, pcn_df, pcn_count_df]
+sheets = ['STP', 'Trust', 'Trust Count', 'PCN', 'PCN Count']
+
+excel_sheet = io.BytesIO()
+
+writer = pd.ExcelWriter(excel_sheet, engine='openpyxl')
+for count, file in enumerate(files):
+    file.to_excel(writer, sheet_name=sheets[count], index=False)
+writer.save()
+
+#Send Duplicate Report File to test Output in datalake
+#--------------------------------------------------
+current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
+file_contents = excel_sheet
+datalake_upload(file_contents, CONNECTION_STRING, file_system, "proc/projects/nhsx_slt_analytics/shcr/excel_summary/"+current_date_path, "shared_care_dupe_report.xlsx")
+
 
 # COMMAND ----------
 
@@ -364,6 +405,7 @@ pcn_count_df['Type'] = 'PCN'
 #--------------------------------------------------
 files = [stp_df, trust_df, trust_count_df, pcn_df, pcn_count_df]
 sheets = ['STP', 'Trust', 'Trust Count', 'PCN', 'PCN Count']
+
 excel_sheet = io.BytesIO()
 
 writer = pd.ExcelWriter(excel_sheet, engine='openpyxl')
@@ -378,7 +420,7 @@ writer.save()
 #--------------------------------------------------
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = excel_sheet
-datalake_upload(file_contents, CONNECTION_STRING, file_system, "proc/projects/nhsx_slt_analytics/shcr/excel_summary/"+current_date_path, "excel_output.xlsx")
+datalake_upload(file_contents, CONNECTION_STRING, file_system, "proc/projects/nhsx_slt_analytics/shcr/excel_summary/"+current_date_path, "shared_care_summary_output.xlsx")
 
 # COMMAND ----------
 
