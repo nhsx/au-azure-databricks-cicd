@@ -1,11 +1,11 @@
 # Databricks notebook source
 #!/usr/bin python3
 
-# -------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 # Copyright (c) 2021 NHS England and NHS Improvement. All rights reserved.
 # Licensed under the MIT License. See license.txt in the project root for
 # license information.
-# -------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 """
 FILE:           dbrks_dscr_ics_qrtly_report_raw.py
@@ -24,7 +24,7 @@ VERSION:        0.0.1
 
 # Install libs
 # -------------------------------------------------------------------------
-%pip install geojson==2.5.* tabulate requests pandas pathlib azure-storage-file-datalake beautifulsoup4 numpy urllib3 lxml regex pyarrow==5.0.* xlrd openpyxl python-dateutil
+%pip install geojson==2.5.* tabulate requests pandas pathlib azure-storage-file-datalake beautifulsoup4 numpy urllib3 lxml regex pyarrow==5.0.* xlrd openpyxl python-dateutil fastparquet
 
 # COMMAND ----------
 
@@ -36,6 +36,7 @@ import io
 import tempfile
 from datetime import datetime
 import json
+import fastparquet
 
 # 3rd party:
 import pandas as pd
@@ -92,40 +93,100 @@ for new_source_file in file_name_list:
 
 # COMMAND ----------
 
-new_dataframe
+new_source_path
 
 # COMMAND ----------
 
-historical_source_file
+new_dataframe
 
 # COMMAND ----------
 
 # Pull historical dataset
 # -----------------------------------------------------------------------
-latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, historical_source_path)
-historical_dataset = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, historical_source_file)
+latestFolder_historical = datalake_latestFolder(CONNECTION_STRING, file_system, historical_source_path)
+historical_dataset = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder_historical, historical_source_file)
+historical_dataframe = pd.read_parquet(io.BytesIO(historical_dataset), engine="pyarrow")
+historical_dataframe
 
 
 # COMMAND ----------
 
-# Append new data to historical data
+#drop rows that contain no data in any of the columns
+df_process = new_dataframe.copy()
+df_process.dropna(axis = 0, how = 'all', inplace = True)
+df_process = df_process.reset_index()
+df_process
+
+
+# COMMAND ----------
+
+##process new dataframe
+
+#drop rows that contain no data in any of the columns
+df_process = new_dataframe.copy()
+df_process.dropna(axis = 0, how = 'all', inplace = True)
+df_process.reset_index(inplace = True)
+
+#copy ICS overview information for each row
+ics_row = df_process[['ICS Overview - Year 1 2022/23 Reporting QTR:',
+ 'ICS Overview  - ICS NAME:',
+ 'ICS Overview - LOCAL AUTHORITY NAME:',
+ 'ICS Overview - ICS SRO Approved prior to submission:',
+ 'ICS Overview - APPROVED BY (Name):',
+ 'ICS Overview - (Job Role):',
+ 'ICS Overview - Submitted to DiSC By (Name): ',
+ 'ICS Overview - (Job Role):.1',
+ 'ICS Overview  - Date of Qtrly Report Submission:',
+ 'ICS Overview  - DiSC Regional Lead Approved:',
+ 'ICS Overview - Date Reviewed :',
+ 'ICS Overview - QTRLY FUNDING ALLOCATION:',
+ 'ICS Overview - QTRLY FUNDING  APPROVED: ',
+ 'ICS Overview - ESCALATION REQUIRED:',
+ 'ICS Overview - DATE ESCALATION MTG:']].iloc[0]
+
+for i in range(df_process.shape[0]):
+  df_process.loc[i, ['ICS Overview - Year 1 2022/23 Reporting QTR:',
+ 'ICS Overview  - ICS NAME:',
+ 'ICS Overview - LOCAL AUTHORITY NAME:',
+ 'ICS Overview - ICS SRO Approved prior to submission:',
+ 'ICS Overview - APPROVED BY (Name):',
+ 'ICS Overview - (Job Role):',
+ 'ICS Overview - Submitted to DiSC By (Name): ',
+ 'ICS Overview - (Job Role):.1',
+ 'ICS Overview  - Date of Qtrly Report Submission:',
+ 'ICS Overview  - DiSC Regional Lead Approved:',
+ 'ICS Overview - Date Reviewed :',
+ 'ICS Overview - QTRLY FUNDING ALLOCATION:',
+ 'ICS Overview - QTRLY FUNDING  APPROVED: ',
+ 'ICS Overview - ESCALATION REQUIRED:',
+ 'ICS Overview - DATE ESCALATION MTG:']] = ics_row
+  
+df_process
+
+# COMMAND ----------
+
+#drop the separator columns (columns which are unnamed)
+df_process = df_process[df_process.columns.drop(list(df_process.filter(regex='Unnamed')))]
+df_process
+
+# COMMAND ----------
+
+historical_dataframe = historical_dataframe.append(df_process)
+#historical_dataframe
+
+# COMMAND ----------
+
+historical_dataframe['Remote Monitoring Tracker -             KEY ACTIVITIES and INSIGHTS:'] = historical_dataframe['Remote Monitoring Tracker -             KEY ACTIVITIES and INSIGHTS:'].astype('string')
+
+# COMMAND ----------
+
+#Upload hsitorical appended data to datalake
 # -----------------------------------------------------------------------
-historical_dataframe = pd.read_csv(io.BytesIO(historical_dataset))
-dates_in_historical = historical_dataframe["Date"].unique().tolist()
-dates_in_new = new_dataframe["Date"].unique().tolist()[-1]
-if dates_in_new in dates_in_historical:
-  print('Data already exists in historical data')
-else:
-  historical_dataframe = new_dataframe
-  historical_dataframe = historical_dataframe.sort_values(by=['Date'])
-  historical_dataframe = historical_dataframe.reset_index(drop=True)
+current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
+file_contents = io.BytesIO()
+historical_dataframe.to_parquet(file_contents, engine="pyarrow")
+datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, sink_file)
 
 # COMMAND ----------
 
-# Upload hsitorical appended data to datalake
-current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
-file_contents = io.StringIO()
-#historical_dataframe.to_csv(file_contents, index=False)
-#historical_dataframe.to_parquet(file_contents, engine="pyarrow")
-new_dataframe.to_parquet(file_contents, engine="pyarrow")
-datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, sink_file)
+
