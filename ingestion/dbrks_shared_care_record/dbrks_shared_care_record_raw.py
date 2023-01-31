@@ -191,8 +191,8 @@ for filename in directory:
         xls_file[key].insert(1, "ODS STP Code", STP_code, False)
         xls_file[key].insert(2, "STP Name", STP_name, False)
         xls_file[key].insert(3, "ICS Name (if applicable)", ICS_name, False)
-        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)   
-        xls_file[key]["Partner Organisation plans to be connected by Sept 2021?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)        
+        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"Connected": 1, "Not Connected": 0, "Please select": 0}).fillna(0).astype(int)     
+        xls_file[key]["Partner Organisation plans to be connected by March 2023?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0).astype(int)        
         trust_df = trust_df.append(xls_file[key].iloc[:, 0:9], ignore_index=True)
 
 
@@ -217,8 +217,8 @@ for filename in directory:
         xls_file[key].insert(1, "ODS STP Code", STP_code, False)
         xls_file[key].insert(2, "STP Name", STP_name, False)
         xls_file[key].insert(3, "ICS Name (if applicable)", ICS_name, False)
-        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)   
-        xls_file[key]["Partner Organisation plans to be connected by Sept 2021?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)        
+        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"Connected": 1, "Not Connected": 0, "Please select": 0}).fillna(0) 
+        xls_file[key]["Partner Organisation plans to be connected by March 2023?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)        
         pcn_df = pcn_df.append(xls_file[key].iloc[:, 0:9], ignore_index=True)
         
     ### LA CALCULATIONS ###
@@ -242,8 +242,8 @@ for filename in directory:
         xls_file[key].insert(1, "ODS STP Code", STP_code, False)
         xls_file[key].insert(2, "STP Name", STP_name, False)
         xls_file[key].insert(3, "ICS Name (if applicable)", ICS_name, False)
-        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)   
-        xls_file[key]["Partner Organisation plans to be connected by Sept 2021?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)        
+        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"Connected": 1, "Not Connected": 0, "Please select": 0}).fillna(0)  
+        xls_file[key]["Partner Organisation plans to be connected by March 2023?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)        
         la_df = la_df.append(xls_file[key].iloc[:, 0:9], ignore_index=True)
 
     ### Community Provider CALCULATIONS ###
@@ -267,8 +267,8 @@ for filename in directory:
         xls_file[key].insert(1, "ODS STP Code", STP_code, False)
         xls_file[key].insert(2, "STP Name", STP_name, False)
         xls_file[key].insert(3, "ICS Name (if applicable)", ICS_name, False)
-        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)   
-        xls_file[key]["Partner Organisation plans to be connected by Sept 2021?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)        
+        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"Connected": 1, "Not Connected": 0, "Please select": 0}).fillna(0)   
+        xls_file[key]["Partner Organisation plans to be connected by March 2023?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)        
         community_provider_df = community_provider_df.append(xls_file[key].iloc[:, 0:9], ignore_index=True) 
 
     ### Other Partner CALCULATIONS ###
@@ -292,8 +292,8 @@ for filename in directory:
         xls_file[key].insert(1, "ODS STP Code", STP_code, False)
         xls_file[key].insert(2, "STP Name", STP_name, False)
         xls_file[key].insert(3, "ICS Name (if applicable)", ICS_name, False)
-        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)   
-        xls_file[key]["Partner Organisation plans to be connected by Sept 2021?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)        
+        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"Connected": 1, "Not Connected": 0, "Please select": 0}).fillna(0)
+        xls_file[key]["Partner Organisation plans to be connected by March 2023?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)        
         other_partner_df = other_partner_df.append(xls_file[key].iloc[:, 0:9], ignore_index=True)            
         
 
@@ -310,6 +310,15 @@ other_partner_df = other_partner_df[['For Month', 'ODS STP Code', 'STP Name', 'I
 
 # COMMAND ----------
 
+# #cast all date fields to datetime format and set to 1st of the month
+# dt =lambda dt: dt.replace(day=1)
+
+# pcn_df['For Month'] = pd.to_datetime(pcn_df['For Month']).apply(dt)
+# stp_df['For Month'] = pd.to_datetime(stp_df['For Month']).apply(dt)
+# trust_df['For Month'] = pd.to_datetime(trust_df['For Month']).apply(dt)
+
+# COMMAND ----------
+
 #Force data from folder name
 # folder_date = pd.to_datetime(latestFolder) - pd.DateOffset(months=1)
 
@@ -321,13 +330,11 @@ other_partner_df = other_partner_df[['For Month', 'ODS STP Code', 'STP Name', 'I
 
 # COMMAND ----------
 
-#len(trust_df[trust_df["STP Name"]=='Buckinghamshire, Oxfordshire and Berkshire West STP'])
-len(trust_df['ODS STP Code'].unique())
-
-# COMMAND ----------
-
-### check for duplicates
+#CHECK FOR DUPLICATES
 import collections
+
+stp_dupes = [item for item, count in collections.Counter(stp_df['ODS STP Code']).items() if count > 1]
+stp_dupes = stp_df[stp_df['ODS STP Code'].isin(stp_dupes)].sort_values(by='ODS STP Code')
 
 trust_dupes = [item for item, count in collections.Counter(trust_df['ODS Trust Code']).items() if count > 1]
 trust_dupes = trust_df[trust_df['ODS Trust Code'].isin(trust_dupes)].sort_values(by='ODS Trust Code')
@@ -341,8 +348,8 @@ la_dupes = la_df[la_df['ODS LA Code'].isin(la_dupes)].sort_values(by='ODS LA Cod
 community_dupes = [item for item, count in collections.Counter(community_provider_df['ODS Community Provider Code']).items() if count > 1]
 community_dupes = community_provider_df[community_provider_df['ODS Community Provider Code'].isin(community_dupes)].sort_values(by='ODS Community Provider Code')
 
-other_dupes = [item for item, count in collections.Counter(other_partner_df['ODS Community Provider Code']).items() if count > 1]
-other_dupes = other_partner_df[other_partner_df['ODS Community Provider Code'].isin(community_dupes)].sort_values(by='ODS Community Provider Code')
+other_dupes = [item for item, count in collections.Counter(other_partner_df['ODS Other Partner Code']).items() if count > 1]
+other_dupes = other_partner_df[other_partner_df['ODS Other Partner Code'].isin(community_dupes)].sort_values(by='ODS Other Partner Code')
 
 #a = a[a["ODS STP Code"]=="E54000044"]
 
@@ -352,8 +359,8 @@ other_dupes = other_partner_df[other_partner_df['ODS Community Provider Code'].i
 #DUPLICATE REPORT
 #Write pages to Excel file in iobytes
 #--------------------------------------------------
-files = [stp_df, trust_df, trust_count_df, pcn_df, pcn_count_df]
-sheets = ['STP', 'Trust', 'Trust Count', 'PCN', 'PCN Count']
+files = [stp_dupes, trust_dupes, pcn_dupes, la_dupes, community_dupes, other_dupes]
+sheets = ['STP', 'Trust', 'PCN', 'LA', 'Community', 'Other']
 
 excel_sheet = io.BytesIO()
 
@@ -371,16 +378,46 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, "proc/projects/nh
 
 # COMMAND ----------
 
-# #cast all date fields to datetime format and set to 1st of the month
-# dt =lambda dt: dt.replace(day=1)
-
-# pcn_df['For Month'] = pd.to_datetime(pcn_df['For Month']).apply(dt)
-# stp_df['For Month'] = pd.to_datetime(stp_df['For Month']).apply(dt)
-# trust_df['For Month'] = pd.to_datetime(trust_df['For Month']).apply(dt)
-
-# COMMAND ----------
-
 ##Calculate aggregate numbers for Trusts
+#------------------------------------
+trust_count_df = trust_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].size().reset_index(name='Total')
+trust_count_df_2 = trust_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].sum().reset_index(name='Total')
+trust_count_df['Number Connected'] = trust_count_df_2['Total']
+trust_count_df['Percent'] = trust_count_df_2['Total']/trust_count_df['Total']
+trust_count_df['Type'] = 'Trust'
+
+##Calculate aggregate numbers for PCNs
+#------------------------------------
+pcn_count_df = pcn_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].size().reset_index(name='Total')
+pcn_count_df2 = pcn_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].sum().reset_index(name='Total')
+pcn_count_df['Number Connected'] = pcn_count_df2['Total']
+pcn_count_df['Percent'] = pcn_count_df2['Total']/pcn_count_df['Total']
+pcn_count_df['Type'] = 'PCN'
+
+
+##Calculate aggregate numbers for LAs
+#------------------------------------
+trust_count_df = trust_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].size().reset_index(name='Total')
+trust_count_df_2 = trust_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].sum().reset_index(name='Total')
+trust_count_df['Number Connected'] = trust_count_df_2['Total']
+trust_count_df['Percent'] = trust_count_df_2['Total']/trust_count_df['Total']
+trust_count_df['Type'] = 'Trust'
+
+trust_count_df = trust_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].size().reset_index(name='Total')
+trust_count_df_2 = trust_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].sum().reset_index(name='Total')
+trust_count_df['Number Connected'] = trust_count_df_2['Total']
+trust_count_df['Percent'] = trust_count_df_2['Total']/trust_count_df['Total']
+trust_count_df['Type'] = 'Trust'
+
+##Calculate aggregate numbers for Community Providers
+#------------------------------------
+trust_count_df = trust_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].size().reset_index(name='Total')
+trust_count_df_2 = trust_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].sum().reset_index(name='Total')
+trust_count_df['Number Connected'] = trust_count_df_2['Total']
+trust_count_df['Percent'] = trust_count_df_2['Total']/trust_count_df['Total']
+trust_count_df['Type'] = 'Trust'
+
+##Calculate aggregate numbers for Other
 #------------------------------------
 trust_count_df = trust_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].size().reset_index(name='Total')
 trust_count_df_2 = trust_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].sum().reset_index(name='Total')
@@ -390,13 +427,15 @@ trust_count_df['Type'] = 'Trust'
 
 # COMMAND ----------
 
-##Calculate aggregate numbers for PCNs
-#------------------------------------
-pcn_count_df = pcn_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].size().reset_index(name='Total')
-pcn_count_df2 = pcn_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].sum().reset_index(name='Total')
-pcn_count_df['Number Connected'] = pcn_count_df2['Total']
-pcn_count_df['Percent'] = pcn_count_df2['Total']/pcn_count_df['Total']
-pcn_count_df['Type'] = 'PCN'
+trust_df
+
+# COMMAND ----------
+
+
+
+# COMMAND ----------
+
+pcn_count_df
 
 # COMMAND ----------
 
