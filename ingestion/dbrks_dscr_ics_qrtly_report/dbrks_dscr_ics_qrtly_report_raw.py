@@ -93,7 +93,7 @@ for new_source_file in file_name_list:
 
 # COMMAND ----------
 
-new_source_path
+new_source_file
 
 # COMMAND ----------
 
@@ -171,8 +171,23 @@ df_process
 
 # COMMAND ----------
 
-historical_dataframe = historical_dataframe.append(df_process)
-#historical_dataframe
+list1 = list(df_process.columns)
+list2 = list(historical_dataframe)
+not_in_hdf = list(set(list2) - set(list1))
+not_in_hdf
+
+# COMMAND ----------
+
+historical_dataframe = pd.concat([historical_dataframe, df_process], axis = 0, ignore_index = True)
+historical_dataframe
+
+# COMMAND ----------
+
+historical
+
+# COMMAND ----------
+
+historical_dataframe_Da
 
 # COMMAND ----------
 
