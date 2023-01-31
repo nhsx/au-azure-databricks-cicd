@@ -13,7 +13,7 @@ DESCRIPTION:
                 Helper functons needed for the databricks processing step of ETL pipelines
 USAGE:
                 ...
-CONTRIBUTORS:   Craig Shenton, Mattia Ficarelli, Kabir Khan, Faaiz Shanawas
+CONTRIBUTORS:   Craig Shenton, Mattia Ficarelli, Kabir Khan, Faaiz Shanawas, Abdu Nuhu
 CONTACT:        data@nhsx.nhs.uk
 CREATED:        20 Jan 2023
 VERSION:        0.0.3
@@ -263,4 +263,36 @@ def get_thresholds(previous_value, percentage):
 
 # COMMAND ----------
 
+# Function to get post load last run aggragation from log table
+#------------------------------------------------------------------------------------------------
+def get_post_load_agg(agg_log_tbl, tabl_name, agg):
+    spark_count_agg_df = read_sql_server_table(agg_log_tbl) 
+    agg_df = spark_count_agg_df.toPandas() 
+    agg_df_2 = agg_df[(agg_df["aggregation"].str.contains(agg)) & (agg_df["tbl_name"] == tabl_name)] 
+    previous_run_date = agg_df_2["load_date"].max()    
+    agg_df_3 = agg_df_2[agg_df_2["load_date"] == previous_run_date]
+    return agg_df_3
 
+# COMMAND ----------
+
+# Function for checking aggregation is with some range
+#------------------------------------------------------------------------------------------------
+def today_previous_validation(prev_df, tab_name, percentage, ge_df, agg):
+    if not prev_df.empty:
+        print("############# Last run details is shown below #############################################")
+        display(prev_df)
+  
+        prev_count = prev_df['aggregate_value'].values[0] 
+  
+        print("############# " + tab_name + " previous count is shown below ###################")
+        print(prev_count)
+        print("##############################################################################################")
+  
+        month_min, month_max = get_thresholds(prev_count, percentage)
+
+        info = "Checking that the " + agg + " is within the tolerance amount"
+        expect = ge_df.expect_table_row_count_to_be_between(min_value=month_min, max_value=month_max)
+        test_result(expect, info)
+        assert expect.success
+    else:
+       print("############# No previous run found, this is taken to be the first ever run for this #######")
