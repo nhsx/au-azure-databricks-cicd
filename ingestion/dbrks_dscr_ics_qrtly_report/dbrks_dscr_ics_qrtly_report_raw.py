@@ -171,27 +171,12 @@ df_process
 
 # COMMAND ----------
 
-list1 = list(df_process.columns)
-list2 = list(historical_dataframe)
-not_in_hdf = list(set(list2) - set(list1))
-not_in_hdf
+historical_dataframe = historical_dataframe.append(df_process)
+#historical_dataframe
 
 # COMMAND ----------
 
-historical_dataframe = pd.concat([historical_dataframe, df_process], axis = 0, ignore_index = True)
-historical_dataframe
-
-# COMMAND ----------
-
-historical
-
-# COMMAND ----------
-
-historical_dataframe_Da
-
-# COMMAND ----------
-
-historical_dataframe['Remote Monitoring Tracker -             KEY ACTIVITIES and INSIGHTS:'] = historical_dataframe['Remote Monitoring Tracker -             KEY ACTIVITIES and INSIGHTS:'].astype('string')
+historical_dataframe = historical_dataframe.astype('string')
 
 # COMMAND ----------
 
@@ -201,7 +186,3 @@ current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.BytesIO()
 historical_dataframe.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, sink_file)
-
-# COMMAND ----------
-
-
