@@ -111,16 +111,15 @@ directory, paths = datalake_listDirectory(CONNECTION_STRING, file_system, source
 # Ingestion and processing of data from individual excel sheets.
 # -------------------------------------------------------------
 
+#initialize dataframes
 stp_df = pd.DataFrame()
 trust_df = pd.DataFrame()
 pcn_df = pd.DataFrame()
+la_df = pd.DataFrame()
 other_df = pd.DataFrame()
 community_df = pd.DataFrame()
-pcn_df = pd.DataFrame()
-la_df = pd.DataFrame()
 
-
-#loop through each submitted file in the landing area
+#loop through each submitted file in the landing area. FOr each file its goes through the various sheets and adds them to an output 
 for filename in directory:
     file = datalake_download(CONNECTION_STRING, file_system, source_path + latestFolder, filename)
     
@@ -128,15 +127,15 @@ for filename in directory:
     sheets = get_sheetnames_xlsx(io.BytesIO(file))
 
     ### STP CALCULATIONS ###
-    #list comprehension to get sheets with STP in the name from list of all sheets - ideally 1?
+    #list comprehension to get sheets with ICB in the name from list of all sheets - presumably it should only ever be 1
     sheet_name = [sheet for sheet in sheets if sheet.startswith("ICB")]
     
-    #Read current sheet. The output is a dictionary of columns
+    #Read current sheet. The output is a dictionary. Top level is ICB Sheets should be just 1, next level is each column on the sheet
     xls_file = pd.read_excel(io.BytesIO(file), sheet_name=sheet_name, engine="openpyxl")
     for key in xls_file:
         #drop unnamed columns
         xls_file[key].drop(list(xls_file[key].filter(regex="Unnamed:")), axis=1, inplace=True)
-        #remove empty rows
+        #remove empty rows if column 1 is empty
         xls_file[key] = xls_file[key].loc[~xls_file[key]["For Month\nsee guidance Ref 2"].isnull()]
         #rename columns based on order
         xls_file[key].rename(
@@ -148,6 +147,7 @@ for filename in directory:
                 list(xls_file[key])[4]: "ShCR Programme Name",
                 list(xls_file[key])[5]: "Name of ShCR System",
                 ###Extra columns
+                list(xls_file[key])[10]: "Access to Advanced (EoL) Care Plans",
                 list(xls_file[key])[11]: "Number of users with access to the ShCR",
                 list(xls_file[key])[12]: "Number of ShCR views in the past month",
                 list(xls_file[key])[13]: "Number of unique user ShCR views in the past month",
@@ -299,14 +299,22 @@ for filename in directory:
 
     
 # #Remove any non-required columns from final output
-stp_df= stp_df[['For Month', 'ODS STP Code', 'STP Name', 'ICS Name (if applicable)', 'ShCR Programme Name', 'Name of ShCR System', 'Number of users with access to the ShCR', 'Number of ShCR views in the past month', 'Number of unique user ShCR views in the past month', 'Completed by (email)', 'Date completed']]
+stp_df= stp_df[['For Month', 'ODS STP Code', 'STP Name', 'ICS Name (if applicable)', 'ShCR Programme Name', 'Name of ShCR System', 'Access to Advanced (EoL) Care Plans', 'Number of users with access to the ShCR', 'Number of ShCR views in the past month', 'Number of unique user ShCR views in the past month', 'Completed by (email)', 'Date completed']]
 
 trust_df = trust_df[['For Month', 'ODS STP Code', 'STP Name', 'ICS Name (if applicable)', 'ODS Trust Code', 'Trust Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
+
 pcn_df = pcn_df[['For Month', 'ODS STP Code', 'STP Name', 'ICS Name (if applicable)', 'ODS PCN Code', 'PCN Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
+
 la_df = la_df[['For Month', 'ODS STP Code', 'STP Name', 'ICS Name (if applicable)', 'ODS LA Code', 'LA Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
+
 community_df = community_df[['For Month', 'ODS STP Code', 'STP Name', 'ICS Name (if applicable)', 'ODS Community Provider Code', 'Community Provider Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
+
 other_df = other_df[['For Month', 'ODS STP Code', 'STP Name', 'ICS Name (if applicable)', 'ODS Other Partner Code', 'Other Partner Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
 
+
+# COMMAND ----------
+
+stp_df
 
 # COMMAND ----------
 
@@ -357,40 +365,32 @@ other_dupes = [item for item, count in collections.Counter(other_df['ODS Other P
 other_dupes = other_df[other_df['ODS Other Partner Code'].isin(community_dupes)].sort_values(by='ODS Other Partner Code')
 other_dupes = other_dupes.iloc[:,[1,2,4,5]]
 
-#a = a[a["ODS STP Code"]=="E54000044"]
-
-
 # COMMAND ----------
 
 ##Calculate aggregate numbers for Trusts
 #------------------------------------
 trust_count_df = trust_df.groupby('STP Name').agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
 trust_count_df['Percent'] = trust_count_df['Connected']/trust_count_df['Total']
-trust_count_df['Type'] = 'Trust'
 
 # ##Calculate aggregate numbers for PCNs
 # #------------------------------------
 pcn_count_df = pcn_df.groupby('STP Name').agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
 pcn_count_df['Percent'] = pcn_count_df['Connected']/pcn_count_df['Total']
-pcn_count_df['Type'] = 'PCN'
 
 # ##Calculate aggregate numbers for LAs
 # #------------------------------------
 la_count_df = la_df.groupby('STP Name').agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
 la_count_df['Percent'] = la_count_df['Connected']/la_count_df['Total']
-la_count_df['Type'] = 'Local Authority'
 
 # ##Calculate aggregate numbers for Community Providers
 # #------------------------------------
 community_count_df = community_df.groupby('STP Name').agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
 community_count_df['Percent'] = community_count_df['Connected']/community_count_df['Total']
-community_count_df['Type'] = 'Local Authority'
 
 # ##Calculate aggregate numbers for Other
 # #------------------------------------
 other_count_df = other_df.groupby('STP Name').agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
 other_count_df['Percent'] = other_count_df['Connected']/other_count_df['Total']
-other_count_df['Type'] = 'Local Authority'
 
 # COMMAND ----------
 
@@ -398,8 +398,9 @@ other_count_df['Type'] = 'Local Authority'
 #Write pages to Excel file in iobytes
 #--------------------------------------------------
 
-files = [stp_df, trust_df, trust_count_df, pcn_df, pcn_count_df, la_df, la_count_df, community_df, community_count_df, other_df, other_count_df, stp_dupes, trust_dupes, pcn_dupes, la_dupes, community_dupes, other_dupes]
-sheets = ['STP', 'Trust', 'Trust Count', 'PCN', 'PCN Count', 'LA', 'LA Count', 'Community', 'Community Count', 'Other', 'Other Count', 'STP dupes', 'Trust dupes', 'PCN dupes', 'LA dupes', 'Community dupes', 'Other dupes']
+files = [stp_df, stp_dupes, trust_df, trust_count_df, trust_dupes, pcn_df, pcn_count_df, pcn_dupes, la_df, la_count_df, la_dupes, community_df, community_count_df, community_dupes, other_df, other_count_df, other_dupes]
+
+sheets = ['STP', 'STP dupes', 'Trust', 'Trust Count', 'Trust dupes', 'PCN', 'PCN Count', 'PCN dupes', 'LA', 'LA Count', 'LA dupes', 'Community', 'Community Count', 'Community dupes', 'Other', 'Other Count', 'Other dupes']
 
 excel_sheet = io.BytesIO()
 
