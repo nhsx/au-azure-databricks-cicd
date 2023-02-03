@@ -129,6 +129,22 @@ assert expect.success
 
 # COMMAND ----------
 
+# Checking that month_year coulumn is ncreasing
+# -----------------------------------------------------------------
+distinct_month_year = pd_month_df["month_year"].unique()
+month_year_distinct_df = pd.DataFrame(data = distinct_month_year, columns = ["month_year"])
+month_year_distinct_df["month_year"] = pd.to_datetime(month_year_distinct_df["month_year"])
+month_year_distinct_df["month_year"] = month_year_distinct_df["month_year"].dt.strftime("%Y%m%d").astype(int)
+month_year_distinct_df.sort_values(by="month_year", ascending=True, inplace=True)
+
+distinct_ge_df = ge.from_pandas(month_year_distinct_df)
+info = "Checking that month_year column is increasing"
+expect = distinct_ge_df.expect_column_values_to_be_increasing(column="month_year")
+test_result(expect, info)
+assert expect.success
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC ### Collated
 
