@@ -89,6 +89,9 @@ file_name_list = [file for file in file_name_list if '.xlsm' in file]
 for new_source_file in file_name_list:
   new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, new_source_file)
   new_dataframe = pd.read_excel(io.BytesIO(new_dataset), sheet_name = "Backsheet for Pipeline", header = 0, engine='openpyxl') 
+  
+#convert new dataframe to string so it is in the same format as historical
+new_dataframe = new_dataframe.astype('string')
  
 
 # COMMAND ----------
@@ -103,6 +106,7 @@ historical_dataframe = pd.read_parquet(io.BytesIO(historical_dataset), engine="p
 # COMMAND ----------
 
 # Getting ics_overview row from both dataframe to compare if data is exists
+
 ics_new_dataframe = new_dataframe[['ICS Overview - Year 1 2022/23 Reporting QTR:',
        'ICS Overview  - ICS NAME:', 'ICS Overview - LOCAL AUTHORITY NAME:',
        'ICS Overview - ICS SRO Approved prior to submission:',
@@ -131,22 +135,24 @@ ics_historical_dataframe = historical_dataframe[['ICS Overview - Year 1 2022/23 
        'ICS Overview - ESCALATION REQUIRED:',
        'ICS Overview - DATE ESCALATION MTG:']]
 
+ics_historical_dataframe = ics_historical_dataframe.dropna()
+
 # COMMAND ----------
 
-# comparing if new data already exists in historical data 
-
+#check if the data already exists in the historical dataframe by checking the ICS overview information 
 exists = False
-for i in range(0, ics_historical_dataframe.shape[0]):
-  if (ics_historical_dataframe.iloc[i] == ics_new_dataframe).all() == True:
+for i in range(ics_historical_dataframe.shape[0]):
+  if (ics_historical_dataframe.iloc[i] == ics_new_dataframe).all():
     exists = True
-    
 if exists == True:
-  print('Data already exists in historical data')
+  print('data already exists')
 else:
+  print('data does not already exist - appended new data to the historical dataframe')
   historical_dataframe = historical_dataframe.append(new_dataframe)
 
 # COMMAND ----------
 
+#convert all the data to a string data type so that we can upload to the datalake
 historical_dataframe = historical_dataframe.astype('string')
 
 # COMMAND ----------
@@ -157,3 +163,7 @@ current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.BytesIO()
 historical_dataframe.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, sink_file)
+
+# COMMAND ----------
+
+
