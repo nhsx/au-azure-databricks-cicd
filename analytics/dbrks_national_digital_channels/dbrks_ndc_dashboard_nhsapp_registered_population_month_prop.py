@@ -80,12 +80,6 @@ latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
-# Ingestion of reference deomintator data (ONS: age banded population data)
-# ---------------------------------------------------------------------------------------------------
-ref_latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, reference_source_path)
-file = datalake_download(CONNECTION_STRING, file_system, reference_source_path+ref_latestFolder, reference_source_file)
-df_ref = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
-
 # COMMAND ----------
 
 #Processing
@@ -98,12 +92,10 @@ df_1.iloc[:, 0] = df_1.iloc[:,0].dt.strftime('%Y-%m')
 df_2 = df_1.groupby(df_1.iloc[:,0]).sum().reset_index()
 df_2.rename(columns  = {'Monthly': 'Date', 'all_time_nhs_app_registered_users': 'Number of users with an NHS App registration'}, inplace = True)
 
-#Denominator porcessing
+#Denominator(needs to be manually updated)
 # ---------------------------------------------------------------------------------------------------
-df_ref.loc[df_ref['Age'] == "90+", 'Age'] = 90
-df_ref['Age'] = df_ref['Age'].astype('int32')
-df_ref_latest_adult = df_ref[(df_ref['Effective_Snapshot_Date'] == df_ref['Effective_Snapshot_Date'].max()) & ((df_ref['Age'] >17))]
-denominator = df_ref_latest_adult['Size'].sum()
+denominator =  44715443
+
 
 #Joint processing 
 # ---------------------------------------------------------------------------------------------------
