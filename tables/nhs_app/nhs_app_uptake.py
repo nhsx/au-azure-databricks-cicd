@@ -225,6 +225,25 @@ print("Finish creating spark views")
 
 # COMMAND ----------
 
+# MAGIC %sql
+# MAGIC 
+# MAGIC DROP TABLE IF EXISTS uptake_totals;
+# MAGIC 
+# MAGIC CREATE TABLE uptake_totals
+# MAGIC as 
+# MAGIC select
+# MAGIC     uptake_practice_code	
+# MAGIC     ,MAX(M0148_number_of_gp_registered_patients) as M0148_number_of_gp_registered_patients
+# MAGIC     ,SUM(M0144_number_of_nhs_app_registrations) as M0144_number_of_nhs_app_registrations
+# MAGIC     ,SUM(M0146_number_of_p9_app_registrations) as M0146_number_of_p9_app_registrations
+# MAGIC 
+# MAGIC from
+# MAGIC   uptake
+# MAGIC group by
+# MAGIC   uptake_practice_code
+
+# COMMAND ----------
+
 print("Creating SQL table in SQL Server")
 print("--------------------------------")
 
@@ -235,3 +254,15 @@ spark.sql("DROP TABLE IF EXISTS uptake")
 
 print("Finish creating SQL table in SQL Server")
 
+
+# COMMAND ----------
+
+print("Creating totals SQL table in SQL Server")
+print("--------------------------------")
+
+table_name = "nhs_app_uptake_totals"
+df_sql = spark.sql("SELECT * FROM uptake_totals")
+write_spark_df_to_sql(df_sql, table_name, "overwrite")
+spark.sql("DROP TABLE IF EXISTS uptake_totals")
+
+print("Finish creating totals SQL table in SQL Server")
