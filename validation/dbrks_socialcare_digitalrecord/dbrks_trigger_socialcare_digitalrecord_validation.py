@@ -142,7 +142,7 @@ assert expect.success
 info = 'Checking that PIR type only has Residential, Community, Shared Lives\n'
 expect = validation_df.expect_column_values_to_be_in_set(column="PIR type", value_set=["Residential", "Community", "Shared Lives", "Specialist College"])
 test_result(expect, info)
-ssert expect.success
+assert expect.success
 
 # COMMAND ----------
 
