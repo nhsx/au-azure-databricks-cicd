@@ -235,6 +235,9 @@
 				},
 				{
 					"databricks_notebook": "/databricks/au-azure-databricks-cicd/tables/nhs_app/nhs_app_uptake"
+				},
+				{
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/tables/nhs_app/nhs_app_usage"
 				}
 			]
 		},
