@@ -111,15 +111,12 @@ directory, paths = datalake_listDirectory(CONNECTION_STRING, file_system, source
 # Ingestion and processing of data from individual excel sheets.
 # -------------------------------------------------------------
 
-#initialize dataframes
 stp_df = pd.DataFrame()
 trust_df = pd.DataFrame()
 pcn_df = pd.DataFrame()
-la_df = pd.DataFrame()
 other_df = pd.DataFrame()
-community_df = pd.DataFrame()
 
-#loop through each submitted file in the landing area. FOr each file its goes through the various sheets and adds them to an output 
+#loop through each submitted file in the landing area
 for filename in directory:
     file = datalake_download(CONNECTION_STRING, file_system, source_path + latestFolder, filename)
     
@@ -127,16 +124,17 @@ for filename in directory:
     sheets = get_sheetnames_xlsx(io.BytesIO(file))
 
     ### STP CALCULATIONS ###
-    #list comprehension to get sheets with ICB in the name from list of all sheets - presumably it should only ever be 1
-    sheet_name = [sheet for sheet in sheets if sheet.startswith("ICB")]
+    #list comprehension to get sheets with STP in the name from list of all sheets - ideally 1?
+    sheet_name = [sheet for sheet in sheets if sheet.startswith("STP")]
     
-    #Read current sheet. The output is a dictionary. Top level is ICB Sheets should be just 1, next level is each column on the sheet
+    #Read current sheet. The output is a dictionary of columns
     xls_file = pd.read_excel(io.BytesIO(file), sheet_name=sheet_name, engine="openpyxl")
     for key in xls_file:
         #drop unnamed columns
         xls_file[key].drop(list(xls_file[key].filter(regex="Unnamed:")), axis=1, inplace=True)
-        #remove empty rows if column 1 is empty
-        xls_file[key] = xls_file[key].loc[~xls_file[key]["For Month\nsee guidance Ref 2"].isnull()]
+        #remove empty rows
+        xls_file[key] = xls_file[key].loc[~xls_file[key]["For Month"].isnull()]
+        
         #rename columns based on order
         xls_file[key].rename(
             columns={
@@ -146,13 +144,12 @@ for filename in directory:
                 list(xls_file[key])[3]: "ICS Name (if applicable)",
                 list(xls_file[key])[4]: "ShCR Programme Name",
                 list(xls_file[key])[5]: "Name of ShCR System",
-                ###Extra columns
-                list(xls_file[key])[10]: "Access to Advanced (EoL) Care Plans",
-                list(xls_file[key])[11]: "Number of users with access to the ShCR",
-                list(xls_file[key])[12]: "Number of ShCR views in the past month",
-                list(xls_file[key])[13]: "Number of unique user ShCR views in the past month",
-                list(xls_file[key])[14]: "Completed by (email)",
-                list(xls_file[key])[15]: "Date completed",
+                list(xls_file[key])[6]: "Number of users with access to the ShCR",
+                list(xls_file[key])[7]: "Number of citizen records available to users via the ShCR",
+                list(xls_file[key])[8]: "Number of ShCR views in the past month",
+                list(xls_file[key])[9]: "Number of unique user ShCR views in the past month",
+                list(xls_file[key])[10]: "Completed by (email)",
+                list(xls_file[key])[11]: "Date completed",
             },
             inplace=True,
         )
@@ -164,6 +161,7 @@ for filename in directory:
           
         #For numeric fields, fill in blanks with zeros. Replace any non numeric entries with zero.
         xls_file[key]["Number of users with access to the ShCR"] = pd.to_numeric(xls_file[key]["Number of users with access to the ShCR"], errors='coerce').fillna(0).astype(int)
+        xls_file[key]["Number of citizen records available to users via the ShCR"] = pd.to_numeric(xls_file[key]["Number of citizen records available to users via the ShCR"], errors='coerce').fillna(0).astype(int)
         xls_file[key]["Number of ShCR views in the past month"] = pd.to_numeric(xls_file[key]["Number of ShCR views in the past month"], errors='coerce').fillna(0).astype(int)
         xls_file[key]["Number of unique user ShCR views in the past month"] = pd.to_numeric(xls_file[key]["Number of unique user ShCR views in the past month"], errors='coerce').fillna(0).astype(int)
 
@@ -183,25 +181,28 @@ for filename in directory:
                 list(xls_file[key])[1]: "ODS Trust Code",
                 list(xls_file[key])[2]: "Trust Name",
                 list(xls_file[key])[3]: "Partner Organisation connected to ShCR?",
-                #extra column
-                list(xls_file[key])[5]: "Partner Organisation plans to be connected by March 2023?",
+                list(xls_file[key])[4]: "Partner Organisation plans to be connected by Sept 2021?",
+                list(xls_file[key])[5]: "Partner Organisation primary clinical system connect directly to the ShCR?",
             },
             inplace=True,
         )
         xls_file[key].insert(1, "ODS STP Code", STP_code, False)
         xls_file[key].insert(2, "STP Name", STP_name, False)
         xls_file[key].insert(3, "ICS Name (if applicable)", ICS_name, False)
-        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"Connected": 1, "Not Connected": 0, "Please select": 0}).fillna(0).astype(int)     
-        xls_file[key]["Partner Organisation plans to be connected by March 2023?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0).astype(int)        
+        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)   
+        xls_file[key]["Partner Organisation primary clinical system connect directly to the ShCR?"] = xls_file[key]["Partner Organisation primary clinical system connect directly to the ShCR?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)   
+        xls_file[key]["Partner Organisation plans to be connected by Sept 2021?"] = xls_file[key]["Partner Organisation plans to be connected by Sept 2021?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)        
         trust_df = trust_df.append(xls_file[key].iloc[:, 0:9], ignore_index=True)
 
 
     ### PCN CALCULATIONS ###
     sheet_name = [sheet for sheet in sheets if sheet.startswith("PCN")]
     xls_file = pd.read_excel(io.BytesIO(file), sheet_name=sheet_name, engine="openpyxl")
+    
     for key in xls_file:
+        #this isn't working properly - maybe switch to list of columns we DO want? 
         xls_file[key].drop(list(xls_file[key].filter(regex="Unnamed:")), axis=1, inplace=True)
-
+        
         xls_file[key] = xls_file[key].loc[~xls_file[key]["For Month"].isnull()]
         xls_file[key].rename(
             columns={
@@ -209,112 +210,66 @@ for filename in directory:
                 list(xls_file[key])[1]: "ODS PCN Code",
                 list(xls_file[key])[2]: "PCN Name",
                 list(xls_file[key])[3]: "Partner Organisation connected to ShCR?",
-                #extra column
-                list(xls_file[key])[5]: "Partner Organisation plans to be connected by March 2023?",
+                list(xls_file[key])[4]: "Partner Organisation plans to be connected by Sept 2021?",
+                list(xls_file[key])[5]: "Partner Organisation primary clinical system connect directly to the ShCR?",
             },
             inplace=True,
         )
         xls_file[key].insert(1, "ODS STP Code", STP_code, False)
         xls_file[key].insert(2, "STP Name", STP_name, False)
         xls_file[key].insert(3, "ICS Name (if applicable)", ICS_name, False)
-        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"Connected": 1, "Not Connected": 0, "Please select": 0}).fillna(0) 
-        xls_file[key]["Partner Organisation plans to be connected by March 2023?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)        
-        pcn_df = pcn_df.append(xls_file[key].iloc[:, 0:9], ignore_index=True)
+        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)   
+        xls_file[key]["Partner Organisation primary clinical system connect directly to the ShCR?"] = xls_file[key]["Partner Organisation primary clinical system connect directly to the ShCR?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)   
+        xls_file[key]["Partner Organisation plans to be connected by Sept 2021?"] = xls_file[key]["Partner Organisation plans to be connected by Sept 2021?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)   
+
+        pcn_df = pcn_df.append(xls_file[key], ignore_index=True)
         
-    ### LA CALCULATIONS ###
-    sheet_name = [sheet for sheet in sheets if sheet.startswith("LA")]
-    xls_file = pd.read_excel(io.BytesIO(file), sheet_name=sheet_name, engine="openpyxl")
-    for key in xls_file:
-        xls_file[key].drop(list(xls_file[key].filter(regex="Unnamed:")), axis=1, inplace=True)
-
-        xls_file[key] = xls_file[key].loc[~xls_file[key]["For Month"].isnull()]
-        xls_file[key].rename(
-            columns={
-                list(xls_file[key])[0]: "For Month",
-                list(xls_file[key])[1]: "ODS LA Code",
-                list(xls_file[key])[2]: "LA Name",
-                list(xls_file[key])[3]: "Partner Organisation connected to ShCR?",
-                #extra column
-                list(xls_file[key])[5]: "Partner Organisation plans to be connected by March 2023?",
-            },
-            inplace=True,
-        )
-        xls_file[key].insert(1, "ODS STP Code", STP_code, False)
-        xls_file[key].insert(2, "STP Name", STP_name, False)
-        xls_file[key].insert(3, "ICS Name (if applicable)", ICS_name, False)
-        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"Connected": 1, "Not Connected": 0, "Please select": 0}).fillna(0)  
-        xls_file[key]["Partner Organisation plans to be connected by March 2023?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)        
-        la_df = la_df.append(xls_file[key].iloc[:, 0:9], ignore_index=True)
-
-    ### Community Provider CALCULATIONS ###
-    sheet_name = [sheet for sheet in sheets if sheet.startswith("Other Community")]
-    xls_file = pd.read_excel(io.BytesIO(file), sheet_name=sheet_name, engine="openpyxl")
-    for key in xls_file:
-        xls_file[key].drop(list(xls_file[key].filter(regex="Unnamed:")), axis=1, inplace=True)
-
-        xls_file[key] = xls_file[key].loc[~xls_file[key]["For Month"].isnull()]
-        xls_file[key].rename(
-            columns={
-                list(xls_file[key])[0]: "For Month",
-                list(xls_file[key])[1]: "ODS Community Provider Code",
-                list(xls_file[key])[2]: "Community Provider Name",
-                list(xls_file[key])[3]: "Partner Organisation connected to ShCR?",
-                #extra column
-                list(xls_file[key])[5]: "Partner Organisation plans to be connected by March 2023?",
-            },
-            inplace=True,
-        )
-        xls_file[key].insert(1, "ODS STP Code", STP_code, False)
-        xls_file[key].insert(2, "STP Name", STP_name, False)
-        xls_file[key].insert(3, "ICS Name (if applicable)", ICS_name, False)
-        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"Connected": 1, "Not Connected": 0, "Please select": 0}).fillna(0)   
-        xls_file[key]["Partner Organisation plans to be connected by March 2023?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)        
-        community_df = community_df.append(xls_file[key].iloc[:, 0:9], ignore_index=True) 
-
-    ### Other Partner CALCULATIONS ###
-    sheet_name = [sheet for sheet in sheets if sheet.startswith("Other partners")]
-    xls_file = pd.read_excel(io.BytesIO(file), sheet_name=sheet_name, engine="openpyxl")
-    for key in xls_file:
-        xls_file[key].drop(list(xls_file[key].filter(regex="Unnamed:")), axis=1, inplace=True)
-
-        xls_file[key] = xls_file[key].loc[~xls_file[key]["For Month"].isnull()]
-        xls_file[key].rename(
-            columns={
-                list(xls_file[key])[0]: "For Month",
-                list(xls_file[key])[1]: "ODS Other Partner Code",
-                list(xls_file[key])[2]: "Other Partner Name",
-                list(xls_file[key])[3]: "Partner Organisation connected to ShCR?",
-                #extra column
-                list(xls_file[key])[5]: "Partner Organisation plans to be connected by March 2023?",
-            },
-            inplace=True,
-        )
-        xls_file[key].insert(1, "ODS STP Code", STP_code, False)
-        xls_file[key].insert(2, "STP Name", STP_name, False)
-        xls_file[key].insert(3, "ICS Name (if applicable)", ICS_name, False)
-        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"Connected": 1, "Not Connected": 0, "Please select": 0}).fillna(0)
-        xls_file[key]["Partner Organisation plans to be connected by March 2023?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)        
-        other_df = other_df.append(xls_file[key].iloc[:, 0:9], ignore_index=True)            
-        
-
+#     Other calculations
+#     sheet_name = [sheet for sheet in sheets if sheet.startswith('Other')]
+#     xls_file = pd.read_excel(io.BytesIO(file), sheet_name=sheet_name, engine='openpyxl')
+#     for key in xls_file:
+#     xls_file[key].drop(list(xls_file[key].filter(regex = 'Unnamed:')), axis = 1, inplace = True)
+#     xls_file[key] = xls_file[key].loc[~xls_file[key]["For Month"].isnull()]
+#     xls_file[key].rename(columns={list(xls_file[key])[0]:"For Month",
+#                                  list(xls_file[key])[1]:"ODS STP Code",
+#                                  list(xls_file[key])[2]:"ODS PCN Code",
+#                                  list(xls_file[key])[2]:"Other partner",
+#                                  list(xls_file[key])[3]:"Partner Organisation connected to ShCR?",
+#                                  list(xls_file[key])[4]:"Partner Organisation plans to be connected by Sept 2021?",
+#                                  list(xls_file[key])[5]:"Partner Organisation's primary clinical system connect directly to the ShCR?"},inplace=True)
+#     xls_file[key].drop('ODS STP Code', axis=1, inplace=True)
+#     ls_file[key].insert(1, "ODS STP Code", STP_code, False)
+#     xls_file[key].insert(2, "STP Name", STP_name, False)
+#     xls_file[key].insert(3, "ICS Name (if applicable)", ICS_name, False)
+#     print(list(xls_file[key]))
+#     other_df = other_df.append(xls_file[key], ignore_index=True)
     
-# #Remove any non-required columns from final output
-stp_df= stp_df[['For Month', 'ODS STP Code', 'STP Name', 'ICS Name (if applicable)', 'ShCR Programme Name', 'Name of ShCR System', 'Access to Advanced (EoL) Care Plans', 'Number of users with access to the ShCR', 'Number of ShCR views in the past month', 'Number of unique user ShCR views in the past month', 'Completed by (email)', 'Date completed']]
+#Remove any non-required columns from final output
+pcn_df = pcn_df[['For Month', 'ODS STP Code', 'STP Name', 'ICS Name (if applicable)', 'ODS PCN Code', 'PCN Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by Sept 2021?', 'Partner Organisation primary clinical system connect directly to the ShCR?']]
 
-trust_df = trust_df[['For Month', 'ODS STP Code', 'STP Name', 'ICS Name (if applicable)', 'ODS Trust Code', 'Trust Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
+trust_df = trust_df[['For Month', 'ODS STP Code', 'STP Name', 'ICS Name (if applicable)', 'ODS Trust Code', 'Trust Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by Sept 2021?', 'Partner Organisation primary clinical system connect directly to the ShCR?']]
 
-pcn_df = pcn_df[['For Month', 'ODS STP Code', 'STP Name', 'ICS Name (if applicable)', 'ODS PCN Code', 'PCN Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
-
-la_df = la_df[['For Month', 'ODS STP Code', 'STP Name', 'ICS Name (if applicable)', 'ODS LA Code', 'LA Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
-
-community_df = community_df[['For Month', 'ODS STP Code', 'STP Name', 'ICS Name (if applicable)', 'ODS Community Provider Code', 'Community Provider Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
-
-other_df = other_df[['For Month', 'ODS STP Code', 'STP Name', 'ICS Name (if applicable)', 'ODS Other Partner Code', 'Other Partner Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
-
+stp_df= stp_df[['For Month', 'ODS STP Code', 'STP Name', 'ICS Name (if applicable)', 'ShCR Programme Name', 'Name of ShCR System', 'Number of users with access to the ShCR', 'Number of citizen records available to users via the ShCR', 'Number of ShCR views in the past month', 'Number of unique user ShCR views in the past month', 'Completed by (email)', 'Date completed']]
 
 # COMMAND ----------
 
-stp_df
+folder_date = pd.to_datetime(latestFolder) - pd.DateOffset(months=1)
+
+stp_df['For Month'] = folder_date
+stp_df['Date completed'] = pd.to_datetime(stp_df['Date completed'],errors='coerce')
+
+pcn_df['For Month'] = folder_date
+trust_df['For Month'] = folder_date
+
+# COMMAND ----------
+
+### check for duplicates
+# import collections
+# a = [item for item, count in collections.Counter(trust_df['ODS Trust Code']).items() if count > 1]
+# trust_df[trust_df['ODS Trust Code'].isin(a)].sort_values(by='ODS Trust Code')
+
+# #a = [item for item, count in collections.Counter(pcn_df['ODS PCN Code']).items() if count > 1]
+# #pcn_df[pcn_df['ODS PCN Code'].isin(a)].sort_values(by='ODS Trust Code')
 
 # COMMAND ----------
 
@@ -327,81 +282,31 @@ stp_df
 
 # COMMAND ----------
 
-#Force data from folder name
-# folder_date = pd.to_datetime(latestFolder) - pd.DateOffset(months=1)
-
-# stp_df['For Month'] = folder_date
-# stp_df['Date completed'] = pd.to_datetime(stp_df['Date completed'],errors='coerce')
-
-# pcn_df['For Month'] = folder_date
-# trust_df['For Month'] = folder_date
-
-# COMMAND ----------
-
-#CHECK FOR DUPLICATES
-import collections
-
-stp_dupes = [item for item, count in collections.Counter(stp_df['ODS STP Code']).items() if count > 1]
-stp_dupes = stp_df[stp_df['ODS STP Code'].isin(stp_dupes)].sort_values(by='ODS STP Code')
-stp_dupes = stp_dupes.iloc[:,[1,2,3,4,5,9]]
-
-trust_dupes = [item for item, count in collections.Counter(trust_df['ODS Trust Code']).items() if count > 1]
-trust_dupes = trust_df[trust_df['ODS Trust Code'].isin(trust_dupes)].sort_values(by='ODS Trust Code')
-trust_dupes = trust_dupes.iloc[:,[1,2,4,5]]
-
-pcn_dupes = [item for item, count in collections.Counter(pcn_df['ODS PCN Code']).items() if count > 1]
-pcn_dupes = pcn_df[pcn_df['ODS PCN Code'].isin(pcn_dupes)].sort_values(by='ODS PCN Code')
-pcn_dupes = pcn_dupes.iloc[:,[1,2,4,5]]
-
-la_dupes = [item for item, count in collections.Counter(la_df['ODS LA Code']).items() if count > 1]
-la_dupes = la_df[la_df['ODS LA Code'].isin(la_dupes)].sort_values(by='ODS LA Code')
-la_dupes = la_dupes.iloc[:,[1,2,4,5]]
-
-community_dupes = [item for item, count in collections.Counter(community_df['ODS Community Provider Code']).items() if count > 1]
-community_dupes = community_df[community_df['ODS Community Provider Code'].isin(community_dupes)].sort_values(by='ODS Community Provider Code')
-community_dupes = community_dupes.iloc[:,[1,2,4,5]]
-
-other_dupes = [item for item, count in collections.Counter(other_df['ODS Other Partner Code']).items() if count > 1]
-other_dupes = other_df[other_df['ODS Other Partner Code'].isin(community_dupes)].sort_values(by='ODS Other Partner Code')
-other_dupes = other_dupes.iloc[:,[1,2,4,5]]
-
-# COMMAND ----------
-
 ##Calculate aggregate numbers for Trusts
 #------------------------------------
-trust_count_df = trust_df.groupby('STP Name').agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
-trust_count_df['Percent'] = trust_count_df['Connected']/trust_count_df['Total']
+trust_count_df = trust_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].size().reset_index(name='Total')
+trust_count_df_2 = trust_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].sum().reset_index(name='Total')
+trust_count_df['Number Connected'] = trust_count_df_2['Total']
+trust_count_df['Percent'] = trust_count_df_2['Total']/trust_count_df['Total']
+trust_count_df['Type'] = 'Trust'
 
-# ##Calculate aggregate numbers for PCNs
-# #------------------------------------
-pcn_count_df = pcn_df.groupby('STP Name').agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
-pcn_count_df['Percent'] = pcn_count_df['Connected']/pcn_count_df['Total']
+# COMMAND ----------
 
-# ##Calculate aggregate numbers for LAs
-# #------------------------------------
-la_count_df = la_df.groupby('STP Name').agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
-la_count_df['Percent'] = la_count_df['Connected']/la_count_df['Total']
-
-# ##Calculate aggregate numbers for Community Providers
-# #------------------------------------
-community_count_df = community_df.groupby('STP Name').agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
-community_count_df['Percent'] = community_count_df['Connected']/community_count_df['Total']
-
-# ##Calculate aggregate numbers for Other
-# #------------------------------------
-other_count_df = other_df.groupby('STP Name').agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
-other_count_df['Percent'] = other_count_df['Connected']/other_count_df['Total']
+##Calculate aggregate numbers for PCNs
+#------------------------------------
+pcn_count_df = pcn_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].size().reset_index(name='Total')
+pcn_count_df2 = pcn_df.groupby('STP Name')['Partner Organisation connected to ShCR?'].sum().reset_index(name='Total')
+pcn_count_df['Number Connected'] = pcn_count_df2['Total']
+pcn_count_df['Percent'] = pcn_count_df2['Total']/pcn_count_df['Total']
+pcn_count_df['Type'] = 'PCN'
 
 # COMMAND ----------
 
 #SNAPSHOT SUMMARY
 #Write pages to Excel file in iobytes
 #--------------------------------------------------
-
-files = [stp_df, stp_dupes, trust_df, trust_count_df, trust_dupes, pcn_df, pcn_count_df, pcn_dupes, la_df, la_count_df, la_dupes, community_df, community_count_df, community_dupes, other_df, other_count_df, other_dupes]
-
-sheets = ['STP', 'STP dupes', 'Trust', 'Trust Count', 'Trust dupes', 'PCN', 'PCN Count', 'PCN dupes', 'LA', 'LA Count', 'LA dupes', 'Community', 'Community Count', 'Community dupes', 'Other', 'Other Count', 'Other dupes']
-
+files = [stp_df, trust_df, trust_count_df, pcn_df, pcn_count_df]
+sheets = ['STP', 'Trust', 'Trust Count', 'PCN', 'PCN Count']
 excel_sheet = io.BytesIO()
 
 writer = pd.ExcelWriter(excel_sheet, engine='openpyxl')
@@ -416,7 +321,7 @@ writer.save()
 #--------------------------------------------------
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = excel_sheet
-datalake_upload(file_contents, CONNECTION_STRING, file_system, "proc/projects/nhsx_slt_analytics/shcr/excel_summary/"+current_date_path, "shared_care_summary_output.xlsx")
+datalake_upload(file_contents, CONNECTION_STRING, file_system, "proc/projects/nhsx_slt_analytics/shcr/excel_summary/"+current_date_path, "excel_output.xlsx")
 
 # COMMAND ----------
 

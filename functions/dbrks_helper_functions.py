@@ -296,27 +296,3 @@ def today_previous_validation(prev_df, tab_name, percentage, ge_df, agg):
         assert expect.success
     else:
        print("############# No previous run found, this is taken to be the first ever run for this #######")
-
-# COMMAND ----------
-
-# Function for checking that unique count in column is with some range
-#------------------------------------------------------------------------------------------------
-def post_load_unique_column_validation(prev_df, tab_name, percentage, ge_df, agg, col_name):
-    if not prev_df.empty:
-        print("############# Last run details is shown below #############################################")
-        display(prev_df)
-  
-        prev_count = prev_df['aggregate_value'].values[0] 
-  
-        print("############# " + tab_name + " previous count is shown below ###################")
-        print(prev_count)
-        print("##############################################################################################")
-  
-        min_v, max_v = get_thresholds(prev_count, percentage)
-
-        info = "Checking that unique count for column " + agg + " is within the tolerance amount"
-        expect = ge_df.expect = ge_df.expect_column_unique_value_count_to_be_between(column=col_name, min_value=min_v, max_value=max_v)
-        test_result(expect, info)
-        assert expect.success
-    else:
-       print("############# No previous run found, this is taken to be the first ever run for this #######")
