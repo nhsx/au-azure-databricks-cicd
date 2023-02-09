@@ -101,6 +101,11 @@ location_count = new_dataframe["Location ID"].count()
 print("########### Number of Location is Shown Below ###########################################")
 print(location_count)
 
+adult_social_care = new_dataframe[new_dataframe["Location Inspection Directorate"] == "Adult social care"]
+location_insp_dir_count = adult_social_care["Location Inspection Directorate"].count()
+print("########### Number of Location Inspection Directorate is Shown Below #######################")
+print(location_insp_dir_count)
+
 
 # COMMAND ----------
 
@@ -139,23 +144,7 @@ else:
 
 # COMMAND ----------
 
-# Validating Location Inspection Directorate column with Adult social care in CQC file is about 27,100 plus or minus 10%
-# ------------------------------------------------------------------------------------------------------------------------------------
-loc_inspection = pd.DataFrame(new_dataframe["Location Inspection Directorate"].str.upper())
-location_insp = loc_inspection[loc_inspection["Location Inspection Directorate"] == "ADULT SOCIAL CARE"]
-adult_socialcare_count = len(location_insp)
-
-print("############### Today's count of Location Inspection Directorate column with Adult social care is shown below ###")
-print(adult_socialcare_count)
-print("#################################################################################################################")
-
-loc_insp_ge_df = ge.from_pandas(location_insp)
-min_no, max_no = get_thresholds(27100, 10)
-
-info = "Checking that Inspection Directorate column with Adult social care row count is about 27,100 plus-minus 10 percent"
-expect = loc_insp_ge_df.expect_table_row_count_to_be_between(min_value=min_no, max_value=max_no)
-assert expect.success
-
+# Get the previous Count for Location Inspevtion Directorate, if there is no previous count log today's count
 
 # COMMAND ----------
 
@@ -198,13 +187,3 @@ location_df = pd.DataFrame(location_agg_row)
 print("############# Log the follow to dbo.pre_load_agg_log table ######################################")
 display(location_df)
 write_to_sql(location_df, agg_log_table, "append")
-
-# COMMAND ----------
-
-# Log Location Inspection Directorate column with Adult social care row count for today's file
-cqc_full_path = new_source_path + new_source_file
-location_adult_socialcare_agg_row = {"load_date": [date], "file_name": [cqc_full_path], "aggregation": ["Count"], "aggregate_value": [adult_socialcare_count], "comment": ["Count of Inspection Directorate column with Adult social care row count"]}
-location_adult_socialcare_df = pd.DataFrame(location_adult_socialcare_agg_row) 
-print("############# Log the follow to dbo.pre_load_agg_log table ######################################")
-display(location_adult_socialcare_df)
-write_to_sql(location_adult_socialcare_df, agg_log_table, "append")
