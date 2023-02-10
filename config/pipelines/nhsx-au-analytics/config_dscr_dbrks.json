@@ -7,9 +7,24 @@
 				"topic": "Digital Social Care Records (DSCRs)",
 				"metrics": [
 					{
-						"id": "add later",
-						"full_name": "care quality commisions(CQC) active location monthly updated data",
-						"short_name": "Care directory wih filters monthly update"
+						"id": "M323",
+						"full_name": "Location DSCR implementation (PIR monthly - Tab01 in Databricks)",
+						"short_name": "Location DSCR implementation (PIR monthly - Tab01 in Databricks)"
+					},
+					{
+						"id": "M324",
+						"full_name": "Location DSCR implementation (PIR collated - Tab02 in Databricks)",
+						"short_name": "Location DSCR implementation (PIR collated - Tab02 in Databricks)"
+					},
+					{
+						"id": "M325",
+						"full_name": "Provider DSCR minimum implementation (PIR collated - Tab02 in Databricks)",
+						"short_name": "Provider DSCR minimum implementation (PIR collated - Tab02 in Databricks)"
+					},
+					{
+						"id": "M326",
+						"full_name": "Location DSCRQ completeness (PIR collated - Tab02 in Databricks)",
+						"short_name": "Location DSCRQ completeness (PIR collated - Tab02 in Databricks)"
 					}
 				]
 			}
@@ -66,7 +81,7 @@
 		"validation": [
 			{
 				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_dscr_validation/dbrks_dscr_hsca_file_validation",
-				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
+				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_dscr_validation/dbrks_post_process_validation"
 		}
 		]
 	}
