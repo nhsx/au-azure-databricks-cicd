@@ -126,7 +126,7 @@ thresholds_dict = {}
 for column in new_dataframe.columns[2:len(new_dataframe.columns)]:
   print("The threshold for {} is calculated as follows".format(column))
   previous_sum = df_sum_prev.loc[df_sum_prev['comment'].str.contains(column)]['aggregate_value'].values[0] #get the previous sum for each column from the dataframe above^
-  min_val, max_val = get_thresholds(previous_sum, 20)
+  min_val, max_val = get_thresholds(previous_sum, 25)
   min_max = [min_val, max_val]
   thresholds_dict[column] = min_max
   print()
