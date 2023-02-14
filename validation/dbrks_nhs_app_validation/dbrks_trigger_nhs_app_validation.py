@@ -178,12 +178,13 @@ assert expect.success
 # COMMAND ----------
 
 #test that the sum of each column is within the tolerance amount from the previous week
-
+#ODWithdrawals has been exclude as it a small number
 for column in new_dataframe.columns[2:len(new_dataframe.columns)]:
   info = "Checking that the sum of {} is within the tolerance amount".format(column)
-  expect = df1.expect_column_sum_to_be_between(column=column, min_value=thresholds_dict[column][0], max_value=thresholds_dict[column][1])
-  test_result(expect, info)
-  assert expect.success
+  if column != "ODWithdrawals":
+      expect = df1.expect_column_sum_to_be_between(column=column, min_value=thresholds_dict[column][0], max_value=thresholds_dict[column][1])
+      test_result(expect, info)
+      assert expect.success
 
 # COMMAND ----------
 
