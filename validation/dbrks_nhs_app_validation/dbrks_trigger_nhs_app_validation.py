@@ -178,7 +178,7 @@ assert expect.success
 # COMMAND ----------
 
 #test that the sum of each column is within the tolerance amount from the previous week
-#ODWithdrawals has been exclude as it a small number
+#ODWithdrawals column has been excluded as it is a small number
 for column in new_dataframe.columns[2:len(new_dataframe.columns)]:
   info = "Checking that the sum of {} is within the tolerance amount".format(column)
   if column != "ODWithdrawals":
