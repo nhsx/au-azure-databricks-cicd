@@ -71,28 +71,31 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
 # Read parameters from JSON config
 # -------------------------------------------------------------------------
+source_path = config_JSON['pipeline']['project']['source_path']
+source_file = config_JSON['pipeline']['project']['source_file']
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
-new_source_path = config_JSON['pipeline']['raw']['snapshot_source_path']
-historical_source_path = config_JSON['pipeline']['raw']['appended_path']
-historical_source_file = config_JSON['pipeline']['raw']['appended_file']
-sink_path = config_JSON['pipeline']['raw']['appended_path']
-sink_file = config_JSON['pipeline']['raw']['appended_file']
-
+sink_path = config_JSON['pipeline']['project']['sink_path']
+sink_file = config_JSON['pipeline']['project']['sink_file']
+#table_name = config_JSON['pipeline']["staging"]['sink_table']
 
 # COMMAND ----------
 
 # Pull new dataset
 # -------------------------
-latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, new_source_path)
-file_name_list = datalake_listContents(CONNECTION_STRING, file_system, new_source_path+latestFolder)
+latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
+file_name_list = datalake_listContents(CONNECTION_STRING, file_system, source_path+latestFolder)
 file_name_list = [file for file in file_name_list if '.xlsm' in file]
-for new_source_file in file_name_list:
-  new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, new_source_file)
+for source_file in file_name_list:
+  new_dataset = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
   new_dataframe = pd.read_excel(io.BytesIO(new_dataset), sheet_name = "Backsheet for Pipeline", header = 0, engine='openpyxl') 
   
 #convert new dataframe to string so it is in the same format as historical
-new_dataframe = new_dataframe.astype('string')
+#new_dataframe = new_dataframe.astype('string')
  
+
+# COMMAND ----------
+
+new_dataframe
 
 # COMMAND ----------
 
