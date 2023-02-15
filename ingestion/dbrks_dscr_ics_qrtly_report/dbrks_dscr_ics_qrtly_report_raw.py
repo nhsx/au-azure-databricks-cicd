@@ -163,7 +163,3 @@ current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.BytesIO()
 historical_dataframe.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, sink_file)
-
-# COMMAND ----------
-
-
