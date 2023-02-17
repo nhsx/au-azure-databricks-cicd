@@ -25,7 +25,7 @@ VERSION:        0.0.2
 
 # Install libs
 # -------------------------------------------------------------------------
-%pip install geojson==2.5.* tabulate requests pandas pathlib azure-storage-file-datalake  beautifulsoup4 numpy urllib3 lxml dateparser regex openpyxl pyarrow==5.0.*
+%pip install geojson==2.5.* tabulate requests pandas pathlib azure-storage-file-datalake  beautifulsoup4 numpy urllib3 lxml dateparser regex openpyxl==3.1.0  pyarrow==5.0.*
 
 # COMMAND ----------
 
@@ -311,10 +311,6 @@ community_df = community_df[['For Month', 'ODS STP Code', 'STP Name', 'ICS Name 
 
 other_df = other_df[['For Month', 'ODS STP Code', 'STP Name', 'ICS Name (if applicable)', 'ODS Other Partner Code', 'Other Partner Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
 
-
-# COMMAND ----------
-
-stp_df
 
 # COMMAND ----------
 
