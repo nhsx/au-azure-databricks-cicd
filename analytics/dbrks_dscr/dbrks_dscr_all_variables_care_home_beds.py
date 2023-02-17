@@ -15,7 +15,7 @@ USAGE:          (M324, M325, M326, M334)
                 ...
 CONTRIBUTORS:   Everistus Oputa, Martina Fonseca
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        11 Jan. 2022
+CREATED:        17 Feb. 2023
 VERSION:        0.0.1
 """
 
@@ -78,19 +78,14 @@ source_file = config_JSON['pipeline']['project']['source_file']
 reference_path = config_JSON['pipeline']['project']['reference_source_path']
 reference_file = config_JSON['pipeline']['project']['reference_source_file']
 file_system =  dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
-sink_path = config_JSON['pipeline']['project']['databricks'][1]['sink_path']
-sink_file = config_JSON['pipeline']['project']['databricks'][1]['sink_file']
-table_name = config_JSON['pipeline']["staging"][1]['sink_table']
+sink_path = config_JSON['pipeline']['project']['databricks'][2]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][2]['sink_file']
+table_name = config_JSON['pipeline']["staging"][2]['sink_table']
 
 #Get parameters from PIR JSON config
 # -------------------------------------------------------------------------
 pir_source_path = pir_config_JSON['pipeline']['project']['source_path']
 pir_source_file = pir_config_JSON['pipeline']['project']['source_file']
-
-# COMMAND ----------
-
-for i in df.columns:
-  print(i)
 
 # COMMAND ----------
 
