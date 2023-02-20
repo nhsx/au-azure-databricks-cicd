@@ -80,39 +80,21 @@ latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
-# Ingestion of reference deomintator data (ONS: age banded population data)
-# ---------------------------------------------------------------------------------------------------
-ref_latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, reference_source_path)
-file = datalake_download(CONNECTION_STRING, file_system, reference_source_path+ref_latestFolder, reference_source_file)
-df_ref = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 # COMMAND ----------
 
 #Processing
 # ---------------------------------------------------------------------------------------------------
 
-#Numerator
-# ---------------------------------------------------------------------------------------------------
-df_1 = df[["Monthly","all_time_nhs_app_registered_users"]]
-df_1.iloc[:, 0] = df_1.iloc[:,0].dt.strftime('%Y-%m')
-df_2 = df_1.groupby(df_1.iloc[:,0]).sum().reset_index()
-df_2.rename(columns  = {'Monthly': 'Date', 'all_time_nhs_app_registered_users': 'Number of users with an NHS App registration'}, inplace = True)
-
-#Denominator porcessing
-# ---------------------------------------------------------------------------------------------------
-df_ref.loc[df_ref['Age'] == "90+", 'Age'] = 90
-df_ref['Age'] = df_ref['Age'].astype('int32')
-df_ref_latest_adult = df_ref[(df_ref['Effective_Snapshot_Date'] == df_ref['Effective_Snapshot_Date'].max()) & ((df_ref['Age'] >17))]
-denominator = df_ref_latest_adult['Size'].sum()
-
-#Joint processing 
-# ---------------------------------------------------------------------------------------------------
-df_2['Adult population'] = denominator
-df_2['Percentage of adult population with an NHS App registration'] = df_2['Number of users with an NHS App registration']/denominator
-df_3 = df_2.round(4)
-df_3.index.name = "Unique ID"
-df_3['Date'] = pd.to_datetime(df_3['Date'])
-df_processed = df_3.copy()
+df = df[["Monthly","all_time_nhs_app_registered_users"]]
+df.loc[:,"Monthly"] = pd.to_datetime(df['Monthly'])
+df = df.resample('MS', on='Monthly').sum().reset_index()
+df = df.rename(columns  = {'Monthly': 'Date', 'all_time_nhs_app_registered_users': 'Number of users with an NHS App registration'})
+df['Adult population'] = 44715443
+df['Percentage of adult population with an NHS App registration'] = df['Number of users with an NHS App registration']/df['Adult population']
+df = df.round(4)
+df.index.name = "Unique ID"
+df_processed = df.copy()
 
 # COMMAND ----------
 
