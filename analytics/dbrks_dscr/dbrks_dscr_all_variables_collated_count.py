@@ -11,7 +11,7 @@
 FILE:           dbrks_dscr_all_variables_collated_count.py
 DESCRIPTION:
                 Databricks notebook with processing code for the CQC digital social care records metric M324-M326 : Collated CQC database with info on a) digital social care records mapping and b) icb_region.
-USAGE:          (M324, M325, M326)
+USAGE:
                 ...
 CONTRIBUTORS:   Everistus Oputa, Martina Fonseca
 CONTACT:        data@nhsx.nhs.uk

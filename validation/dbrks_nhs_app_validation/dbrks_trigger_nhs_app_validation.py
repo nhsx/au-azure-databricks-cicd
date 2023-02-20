@@ -126,7 +126,7 @@ thresholds_dict = {}
 for column in new_dataframe.columns[2:len(new_dataframe.columns)]:
   print("The threshold for {} is calculated as follows".format(column))
   previous_sum = df_sum_prev.loc[df_sum_prev['comment'].str.contains(column)]['aggregate_value'].values[0] #get the previous sum for each column from the dataframe above^
-  min_val, max_val = get_thresholds(previous_sum, 25)
+  min_val, max_val = get_thresholds(previous_sum, 20)
   min_max = [min_val, max_val]
   thresholds_dict[column] = min_max
   print()
@@ -178,13 +178,12 @@ assert expect.success
 # COMMAND ----------
 
 #test that the sum of each column is within the tolerance amount from the previous week
-#ODWithdrawals column has been excluded as it is a small number
+
 for column in new_dataframe.columns[2:len(new_dataframe.columns)]:
   info = "Checking that the sum of {} is within the tolerance amount".format(column)
-  if column != "ODWithdrawals":
-      expect = df1.expect_column_sum_to_be_between(column=column, min_value=thresholds_dict[column][0], max_value=thresholds_dict[column][1])
-      test_result(expect, info)
-      assert expect.success
+  expect = df1.expect_column_sum_to_be_between(column=column, min_value=thresholds_dict[column][0], max_value=thresholds_dict[column][1])
+  test_result(expect, info)
+  assert expect.success
 
 # COMMAND ----------
 
