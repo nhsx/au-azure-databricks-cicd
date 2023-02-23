@@ -1,0 +1,40 @@
+{
+	"metadata":  {
+		"products": [
+			{
+			"product_name": "Reference Data",
+			"topic": "Registered Patients population on GP practices",
+			"metrics": [
+				{
+            			"id": "",
+            			"full_name": "Number of patients registered on GP practices (NHS Digital) at begin of a financial year (for use as a denominator in metrics on the virtual ward)",
+	 			"short_name":"registered_patients_population_on_gp_practices"
+        			}
+			]
+			}
+		]
+	},
+	"pipeline": {
+		"name": "trigger_registered_gp_practices",
+    	"folder": "reference_tables/registered_gp_practices/",
+		"ingestion": {
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_registered_gp_practices_fy_begin_population/dbrks_registered_gp_practices_fy_begin_population_raw"
+		},
+		"raw": {
+			"snapshot_source_path": "land/nhsdigital/manual_upload/timestamp/csv/registered_gp_practices_fy_begin_population/",
+			"appended_path": " raw/nhsdigital/manual_upload/parquet/registered_gp_practices_fy_begin_population/historical/",
+			"appended_file": "registered_gp_practices_fy_begin_populations_historical.parquet"
+		},
+		"proc": {
+			"metric": "registered_gp_practices_fy_begin_population",
+			"source_path": "raw/nhsdigital/manual_upload/parquet/registered_gp_practices_fy_begin_population/historical/",
+			"source_file": "registered_gp_practices_fy_begin_populations_historical.parquet",
+			"sink_path": " proc/sources/nhsdigital/manual_upload/parquet/registered_gp_practices_fy_begin_population/historical/",
+			"sink_file": "egistered_gp_practices_fy_begin_populations_historical.parquet"
+			}
+	}
+
+}
+
+
+
