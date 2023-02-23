@@ -1,0 +1,78 @@
+{
+	"metadata":  {
+		"products": [
+			{
+			"product_name": "Reference Data",
+			"topic": "icb gp stored_proc_gp_practice_population_single_age_snapshot",
+			"metrics": [
+				{
+            			"id": "",
+            			"full_name": "Reference table with_icb_gp_population",
+	 			"short_name":"icb_gp_population"
+        			}
+				]
+			}
+		]
+	},
+	"pipeline": {
+		"name": "trigger_icb_gp_population",
+    	"folder": "reference_tables/icb_gp_population/",
+		"ingestion": {
+		},
+		"raw": {
+				"source_dbo": "dbo",
+				"source_table": "vw_ics_stp_gp_population",
+				"source_query": "SELECT * FROM vw_ics_stp_gp_population;",	
+				"sink_path": "raw/ncdr_etp/adf_v2/table/icb_gp_population/snapshot/",
+				"sink_file": "table_icb_gp_population.parquet"
+			},
+		"proc": {
+				"source_path":"raw/ncdr_etp/adf_v2/table/icb_gp_population/snapshot/",
+				"source_file": "table_icb_gp_population.parquet",
+				"source_schema": [
+					{"name": "Org_Type", "type": "String"},
+					{"name": "Org_Code", "type": "String"},
+					{"name": "ONS_Code", "type": "String"},					
+					{"name": "Number_Of_Patients", "type": "int"},
+					{"name": "Effective_Snapshot_Date", "type": "datetime"}
+
+				],
+				"sink_path": "proc/sources/ncdr_etp/adf_v2/table/icb_gp_population/snapshot/",
+				"sink_file": "table_icb_gp_population_snapshot.parquet"
+        },
+		"project": {
+				"source_path": "proc/sources/ncdr_etp/adf_v2/table/icb_gp_population/snapshot/",
+				"source_file": "table_icb_gp_population_snapshot.parquet",
+				"sink_path": "proc/projects/reference_tables/demographies/icb_gp_population/",
+				"sink_file": "table_icb_gp_population_snapshot.parquet"
+		},
+		"staging":[    
+    			{
+				"metric": "icb_gp_population",
+				"stored_procedure": "[dbo].[stored_proc_icb_gp_population_snapshot]",
+				"source_path": "proc/projects/reference_tables/demographies/icb_gp_population/",
+				"source_file": "table_icb_gp_population_snapshot.parquet",
+				"sink_table": "icb_gp_population_snapshot"
+				}
+			],
+		"validation": [
+				{
+					"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_icb_gp_population_validation/",
+					"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
+			}
+			]
+
+		
+	}
+}
+
+
+
+
+
+
+
+      
+   
+
+
