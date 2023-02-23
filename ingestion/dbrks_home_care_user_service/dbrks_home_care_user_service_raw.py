@@ -91,6 +91,10 @@ for new_source_file in file_name_list:
 
 # COMMAND ----------
 
+new_dataframe
+
+# COMMAND ----------
+
 # Pull historical dataset
 # -----------------------------------------------------------------------
 latestFolder_historical = datalake_latestFolder(CONNECTION_STRING, file_system, historical_source_path)
@@ -103,7 +107,7 @@ historical_dataframe['Date'] = pd.to_datetime(historical_dataframe['Date'])
 # -----------------------------------------------------------------------
 dates_in_historical = historical_dataframe["Date"].unique().tolist()
 dates_in_new = new_dataframe["Date"].unique().tolist()  #[-1]
-if dates_in_new in dates_in_historical:
+if dates_in_new == dates_in_historical:
   print('Data already exists in historical data')
 else:
   historical_dataframe = historical_dataframe.append(new_dataframe)
