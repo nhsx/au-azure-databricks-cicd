@@ -75,6 +75,10 @@ table_name = config_JSON['pipeline']['staging'][0]['sink_table']
 # COMMAND ----------
 
 
+
+# COMMAND ----------
+
+
  #Processing Virtualward data
 # -------------------------------------------------------------------------------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
@@ -82,7 +86,7 @@ file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolde
 df = pd.read_csv(io.BytesIO(file))
 df1 = df[["Period_End", "ICB_Code", "current_capacity","total_number_of_patients_on_ward"]].copy()
 df1['total_number_of_patients_on_ward'] = df1['total_number_of_patients_on_ward'].astype(int)
-df1 = df1.groupby(['Period_End','ICB_Code','current_capacity'], as_index=False).sum()
+df1 = df1.groupby(['Period_End','ICB_Code'], as_index=False).sum()
 df1['Period_End'] = pd.to_datetime(df1['Period_End'], infer_datetime_format=True)
 df2 = df1[df1['Period_End'] >= '2022-04-14'].reset_index(drop = True)  #--------- taking dates from 
 df3 = df2[['Period_End','ICB_Code', 'current_capacity', 'total_number_of_patients_on_ward']]
