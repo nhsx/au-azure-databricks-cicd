@@ -1,0 +1,95 @@
+{
+	"metadata": {
+		"products": [
+			{
+				"product_name": "Digitise, Connect, Transform (DCT) Dashboard",
+				"Granularity": "National",
+				"topic": "Virtual ward",
+				"metrics": [
+					{
+						"id": "",
+						"full_name": "Number of patient on virtual ward biweekly",
+						"short_name": "patient_on_virtual_ward_biweekly_count"
+					},
+					{
+						"id": "",
+						"full_name": "Rate of patient on virtual ward biweekly (per 1,000)",
+						"short_name": "patient_on_virtual_ward_biweekly_rate"
+					}
+				]
+			}
+			
+		]
+	},
+	"pipeline": {
+		"name": "trigger_virtual_ward",
+		"folder": "nhsx-au-analytics/ncdr_etp/virtual_ward/",
+		"raw": {
+			"source_dbo": "dbo",
+			"source_table": "vw_VirtualWards_Sitrep",
+			"sink_path": "raw/ncdr_etp/adf_v2/table/virtualward/full/",
+			"source_query": "SELECT * FROM dbo.vw_VirtualWards_Sitrep;",
+			"sink_file": "virtual_ward_full.csv"
+		},
+		"proc": {
+			"source_path": "raw/ncdr_etp/adf_v2/table/virtualward/full/",
+			"source_file": "virtual_ward_full.csv",
+			"source_schema": [
+				{"name": "Submission", "type": "int"},
+				{"name": "Period_Start", "type": "datetime"},
+				{"name": "Period_End", "type": "datetime"},					
+				{"name": "organisation_code", "type": "String"},
+				{"name": "organisation_name", "type": "String"},
+				{"name": "ICB_Code", "type": "String"},
+				{"name": "ICB_ONS_Code", "type": "String"},
+				{"name": "ICB_Name", "type": "String"},
+				{"name": "Region_Code", "type": "datetime"},
+				{"name": "Region_Name", "type": "datetime"},
+				{"name": "ward_type", "type": "String"},
+				{"name": "diagnosis_cohort_id", "type": "String"},
+				{"name": "current_capacity", "type": "int"},					
+				{"name": "total_number_of_patients_on_ward", "type": "int"}	
+
+			],
+			"sink_path": "proc/sources/ncdr_etp/adf_v2/table/virtualward/required/",
+			"sink_file": "virtual_ward_required.csv"
+		},
+		"project": {
+			"source_path": "proc/sources/ncdr_etp/adf_v2/table/virtualward/required/",
+			"source_file": "virtual_ward_required.csv",
+			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_virtual_ward_orchestrator",
+			"databricks": [
+				{
+					"metric": "patient_on_virtual_ward_biweekly_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/secondarycare/virtualward/patient_on_virtual_ward_biweekly_count/",
+					"sink_file": "patient_on_virtual_ward_biweekly_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_virtual_ward/dbrks_secondarycare_virtual_ward_patients_biweek_count"
+				},
+				{
+					"metric": "patient_on_virtual_ward_biweekly_rate",
+					"sink_path": "proc/projects/nhsx_slt_analytics/secondarycare/virtualward/patient_on_virtual_ward_biweekly_rate/",
+					"sink_file": "patient_on_virtual_ward_biweekly_rate.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_virtual_ward/dbrks_secondarycare_virtual_ward_patients_biweek_rate"
+				}
+				
+			]
+		},
+		"staging": [
+			{
+				"metric": "patient_on_virtual_ward_biweekly_count",
+				"sink_table": "patient_on_virtual_ward_biweekly_count"
+			},
+			{
+				"metric": "patient_on_virtual_ward_biweekly_rate",
+				"sink_table": "patient_on_virtual_ward_biweekly_rate"
+			}
+			
+		],
+		"validation": [
+			{
+				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_virtualward_validation/",
+				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_virtualward"
+		}
+		]
+	}
+}
