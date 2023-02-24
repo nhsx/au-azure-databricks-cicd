@@ -75,13 +75,16 @@ table_name = config_JSON['pipeline']['staging'][0]['sink_table']
 # COMMAND ----------
 
 
-#Processing
+ #Processing Virtualward data
 # -------------------------------------------------------------------------------------------------
+latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
+file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
+df = pd.read_csv(io.BytesIO(file))
 df1 = df[["Period_End", "ICB_Code", "current_capacity","total_number_of_patients_on_ward"]].copy()
 df1['total_number_of_patients_on_ward'] = df1['total_number_of_patients_on_ward'].astype(int)
 df1 = df1.groupby(['Period_End','ICB_Code','current_capacity'], as_index=False).sum()
 df1['Period_End'] = pd.to_datetime(df1['Period_End'], infer_datetime_format=True)
-df2 = df1[df1['Period_End'] >= '2021-01-01'].reset_index(drop = True)  #--------- taking dates from 
+df2 = df1[df1['Period_End'] >= '2022-04-14'].reset_index(drop = True)  #--------- taking dates from 
 df3 = df2[['Period_End','ICB_Code', 'current_capacity', 'total_number_of_patients_on_ward']]
 df4 = df3.rename(columns = {'Period_End': 'Biweekly Date','ICB_Code': 'ICB Code', 'current_capacity': 'Virtual Ward Current Capacity','total_number_of_patients_on_ward': 'Total Number of Patients on Virtual Ward'})
 df4.index.name = "Unique ID"
