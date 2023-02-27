@@ -81,4 +81,19 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 # COMMAND ----------
 
-df
+# Convert the 'Date' column to datetime format
+df['Date']=pd.to_datetime(df["Date"],unit='s')
+# keeping data only for January 2023
+df = df[(df['Date'] >= "2023-01-01") & (df['Date'] <= "2023-01-31")]
+
+# COMMAND ----------
+
+# Upload processed data to datalake
+# -------------------------------------------------------------------------
+file_contents = io.StringIO()
+df.to_csv(file_contents)
+datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
+
+# COMMAND ----------
+
+# SQL data need uploading needs to confirm with Abdu
