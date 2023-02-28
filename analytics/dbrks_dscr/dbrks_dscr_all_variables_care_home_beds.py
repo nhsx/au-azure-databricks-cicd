@@ -126,10 +126,6 @@ df_hcsu= pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 # COMMAND ----------
 
-hcsu_source_path
-
-# COMMAND ----------
-
 datalake_latestFolder(CONNECTION_STRING, file_system, 'proc/sources/digital_socialcare/manual_upload/home_care_user_service/historical')
 
 # COMMAND ----------
@@ -218,8 +214,13 @@ print("Lenth of DF after filtering only for IsActive - 1 and IsDomcare - 1:", le
 
 # COMMAND ----------
 
+january_df_hcsu = january_df_hcsu.dropna()
+january_df_hcsu
+
+# COMMAND ----------
+
 # Merging data from Home Care Service User File
-df_merged_hcsu_df_join_keep = pd.merge(df_join_keep, df_hcsu, on='Location_Id',how="left")
+df_merged_hcsu_df_join_keep = pd.merge(df_join_keep, january_df_hcsu, on='Location_Id',how="left")
 
 # COMMAND ----------
 
