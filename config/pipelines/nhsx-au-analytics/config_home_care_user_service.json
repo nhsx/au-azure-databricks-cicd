@@ -17,7 +17,7 @@
     },
     "pipeline": {
         "name": "trigger_home_care_user_service",
-        "folder": "nhsx-au-analytics/digital_socialcare/socialcare_digitalrecord/",
+        "folder": "nhsx-au-analytics/nhsx/socialcare_digitalrecord/",
         "ingestion": {
             "databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_home_care_user_service/dbrks_home_care_user_service_raw"
         },
@@ -47,7 +47,7 @@
         ],
         "validation": [
             {
-                "initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_socialcare_digitalrecord/dbrks_home_care_user_service_count_validation",
+                "initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_home_care_user_service/dbrks_home_care_user_service_count_validation",
                 "final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
             }
         ]

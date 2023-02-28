@@ -91,10 +91,6 @@ for new_source_file in file_name_list:
 
 # COMMAND ----------
 
-new_dataframe
-
-# COMMAND ----------
-
 # Pull historical dataset
 # -----------------------------------------------------------------------
 latestFolder_historical = datalake_latestFolder(CONNECTION_STRING, file_system, historical_source_path)
