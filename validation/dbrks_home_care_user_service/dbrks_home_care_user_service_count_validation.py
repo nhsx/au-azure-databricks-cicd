@@ -8,22 +8,22 @@
 # -------------------------------------------------------------------------
 
 """
-FILE:           dbrks_trigger_nhs_app_devices_validation.py
+FILE:           dbrks_home_care_user_service_count_validation.py
 DESCRIPTION:
-                To reduce manual checks and improve quality validations need to added to dbrks_trigger_nhs_app_devices_validation pipeline for digital social care
+                To reduce manual checks and improve quality validations need to added to dbrks_home_care_user_service_count_validation pipeline for digital social care
 USAGE:
                 ...
-CONTRIBUTORS:   Abdu Nuhu, Kabir Khan, Faaiz Shanawas
+CONTRIBUTORS:   Kabir Khan
 CONTACT:        nhsx.data@england.nhs.uk
-CREATED:        11 Jan 2023
-VERSION:        0.0.3
+CREATED:        28 Feb 2023
+VERSION:        0.0.1
 """
 
 # COMMAND ----------
 
 # Install libs
 # -------------------------------------------------------------------------------------
-%pip install pandas pathlib azure-storage-file-datalake numpy pyarrow==5.0.* great_expectations openpyxl 
+%pip install pandas pathlib azure-storage-file-datalake numpy pyarrow==5.0.* great_expectations openpyxl
 
 # COMMAND ----------
 
@@ -58,7 +58,7 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 # -------------------------------------------------------------------------
 
 file_path_config = "config/pipelines/nhsx-au-analytics"
-file_name_config = "config_nhs_app_device_dbrks.json"
+file_name_config = "config_home_care_user_service.json"
 log_table = "dbo.pre_load_log"
 
 file_system_config = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
@@ -74,15 +74,14 @@ new_source_path = config_JSON["pipeline"]['raw']["snapshot_source_path"]
 
 # COMMAND ----------
 
-# Pull new snapshot dataset
+# Pull new dataset
 # -------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, new_source_path)
-file_name_list = datalake_listContents(CONNECTION_STRING, file_system, new_source_path+latestFolder)
-file_name_list = [file for file in file_name_list if 'WeeklyDownloads' in file]
+file_name_list = datalake_listContents(CONNECTION_STRING, file_system, new_source_path+ latestFolder)
+file_name_list = [file for file in file_name_list if '.xlsx' in file]
 for new_source_file in file_name_list:
   new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, new_source_file)
-  new_dataframe = pd.read_csv(io.BytesIO(new_dataset))
-
+  new_dataframe = pd.read_excel(io.BytesIO(new_dataset), sheet_name = 'DATA_MonthEnd', header = 0, engine='openpyxl')
 
 # COMMAND ----------
 
@@ -91,6 +90,10 @@ for new_source_file in file_name_list:
 # ----------------------------------
 val_df = new_dataframe.mask(new_dataframe == " ") # convert all blanks to NaN for validtion
 df1 = ge.from_pandas(val_df) # Create great expectations dataframe from pandas datafarme
+
+# COMMAND ----------
+
+df1
 
 # COMMAND ----------
 
@@ -106,49 +109,20 @@ expect = df1.expect_column_values_to_not_be_null(column='Date')
 test_result(expect, info)
 assert expect.success
 
-
 # COMMAND ----------
 
-#Test that there are 7 records for the weekly data
+## ServiceUserCount contains NULL value, need to find a way we can verify this
 
-#info = 'Checking there are 7 records for the weekly data\n'
-#expect = df1.expect_table_row_count_to_equal(7)
-#test_result(expect, info)
-#assert expect.success
+# #Test that the count only contains ints
 
-
-# COMMAND ----------
-
-#Test that the 7 rows have unique dates
-
-info = 'Checking the Dates for the 7 records for the week are unique data\n'
-expect = df1.expect_column_values_to_be_unique(column="Date")
-test_result(expect, info)
-assert expect.success
-
-# COMMAND ----------
-
-#Test that the count only contains ints
-
-types = {
-    "Count": "int"
-}
-info = "Checking that 'Count' column data are all int\n"
-for column, type_ in types.items():
-    expect = df1.expect_column_values_to_be_of_type(column=column, type_=type_)
-    test_result(expect, info)
-    assert expect.success
-    
-
-# COMMAND ----------
-
-#Test that the Type column only contains Apple or Google
-
-info = 'Checking that the Type column only contains Google or Apple\n'
-expect = df1.expect_column_values_to_be_in_set(column="Type", value_set=["Google", "Apple"]) # Check the values in the columns are either Apple or Google only
-test_result(expect, info)
-assert expect.success
-
+# types = {
+#     "ServiceUserCount": "int"
+# }
+# info = "Checking that 'Count' column data are all int\n"
+# for column, type_ in types.items():
+#     expect = df1.expect_column_values_to_be_of_type(column=column, type_=type_)
+#     test_result(expect, info)
+#     assert expect.success
 
 # COMMAND ----------
 
