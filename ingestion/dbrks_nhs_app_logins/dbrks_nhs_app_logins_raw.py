@@ -86,7 +86,27 @@ nhs_login_file_name_list = datalake_listContents(CONNECTION_STRING, file_system,
 for new_source_file in nhs_login_file_name_list:
   new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, new_source_file)
   new_dataframe = pd.read_csv(io.BytesIO(new_dataset))
-new_dataframe['_time'] = pd.to_datetime(new_dataframe['_time']).dt.strftime('%Y-%m-%d')
+
+# COMMAND ----------
+
+# Process new snapshot into required format
+# -------------------------
+
+new_dataframe['week_commencing'] = pd.to_datetime(new_dataframe['week_commencing']).dt.strftime('%Y-%m-%d')
+
+#pivot data and clean up
+new_dataframe = pd.pivot_table(new_dataframe, index = 'week_commencing', columns='metric_title')
+new_dataframe.columns = new_dataframe.columns.get_level_values(1)
+new_dataframe = new_dataframe.reset_index()
+
+#drop unessecary columns
+new_dataframe = new_dataframe.loc[:,['week_commencing', 'Number of authentications (of products and services) using NHS Login', 'Number of unique users (citizens) authenticating']]
+
+#rename columns
+new_dataframe = new_dataframe.rename(columns = {'Number of authentications (of products and services) using NHS Login': 'Total Logins',
+                               'Number of unique users (citizens) authenticating' :'Accounts',
+                               'week_commencing': '_time'})
+
 
 # COMMAND ----------
 
@@ -95,6 +115,8 @@ new_dataframe['_time'] = pd.to_datetime(new_dataframe['_time']).dt.strftime('%Y-
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, historical_source_path)
 historical_dataset = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, historical_source_file)
 historical_dataframe = pd.read_parquet(io.BytesIO(historical_dataset), engine="pyarrow")
+
+# COMMAND ----------
 
 # Combine new data with historic data
 # -----------------------------------
