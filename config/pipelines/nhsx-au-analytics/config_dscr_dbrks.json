@@ -89,8 +89,8 @@
 				"sink_table": "dbrks_dscr_all_variables_collated_count"
 			},
             {
-				"metric": "dbrks_dscr_all_variables_care_home_beds",
-				"sink_table": "dbrks_dscr_all_variables_care_home_beds"
+				"metric": "dscr_all_variables_care_home_beds",
+				"sink_table": "dscr_all_variables_care_home_beds"
 			}
 		],
 		"validation": [
