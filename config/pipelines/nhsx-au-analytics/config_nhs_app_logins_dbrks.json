@@ -27,7 +27,7 @@
 			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_nhs_app_logins/dbrks_nhs_app_logins_raw"
 		},
 		"raw": {		
-			"snapshot_source_path": "land/datainbox/email_attachment/alerts@splunkcloud.com/Splunk Alert: Last 6 Months Unique Accounts and Total logins by Week/",
+			"snapshot_source_path": "land/datainbox/email_attachment/alerts@splunkcloud.com/Splunk Report: NHSD Services Dashboard/",
 			"appended_path": "raw/nhsdigital/email_attachment/parquet/nhs_app_logins/historical/",
 			"appended_file": "nhs_app_logins_historical.parquet"
 		},
