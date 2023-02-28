@@ -29,7 +29,7 @@
         "proc": {
             "source_path": "raw/digital_socialcare/manual_upload/parquet/home_care_user_service/historical/",
             "source_file": "home_care_user_service_historical.parquet",
-            "sink_path": "proc/sources/digital_socialcare/manual_upload/parquet/home_care_user_service/historical/",
+            "sink_path": "proc/sources/digital_socialcare/manual_upload/home_care_user_service/historical/",
             "sink_file": "home_care_user_service_historical.parquet"
         },
         "project": {

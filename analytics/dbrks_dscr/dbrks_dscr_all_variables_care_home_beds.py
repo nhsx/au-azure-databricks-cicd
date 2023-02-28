@@ -94,8 +94,8 @@ pir_source_file = pir_config_JSON['pipeline']['project']['source_file']
 
 #Get parameters from hcsu JSON config
 # -------------------------------------------------------------------------
-hcsu_source_path = hcsu_config_JSON['pipeline']['raw']['appended_path']
-hcsu_source_file = hcsu_config_JSON['pipeline']['raw']['appended_file']
+hcsu_source_path = hcsu_config_JSON['pipeline']['proc']['sink_path']
+hcsu_source_file = hcsu_config_JSON['pipeline']['proc']['sink_file']
 
 # COMMAND ----------
 
@@ -123,6 +123,14 @@ df_ref_2 = df_ref_1[~df_ref_1.duplicated(['CCG_ONS_Code', 'CCG_ODS_Code','CCG_Na
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, hcsu_source_path)
 file = datalake_download(CONNECTION_STRING, file_system, hcsu_source_path+latestFolder, hcsu_source_file)
 df_hcsu= pd.read_parquet(io.BytesIO(file), engine="pyarrow")
+
+# COMMAND ----------
+
+hcsu_source_path
+
+# COMMAND ----------
+
+datalake_latestFolder(CONNECTION_STRING, file_system, 'proc/sources/digital_socialcare/manual_upload/home_care_user_service/historical')
 
 # COMMAND ----------
 
