@@ -91,14 +91,16 @@ for new_source_file in file_name_list:
 
 # COMMAND ----------
 
+new_dataframe
+
+# COMMAND ----------
+
 # Pull historical dataset
 # -----------------------------------------------------------------------
 latestFolder_historical = datalake_latestFolder(CONNECTION_STRING, file_system, historical_source_path)
 historical_dataset = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder_historical, historical_source_file)
 historical_dataframe = pd.read_parquet(io.BytesIO(historical_dataset), engine="pyarrow")
 
-# Use pandas.to_datetime() to convert string to datetime format
-historical_dataframe['Date'] = pd.to_datetime(historical_dataframe['Date'])
 # Append new data to historical data
 # -----------------------------------------------------------------------
 dates_in_historical = historical_dataframe["Date"].unique().tolist()
