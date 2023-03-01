@@ -93,10 +93,6 @@ df1 = ge.from_pandas(val_df) # Create great expectations dataframe from pandas d
 
 # COMMAND ----------
 
-df1
-
-# COMMAND ----------
-
 # MAGIC %md
 # MAGIC ## Tests Begin
 
