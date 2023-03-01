@@ -57,6 +57,8 @@
 		"project": {
 			"source_path": "proc/sources/ncdr_etp/adf_v2/table/virtualward/required/",
 			"source_file": "virtual_ward_required.csv",
+			"denominator_source_path": "proc/sources/nhsdigital/manual_upload/parquet/registered_gp_practices_fy_begin_population/historical/",
+			"denominator_source_file": "egistered_gp_practices_fy_begin_populations_historical.parquet",
 			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_virtual_ward_orchestrator",
 			"databricks": [
 				{

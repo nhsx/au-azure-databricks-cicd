@@ -1,0 +1,69 @@
+{
+	"metadata": {
+		"products": [
+			{
+				"product_name": "Digitise, Connect, Transform (DCT) Dashboard",
+				"Granularity": "National",
+				"topic": "Virtual ward",
+				"metrics": [
+					{
+						"id": "",
+						"full_name": "virtual ward current capacity at stp level ",
+						"short_name": "virtual_ward_current_capacity"
+					}
+					
+				]
+			}
+			
+		]
+	},
+	"pipeline": {
+		"name": "trigger_virtual_ward_current_capacity",
+		"folder": "nhsx-au-analytics/ncdr_etp/virtual_ward/",
+		"raw": {
+			"source_dbo": "dbo",
+			"source_table": "vw_virtual_ward_current_capacity_stp_level",
+			"sink_path": "raw/ncdr_etp/adf_v2/table/virtualward_current_cpacity/full/",
+			"source_query": "SELECT * FROM dbo.vw_virtual_ward_current_capacity_stp_level;",
+			"sink_file": "virtual_ward_current_capacity.csv"
+		},
+		"proc": {
+			"source_path": "raw/ncdr_etp/adf_v2/table/virtualward_current_cpacity/full/",
+			"source_file": "virtual_ward_current_capacity.csv",
+			"source_schema": [
+				{"name": "Productionmonth", "type": "datetime"},
+				{"name": "viirtual ward current_capacity", "type": "int"}
+					
+			],
+			"sink_path": "proc/sources/ncdr_etp/adf_v2/table/virtualward/current_capacity/",
+			"sink_file": "virtual_ward_current_capacity.csv"
+		},
+		"project": {
+			"source_path": "proc/sources/ncdr_etp/adf_v2/table/virtualward/current_capacity/",
+			"source_file": "virtual_ward_current_capacity.csv",
+			"denominator_source_path": "proc/sources/nhsdigital/manual_upload/parquet/registered_gp_practices_fy_begin_population/historical/",
+			"denominator_source_file": "egistered_gp_practices_fy_begin_populations_historical.parquet",
+			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_virtual_ward_orchestrator",
+			"databricks": [
+				{
+					"metric": "virtual_ward_biweekly_current_capacity_and_prop",
+					"sink_path": "proc/projects/nhsx_slt_analytics/secondarycare/virtualward/virtual_ward_biweekly_current_capacity_and_prop/",
+					"sink_file": "virtual_ward_biweekly_current_capacity_and_prop.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_virtual_ward/dbrks_secondarycare_virtual_ward_biweekly_current_capacity_and_prop"
+				}	
+			]
+		},
+		"staging": [
+			{
+				"metric": "virtual_ward_biweekly_current_capacity_and_prop",
+				"sink_table": "virtual_ward_biweekly_current_capacity_and_prop"
+			}
+		],
+		"validation": [
+			{
+				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_virtualward_capacity_validation/",
+				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_virtualward"
+		}
+		]
+	}
+}
