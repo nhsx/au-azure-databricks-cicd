@@ -22,14 +22,14 @@
 		},
 		"raw": {
 			"snapshot_source_path": "land/nhsdigital/manual_upload/timestamp/csv/registered_gp_practices_fy_begin_population/",
-			"appended_path": " raw/nhsdigital/manual_upload/parquet/registered_gp_practices_fy_begin_population/historical/",
+			"appended_path": "raw/nhsdigital/manual_upload/parquet/registered_gp_practices_fy_begin_population/historical/",
 			"appended_file": "registered_gp_practices_fy_begin_populations_historical.parquet"
 		},
 		"proc": {
 			"metric": "registered_gp_practices_fy_begin_population",
 			"source_path": "raw/nhsdigital/manual_upload/parquet/registered_gp_practices_fy_begin_population/historical/",
 			"source_file": "registered_gp_practices_fy_begin_populations_historical.parquet",
-			"sink_path": " proc/sources/nhsdigital/manual_upload/parquet/registered_gp_practices_fy_begin_population/historical/",
+			"sink_path": "proc/sources/nhsdigital/manual_upload/parquet/registered_gp_practices_fy_begin_population/historical/",
 			"sink_file": "egistered_gp_practices_fy_begin_populations_historical.parquet"
 			}
 	}
