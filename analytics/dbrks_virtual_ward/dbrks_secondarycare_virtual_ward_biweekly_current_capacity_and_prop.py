@@ -8,11 +8,11 @@
 # -------------------------------------------------------------------------
 
 """
-FILE:           dbrks_secondarycare_virtual_ward_patients_biweek_rate.py
+FILE:           dbrks_secondarycare_virtual_ward_biweekly_current_capacity_and_prop.py
 DESCRIPTION:
-                Databricks notebook with processing code for the NHSX dfpc analytics metric: Number of patients on virtual ward per 1,000 registered population, biweekly 
+                Databricks notebook with processing code for the NHSX dfpc analytics metric: virtual wards biweek capacity and the capacity (per 100,000) count
 USAGE:
-                
+                ...
 CONTRIBUTORS:   Everistus Oputa
 CONTACT:        nhsx.data@england.nhs.uk
 CREATED:        23 Feb 2023
@@ -56,8 +56,8 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 # Load JSON config from Azure datalake
 # -------------------------------------------------------------------------
 file_path_config = "/config/pipelines/nhsx-au-analytics/"
-file_name_config = "config_virtual_ward_dbrks.json"
-file_system_config = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
+file_name_config = "config_virtual_ward_current_capacity_dbrks.json"
+file_system_config = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
@@ -65,52 +65,65 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
 # Read parameters from JSON config
 # -------------------------------------------------------------------------
+file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']['source_file']
-reference_path = config_JSON['pipeline']['project']['reference_source_path']
-reference_file = config_JSON['pipeline']['project']['reference_source_file']
-file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
-sink_path = config_JSON['pipeline']['project']['databricks'][1]['sink_path']
-sink_file = config_JSON['pipeline']['project']['databricks'][1]['sink_file']
-table_name = config_JSON['pipeline']['staging'][1]['sink_table']
+reference_path = config_JSON['pipeline']['project']['denominator_source_path']
+reference_file = config_JSON['pipeline']['project']['denominator_source_file']
+sink_path = config_JSON['pipeline']['project']['databricks'][0]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][0]['sink_file']
+table_name = config_JSON['pipeline']['staging'][0]['sink_table'] 
 
 # COMMAND ----------
 
-#Processing
+
+ #Numerator data ingestion and processing
 # -------------------------------------------------------------------------------------------------
-df1 = df[["Period_End", "ICB_Code", "current_capacity","total_number_of_patients_on_ward"]].copy()
-df1['total_number_of_patients_on_ward'] = df1['total_number_of_patients_on_ward'].astype(int)
-df1 = df1.groupby(['Period_End','ICB_Code','current_capacity'], as_index=False).sum()
-df1['Period_End'] = pd.to_datetime(df1['Period_End'], infer_datetime_format=True)
-df2 = df1[df1['Period_End'] >= '2021-01-01'].reset_index(drop = True)  #--------- taking dates from 
-df3 = df2[['Period_End','ICB_Code', 'current_capacity', 'total_number_of_patients_on_ward']]
-df4 = df3.rename(columns = {'Period_End': 'Biweekly Date','ICB_Code': 'ORG_CODE', 'current_capacity': 'Virtual Ward Current Capacity','total_number_of_patients_on_ward': 'Total Number of Patients on Virtual Ward'})
+latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
+file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
+df = pd.read_csv(io.BytesIO(file))
+df1 = df[["Productionmonth", "STP_Code","viirtual ward current_capacity"]].copy()
+df1['viirtual ward current_capacity'] = df1['viirtual ward current_capacity'].astype(int)
+df1 = df1.groupby(['Productionmonth','STP_Code'], as_index=False).sum()
+df1['Productionmonth'] = pd.to_datetime(df1['Productionmonth'], infer_datetime_format=True)
+df2 = df1[df1['Productionmonth'] >= '2022-04-14'].reset_index(drop = True)  #--------- taking dates from 
+df3 = df2[['Productionmonth','STP_Code', 'viirtual ward current_capacity']]
+df4 = df3.rename(columns = {'Productionmonth': 'Run Date','STP_Code': 'ORG_CODE','viirtual ward current_capacity': 'Virtual Ward Capacity at stp level'})
+#df4.index.name = "Unique ID"
+#df_processed = df4.copy()
 
-
-# ref data Processing
+#Denominator data ingestion and processing
 # -------------------------------------------------------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, reference_path)
 file = datalake_download(CONNECTION_STRING, file_system,reference_path+latestFolder, reference_file)
 df_ref = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 df_ref_1 = df_ref[['EXTRACT_DATE','ORG_TYPE','ORG_CODE','SEX','AGE','NUMBER_OF_PATIENTS']]
 df_ref_1['NUMBER_OF_PATIENTS'] = df_ref_1['NUMBER_OF_PATIENTS'].astype(int)
-df_ref_1 = df_ref_1[(df_ref_1['ORG_TYPE']=='STP') & (df_ref_1['SEX']=='FEMALE','MALE')]
-df_ref_1 = df_ref_1.groupby(['EXTRACT_DATE','ORG_TYPE','ORG_CODE','SEX','AGE'], as_index=False).sum()
-df_ref_1['EXTRACT_DATE'] = pd.to_datetime(df1['EXTRACT_DATE'], infer_datetime_format=True)
-df1 = df_ref_1[(df_ref_1['AGE'] >'16') & (df_ref_1['AGE']!== 'ALL')].reset_index(drop = True)  #---------required age for virtual ward stay above 16 and ALLin the file to be eliminated 
-df2 = df1[['EXTRACT_DATE','ORG_TYPE','ORG_CODE','SEX','AGE','NUMBER_OF_PATIENTS']]
+df_ref_1 = df_ref_1[(df_ref_1['ORG_TYPE']=='STP') & (df_ref_1['SEX'].isin(['FEMALE','MALE']))]
+df_ref_1.replace('95+', 95, inplace=True)
+df_ref_1.drop(df_ref_1[df_ref_1['AGE'] == 'ALL'].index, inplace = True)
+df_ref_1["AGE"] = pd.to_numeric(df_ref_1["AGE"])
+df_ref_1 = df_ref_1.loc[df_ref_1["AGE"] >= 16] #---------required age for virtual ward stay is 16+ and ALLin the file to be eliminated 
+df_ref_1 = df_ref_1.drop('AGE', axis=1)
+df_ref_1 = df_ref_1.groupby(['EXTRACT_DATE','ORG_CODE'], as_index=False).sum()
+df_ref_1['EXTRACT_DATE'] = pd.to_datetime(df_ref_1['EXTRACT_DATE'], infer_datetime_format=True)
+df2 = df_ref_1[['EXTRACT_DATE','ORG_CODE','NUMBER_OF_PATIENTS']]
+
+#Joined data processing
+df_join = df2.merge(df4, how ='outer', on = 'ORG_CODE')
+df_join_1 = df_join.drop(columns = ['EXTRACT_DATE']).rename(columns = {'Run Date':'Run Date','ORG_CODE': 'ICB_CODE','NUMBER_OF_PATIENTS': 'STP Population)','Virtual Ward Capacity at stp level':'Virtual Ward Capacity at stp level'})
+df_join_1['VW Capacity (per 100,000 )'] = df_join_1["Virtual Ward Capacity at stp level"]/(df_join_1['STP Population)']/100000)
+df_join_2 = df_join_1.round(2)
+df_join_2.index.name = "Unique ID"
+df_join_2["Run Date"] = pd.to_datetime(df_join_2["Run Date"])
+df_processed = df_join_2.copy()
 
 
 
 
 # COMMAND ----------
 
-# Joint processing
-# -------------------------------------------------------------------------
-df_join = df4.merge(df2, how ='outer', on = 'ORG_CODE')
-df_join.index.name = "Unique ID"
-df_join = df_join.round(4)
-
+df_processed
 
 # COMMAND ----------
 
