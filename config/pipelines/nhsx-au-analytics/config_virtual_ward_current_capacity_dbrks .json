@@ -32,7 +32,8 @@
 			"source_file": "virtual_ward_current_capacity.csv",
 			"source_schema": [
 				{"name": "Productionmonth", "type": "datetime"},
-				{"name": "viirtual ward current_capacity", "type": "int"}
+				{"name": "viirtual ward current_capacity", "type": "int"},
+				{"name": "STP_Code]", "type": "String"}
 					
 			],
 			"sink_path": "proc/sources/ncdr_etp/adf_v2/table/virtualward/current_capacity/",
