@@ -6,7 +6,7 @@
 # -------------------------------------------------------------------------
 
 """
-FILE:          dbrks_home_care_user_service_count.py
+FILE:          dbrks_home_care_user_service.py
 DESCRIPTION:
                 
                Databricks notebook with processing home care service users
@@ -70,6 +70,7 @@ historical_source_path = config_JSON['pipeline']['raw']['appended_path']
 historical_source_file = config_JSON['pipeline']['raw']['appended_file']
 sink_path = config_JSON['pipeline']['raw']['appended_path']
 sink_file = config_JSON['pipeline']['raw']['appended_file']
+table_name = config_JSON['pipeline']['staging'][0]['sink_table']
 
 # COMMAND ----------
 
@@ -79,12 +80,8 @@ latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, historical_
 file = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, historical_source_file)
 df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
-# COMMAND ----------
-
 # Convert the 'Date' column to datetime format
-df['Date']=pd.to_datetime(df["Date"],unit='s')
-# keeping data only for January 2023
-df = df[(df['Date'] >= "2023-01-01") & (df['Date'] <= "2023-01-31")]
+#df['Date']=pd.to_datetime(df["Date"],unit='s')
 
 # COMMAND ----------
 
@@ -96,4 +93,6 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestF
 
 # COMMAND ----------
 
-# SQL data need uploading needs to confirm with Abdu
+# Write data from databricks to dev SQL database
+# -------------------------------------------------------------------------
+write_to_sql(df, table_name, "overwrite")
