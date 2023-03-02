@@ -2,7 +2,7 @@
     "metadata": {
         "products": [
             {
-                "product_name": "------- - ----     -------- Dashboard",
+                "product_name": "Digital social care Dashboard",
                 "Granularity": "National",
                 "topic": "Home Care User Service",
                 "metrics": [
@@ -47,7 +47,7 @@
         ],
         "validation": [
             {
-                "initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_home_care_user_service/dbrks_home_care_user_service_count_validation",
+                "initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_home_care_user_service/dbrks_home_care_user_service_validation",
                 "final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
             }
         ]
