@@ -73,14 +73,6 @@ table_name = config_JSON['pipeline']['staging'][0]['sink_table']
 
 # COMMAND ----------
 
-source_path
-
-# COMMAND ----------
-
-print(latestFolder)
-
-# COMMAND ----------
-
 # Processing Data
 # -------------------------------------------------------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
@@ -89,10 +81,6 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 # Convert the 'Date' column to datetime format
 #df['Date']=pd.to_datetime(df["Date"],unit='s')
-
-# COMMAND ----------
-
-print(latestFolder)
 
 # COMMAND ----------
 
