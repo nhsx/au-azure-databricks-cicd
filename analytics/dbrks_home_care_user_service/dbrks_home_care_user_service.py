@@ -73,7 +73,11 @@ table_name = config_JSON['pipeline']['staging'][0]['sink_table']
 
 # COMMAND ----------
 
-sink_file
+source_path
+
+# COMMAND ----------
+
+print(latestFolder)
 
 # COMMAND ----------
 
@@ -85,6 +89,10 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 # Convert the 'Date' column to datetime format
 #df['Date']=pd.to_datetime(df["Date"],unit='s')
+
+# COMMAND ----------
+
+print(latestFolder)
 
 # COMMAND ----------
 
