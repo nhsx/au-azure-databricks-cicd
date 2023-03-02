@@ -35,14 +35,14 @@
         "project": {
             "source_path": "proc/sources/digital_socialcare/manual_upload/parquet/home_care_user_service/historical/",
             "source_file": "home_care_user_service_historical.parquet",
-            "sink_path": "proc/projects/nhsx_slt_analytics/digital_socialcare/home_care_user_service/service_user_count/",
-            "sink_file": "home_care_user_service_user_count.parquet",
+            "sink_path": "proc/projects/nhsx_slt_analytics/digital_socialcare/home_care_user_service/service_user/",
+            "sink_file": "home_care_user_service_historical.parquet",
             "databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_home_care_user_service/dbrks_home_care_user_service"
         },
         "staging": [
             {
-                "metric": "home_care_user_service_user_count",
-                "sink_table": "home_care_user_service_user_count"
+                "metric": "home_care_user_service_user",
+                "sink_table": "home_care_user_service_user"
             }
         ],
         "validation": [

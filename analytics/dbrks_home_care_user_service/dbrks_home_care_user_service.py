@@ -65,19 +65,22 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 # Read parameters from JSON config
 # -------------------------------------------------------------------------
 file_system = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
-new_source_path = config_JSON['pipeline']['raw']['snapshot_source_path']
-historical_source_path = config_JSON['pipeline']['raw']['appended_path']
-historical_source_file = config_JSON['pipeline']['raw']['appended_file']
-sink_path = config_JSON['pipeline']['raw']['appended_path']
-sink_file = config_JSON['pipeline']['raw']['appended_file']
+source_path = config_JSON['pipeline']['project']['source_path']
+source_file = config_JSON['pipeline']['project']['source_file']
+sink_path = config_JSON['pipeline']['project']['sink_path']
+sink_file = config_JSON['pipeline']['project']['sink_file']
 table_name = config_JSON['pipeline']['staging'][0]['sink_table']
+
+# COMMAND ----------
+
+sink_file
 
 # COMMAND ----------
 
 # Processing Data
 # -------------------------------------------------------------------------
-latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, historical_source_path)
-file = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, historical_source_file)
+latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
+file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 # Convert the 'Date' column to datetime format
