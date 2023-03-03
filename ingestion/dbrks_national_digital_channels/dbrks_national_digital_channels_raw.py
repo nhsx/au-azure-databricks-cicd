@@ -79,12 +79,17 @@ appended_ods_file = config_JSON['pipeline']['raw']['appended_file_daily_ods']
 
 # COMMAND ----------
 
-# Pull daily dataset
+#Pull Excel file
 # ----------------------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, new_source_path)
 file_name_list = datalake_listContents(CONNECTION_STRING, file_system, new_source_path+latestFolder)
 source_file  = [file for file in file_name_list if '.xlsx' in file][0]
 new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, source_file)
+
+# COMMAND ----------
+
+# Pull daily dataset
+# ----------------------------------------
 new_data = pd.read_excel(io.BytesIO(new_dataset), sheet_name = ['NHS App data file', 'vaccinations', 'EPS'], engine='openpyxl')
 new_data_df = pd.DataFrame()
 for sheet_name, df in new_data.items():
@@ -121,12 +126,14 @@ file_contents = io.BytesIO()
 monthly_raw_df.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, appended_path+current_date_path, appended_monthly_file)
 
+# COMMAND ----------
+
 # Pull ODS dataset
 # ----------------------------------------
 new_data_ods = pd.read_excel(io.BytesIO(new_dataset), sheet_name = 'econsult', engine='openpyxl')
-new_data_ods_1 = new_data_ods.loc[:, ~new_data_ods.columns.str.contains('^Unnamed')]
-new_data_ods_1['day'] = pd.to_datetime(new_data_ods_1['day'], format ='%m/%d/%Y')
-new_data_ods_df = new_data_ods_1.copy()
+new_data_ods = new_data_ods.loc[:, ~new_data_ods.columns.str.contains('^Unnamed')]
+new_data_ods['day'] = pd.to_datetime(new_data_ods['day'])
+new_data_ods_df = new_data_ods.copy()
 
 # Upload merged data to datalake
 # -------------------------------------------
