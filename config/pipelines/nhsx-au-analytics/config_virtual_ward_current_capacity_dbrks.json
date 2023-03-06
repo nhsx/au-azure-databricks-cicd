@@ -50,7 +50,7 @@
 					"metric": "virtual_ward_biweekly_current_capacity_and_prop",
 					"sink_path": "proc/projects/nhsx_slt_analytics/secondarycare/virtualward/virtual_ward_biweekly_current_capacity_and_prop/",
 					"sink_file": "virtual_ward_biweekly_current_capacity_and_prop.csv",
-					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_virtual_ward/dbrks_secondarycare_virtual_ward_biweekly_current_capacity_and_prop"
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_virtual_ward_current_capacity/dbrks_secondarycare_virtual_ward_biweekly_current_capacity_and_prop"
 				}	
 			]
 		},
