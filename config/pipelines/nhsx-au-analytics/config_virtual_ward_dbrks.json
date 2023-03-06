@@ -7,15 +7,11 @@
 				"topic": "Virtual ward",
 				"metrics": [
 					{
-						"id": "",
+						"id": "M398B",
 						"full_name": "Number of patient on virtual ward biweekly",
 						"short_name": "patient_on_virtual_ward_biweekly_count"
-					},
-					{
-						"id": "",
-						"full_name": "Rate of patient on virtual ward biweekly (per 1,000)",
-						"short_name": "patient_on_virtual_ward_biweekly_rate"
 					}
+					
 				]
 			}
 			
@@ -66,31 +62,20 @@
 					"sink_path": "proc/projects/nhsx_slt_analytics/secondarycare/virtualward/patient_on_virtual_ward_biweekly_count/",
 					"sink_file": "patient_on_virtual_ward_biweekly_count.csv",
 					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_virtual_ward/dbrks_secondarycare_virtual_ward_patients_biweek_count"
-				},
-				{
-					"metric": "patient_on_virtual_ward_biweekly_rate",
-					"sink_path": "proc/projects/nhsx_slt_analytics/secondarycare/virtualward/patient_on_virtual_ward_biweekly_rate/",
-					"sink_file": "patient_on_virtual_ward_biweekly_rate.csv",
-					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_virtual_ward/dbrks_secondarycare_virtual_ward_patients_biweek_rate"
-				}
-				
+				}				
 			]
 		},
 		"staging": [
 			{
-				"metric": "patient_on_virtual_ward_biweekly_count",
-				"sink_table": "patient_on_virtual_ward_biweekly_count"
-			},
-			{
-				"metric": "patient_on_virtual_ward_biweekly_rate",
-				"sink_table": "patient_on_virtual_ward_biweekly_rate"
-			}
+			"metric": "patient_on_virtual_ward_biweekly_count",
+			"sink_table": "patient_on_virtual_ward_biweekly_count"
+			}		
 			
 		],
 		"validation": [
 			{
-				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_virtualward_validation/",
-				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_virtualward"
+			"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_virtualward_validation/",
+			"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_virtualward"
 		}
 		]
 	}
