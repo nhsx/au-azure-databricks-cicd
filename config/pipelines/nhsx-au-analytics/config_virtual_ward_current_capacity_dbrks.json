@@ -7,7 +7,7 @@
 				"topic": "Virtual ward",
 				"metrics": [
 					{
-						"id": "",
+						"id": "M398",
 						"full_name": "virtual ward current capacity at stp level ",
 						"short_name": "virtual_ward_current_capacity"
 					}
@@ -44,7 +44,7 @@
 			"source_file": "virtual_ward_current_capacity.csv",
 			"denominator_source_path": "proc/sources/nhsdigital/manual_upload/parquet/registered_gp_practices_fy_begin_population/historical/",
 			"denominator_source_file": "egistered_gp_practices_fy_begin_populations_historical.parquet",
-			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_virtual_ward_orchestrator",
+			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_virtual_ward_current_capacity_orchestrator",
 			"databricks": [
 				{
 					"metric": "virtual_ward_biweekly_current_capacity_and_prop",
@@ -56,14 +56,14 @@
 		},
 		"staging": [
 			{
-				"metric": "virtual_ward_biweekly_current_capacity_and_prop",
-				"sink_table": "virtual_ward_biweekly_current_capacity_and_prop"
+			"metric": "virtual_ward_biweekly_current_capacity_and_prop",
+			"sink_table": "virtual_ward_biweekly_current_capacity_and_prop"
 			}
 		],
 		"validation": [
 			{
-				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_virtualward_capacity_validation/",
-				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_virtualward"
+			"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_virtualward_capacity_validation/",
+			"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_virtualward"
 		}
 		]
 	}
