@@ -8,12 +8,12 @@
 # -------------------------------------------------------------------------
 
 """
-FILE:           dbrks_virtual_ward.py
+FILE:           dbrks_virtual_ward_current_capacity.py
 DESCRIPTION:
                 Orchestrator databricks notebook which runs the processing notebooks for NHSX Analyticus unit metrics within the Virtual Ward Data
 USAGE:
                 ...
-CONTRIBUTORS:   Everistus Oputa
+CONTRIBUTORS:   Everistus Oputa and Silas
 CONTACT:        data@nhsx.nhs.uk
 CREATED:        22 Feb 2023
 VERSION:        0.0.1
@@ -55,7 +55,7 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 
 #Download JSON config from Azure datalake
 file_path_config = "/config/pipelines/nhsx-au-analytics/"
-file_name_config = "config_virtual_ward_dbrks.json"
+file_name_config = "config_virtual_ward_current_capacity_dbrks.json"
 file_system_config = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
@@ -67,10 +67,11 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 path_start = dbutils.secrets.get(scope='DatabricksNotebookPath', key="DATABRICKS_PATH")
 
 #Squentially run metric notebooks
+#---------------------------------
 for index, item in enumerate(config_JSON['pipeline']['project']['databricks']): # get index of objects in JSON array
-  try:
-    notebook = config_JSON['pipeline']['project']['databricks'][index]['databricks_notebook']
-    dbutils.notebook.run(path_start+notebook, 8000)
-  except Exception as e:
-    print(e)
-    raise Exception()
+    try:
+        notebook = config_JSON['pipeline']['project']['databricks'][index]['databricks_notebook']
+        dbutils.notebook.run(path_start+notebook, 8000) # is 120 sec long enough for timeout?
+    except Exception as e:
+        print(e)
+        raise Exception()
