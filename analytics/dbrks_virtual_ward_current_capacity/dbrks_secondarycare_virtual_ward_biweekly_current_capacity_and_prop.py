@@ -9,11 +9,12 @@
 
 """
 FILE:           dbrks_secondarycare_virtual_ward_biweekly_current_capacity_and_prop.py
+              
 DESCRIPTION:
                 Databricks notebook with processing code for the NHSX dfpc analytics metric: virtual wards biweek capacity and the capacity (per 100,000) count
 USAGE:
                 ...
-CONTRIBUTORS:   Everistus Oputa
+CONTRIBUTORS:   Everistus Oputa and Silas
 CONTACT:        nhsx.data@england.nhs.uk
 CREATED:        23 Feb 2023
 VERSION:        0.0.1
@@ -83,6 +84,7 @@ latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 df = pd.read_csv(io.BytesIO(file))
 df1 = df[["Productionmonth", "STP_Code","viirtual ward current_capacity"]].copy()
+df1 = df1[df1['viirtual ward current_capacity'].notna()]
 df1['viirtual ward current_capacity'] = df1['viirtual ward current_capacity'].astype(int)
 df1 = df1.groupby(['Productionmonth','STP_Code'], as_index=False).sum()
 df1['Productionmonth'] = pd.to_datetime(df1['Productionmonth'], infer_datetime_format=True)
@@ -117,7 +119,6 @@ df_join_2 = df_join_1.round(2)
 df_join_2.index.name = "Unique ID"
 df_join_2["Run Date"] = pd.to_datetime(df_join_2["Run Date"])
 df_processed = df_join_2.copy()
-
 
 
 
