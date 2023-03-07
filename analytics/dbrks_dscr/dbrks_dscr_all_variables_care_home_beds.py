@@ -251,7 +251,7 @@ df_pir_keep_unit2 = df_pir_keep_unit.sort_values('Use a Digital Social Care Reco
 
 # Left join PIR to reference info (since it means to collate)
 
-df_tab02_patch = df_join_keep.merge(df_pir_keep_unit2, how ='left', on ="Location_Id")
+df_tab02_patch = df_merged_hcsu_df_join_keep.merge(df_pir_keep_unit2, how ='left', on ="Location_Id")
 
 
 # COMMAND ----------
