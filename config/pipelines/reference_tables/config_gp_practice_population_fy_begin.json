@@ -15,7 +15,7 @@
 		]
 	},
 	"pipeline": {
-		"name": "trigger_registered_gp_practices",
+		"name": "trigger_registered_gp_practices_fy_begin_populations",
     	"folder": "reference_tables/registered_gp_practices/",
 		"ingestion": {
 			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_registered_gp_practices_fy_begin_population/dbrks_registered_gp_practices_fy_begin_population_raw"
@@ -31,7 +31,22 @@
 			"source_file": "registered_gp_practices_fy_begin_populations_historical.parquet",
 			"sink_path": "proc/sources/nhsdigital/manual_upload/parquet/registered_gp_practices_fy_begin_population/historical/",
 			"sink_file": "egistered_gp_practices_fy_begin_populations_historical.parquet"
-			}
+			},
+		"project": {
+				"source_path": "proc/sources/nhsdigital/manual_upload/parquet/registered_gp_practices_fy_begin_population/historical/",
+				"source_file": "egistered_gp_practices_fy_begin_populations_historical.parquet",
+				"sink_path": "proc/projects/reference_tables/demographies/registered_gp_practices_fy_begin_population/",
+				"sink_file": "registered_gp_practices_fy_begin_populations_snapshot.parquet"
+		},
+		"staging":[    
+    			{
+				"metric": "registered_gp_practices_fy_begin_populations",
+				"stored_procedure": "[dbo].[stored_proc_registered_gp_practices_fy_begin_populations_snapshot]",
+				"source_path": "proc/projects/reference_tables/demographies/registered_gp_practices_fy_begin_population/",
+				"source_file": "registered_gp_practices_fy_begin_populations_snapshot.parquet",
+				"sink_table": "registered_gp_practices_fy_begin_populations_snapshot"
+				}
+			]
 	}
 
 }
