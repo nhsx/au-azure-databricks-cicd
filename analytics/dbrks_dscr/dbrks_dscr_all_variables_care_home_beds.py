@@ -23,7 +23,7 @@ VERSION:        0.0.1
 
 # Install libs
 # -------------------------------------------------------------------------
-%pip install geojson==2.5.* tabulate requests pandas pathlib azure-storage-file-datalake beautifulsoup4 numpy urllib3 lxml regex pyarrow==5.0.*
+%pip install geojson==2.5.* tabulate requests pandas pathlib azure-storage-file-datalake beautifulsoup4 numpy urllib3 lxml regex pyarrow==5.0.* great_expectations openpyxl 
 
 # COMMAND ----------
 
@@ -41,6 +41,8 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 from azure.storage.filedatalake import DataLakeServiceClient
+import great_expectations as ge
+
 
 # Connect to Azure datalake
 # -------------------------------------------------------------------------
@@ -206,6 +208,25 @@ df_join_keep
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC ## Validating HCSU data
+
+# COMMAND ----------
+
+df_hcsu['Date'].unique()
+
+# COMMAND ----------
+
+latest_users_sum = df_hcsu.loc[(df_hcsu['Date'] == '2023-01-31')]['ServiceUserCount'].sum()
+previous_users_sum = df_hcsu.loc[df_hcsu['Date'] == '2022-12-31']['ServiceUserCount'].sum()
+
+min_count = previous_users_sum*0.8
+max_count = previous_users_sum*1.2
+
+
+
+# COMMAND ----------
+
 # Filtering data only for January 2023
 january_df_hcsu =  df_hcsu.loc[(df_hcsu['Date'] == '2023-01-31')]
 print("Lenth of DF after filtering only for Janury Data:", len(january_df_hcsu))
@@ -216,6 +237,28 @@ print("Lenth of DF after filtering only for IsActive - 1 and IsDomcare - 1:", le
 
 january_df_hcsu = january_df_hcsu.dropna()
 january_df_hcsu
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Begin Test
+
+# COMMAND ----------
+
+df1 = ge.from_pandas(january_df_hcsu) # Create great expectations dataframe from pandas datafarme
+
+# COMMAND ----------
+
+## test that the sum of users is within the tolerance amount
+info = "Checking that the sum of Service User Count is within the tolerance amount"
+expect = df1.expect_column_sum_to_be_between(column='ServiceUserCount', min_value=min_count, max_value=max_count)
+test_result(expect, info)
+assert expect.success
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## End Test 
 
 # COMMAND ----------
 
