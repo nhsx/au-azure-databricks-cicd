@@ -66,6 +66,21 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
 # COMMAND ----------
 
+# Load Home Care Service User config file
+# -------------------------------------------------------------------------
+hcsu_file_name_config = "config_home_care_user_service.json"
+hcsu_config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, hcsu_file_name_config)
+hcsu_config_JSON = json.loads(io.BytesIO(hcsu_config_JSON).read())
+
+# COMMAND ----------
+
+#Get parameters from hcsu JSON config
+# -------------------------------------------------------------------------
+hcsu_source_path = hcsu_config_JSON['pipeline']['proc']['sink_path']
+hcsu_source_file = hcsu_config_JSON['pipeline']['proc']['sink_file']
+
+# COMMAND ----------
+
 # Read parameters from JSON config
 # -------------------------------------------------------------------------
 file_system = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
@@ -86,7 +101,7 @@ date = datetime.strptime(today, '%Y-%m-%d %H:%M:%S')
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ## Beging Test
+# MAGIC ## Begin Test
 
 # COMMAND ----------
 
@@ -223,6 +238,47 @@ yes_ge_df = ge.from_pandas(yes_only_df)
 today_previous_validation(collated_yes_prev_count, collated_count_tbl, 0.1, yes_ge_df, collated_yes_agg)
   
 
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## HCSU data
+
+# COMMAND ----------
+
+# HCSU Data Processing 
+# -------------------------------------------------------------------------
+latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, hcsu_source_path)
+file = datalake_download(CONNECTION_STRING, file_system, hcsu_source_path+latestFolder, hcsu_source_file)
+df_hcsu= pd.read_parquet(io.BytesIO(file), engine="pyarrow")
+
+# COMMAND ----------
+
+latest_users_sum = df_hcsu.loc[(df_hcsu['Date'] == '2023-01-31')]['ServiceUserCount'].sum()
+previous_users_sum = df_hcsu.loc[df_hcsu['Date'] == '2022-12-31']['ServiceUserCount'].sum()
+
+min_count = previous_users_sum*0.8
+max_count = previous_users_sum*1.2
+
+# COMMAND ----------
+
+# Filtering data only for January 2023
+january_df_hcsu =  df_hcsu.loc[(df_hcsu['Date'] == '2023-01-31')]
+print("Lenth of DF after filtering only for Janury Data:", len(january_df_hcsu))
+january_df_hcsu = january_df_hcsu.loc[(january_df_hcsu['IsActive'] == 1) & (january_df_hcsu['IsDomcare'] == 1)]
+print("Lenth of DF after filtering only for IsActive - 1 and IsDomcare - 1:", len(january_df_hcsu))
+
+# COMMAND ----------
+
+january_df1 = ge.from_pandas(january_df_hcsu) # Create great expectations dataframe from pandas datafarme
+
+# COMMAND ----------
+
+## test that the sum of users is within the tolerance amount
+info = "Checking that the sum of Service User Count is within the tolerance amount"
+expect = january_df1.expect_column_sum_to_be_between(column='ServiceUserCount', min_value=min_count, max_value=max_count)
+test_result(expect, info)
+assert expect.success
 
 # COMMAND ----------
 
