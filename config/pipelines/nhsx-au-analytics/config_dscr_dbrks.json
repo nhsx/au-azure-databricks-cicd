@@ -65,12 +65,6 @@
 					"sink_file": "dscr_all_variables_month_count.csv",
 					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dscr/dbrks_dscr_all_variables_month_count"
 				},
-				{
-					"metric": "dbrks_dscr_all_variables_collated_count",
-					"sink_path": "proc/projects/nhsx_slt_analytics/digital_socialcare/dscr/dbrks_dscr_all_variables_collated_count/",
-					"sink_file": "dbrks_dscr_all_variables_collated_count.csv",
-					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dscr/dbrks_dscr_all_variables_collated_count"
-				},
                 {
 					"metric": "dbrks_dscr_all_variables_care_home_beds",
 					"sink_path": "proc/projects/nhsx_slt_analytics/digital_socialcare/dscr/dbrks_dscr_all_variables_care_home_beds/",
@@ -83,10 +77,6 @@
 			{
 				"metric": "dscr_all_variables_month_count",
 				"sink_table": "dscr_all_variables_month_count"
-			},
-			{
-				"metric": "dbrks_dscr_all_variables_collated_count",
-				"sink_table": "dbrks_dscr_all_variables_collated_count"
 			},
             {
 				"metric": "dscr_all_variables_care_home_beds",
