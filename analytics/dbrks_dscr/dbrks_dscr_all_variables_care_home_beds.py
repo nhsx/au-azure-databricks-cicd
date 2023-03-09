@@ -224,6 +224,11 @@ df_merged_hcsu_df_join_keep = pd.merge(df_join_keep, january_df_hcsu, on='Locati
 
 # COMMAND ----------
 
+df_merged_hcsu_df_join_keep = df_merged_hcsu_df_join_keep.drop(['Date', 'IsActive', 'IsDomcare'], axis = 1)
+df_merged_hcsu_df_join_keep
+
+# COMMAND ----------
+
 df_pir_keep[df_pir_keep["PIRm_n"]>1].sort_values("Location_Id")
 
 # COMMAND ----------
@@ -260,6 +265,10 @@ df_tab02_patch = df_merged_hcsu_df_join_keep.merge(df_pir_keep_unit2, how ='left
 # ---------------------------------------------------------------------
 df_tab02_patch["run_date"] = df_join_keep["monthly_date"]
 
+
+# COMMAND ----------
+
+df_tab02_patch
 
 # COMMAND ----------
 
