@@ -85,7 +85,7 @@ reference_file = config_JSON['pipeline']['project']['reference_source_file']
 file_system =  dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 sink_path = config_JSON['pipeline']['project']['databricks'][2]['sink_path']
 sink_file = config_JSON['pipeline']['project']['databricks'][2]['sink_file']
-table_name = config_JSON['pipeline']["staging"][2]['sink_table']
+table_name = config_JSON['pipeline']["staging"][1]['sink_table']
 
 #Get parameters from PIR JSON config
 # -------------------------------------------------------------------------
