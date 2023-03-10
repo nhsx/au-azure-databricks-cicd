@@ -151,7 +151,7 @@ assert expect.success
 # COMMAND ----------
 
 # -----------------------------------------------------------------------------------------------------------------------------------------------------------------
-# read data from dbrks_dscr_all_variables_collated_count table and count rows. At this stage the data in the table has been refresh and contains additional new data
+# read data from dscr_all_variables_care_home_beds table and count rows. At this stage the data in the table has been refresh and contains additional new data
 collated_df = read_sql_server_table(collated_count_tbl)
 today_collated_count = collated_df.count()
 pd_collated_df = collated_df.toPandas()
@@ -163,22 +163,22 @@ print(location_id_count)
 # COMMAND ----------
 
 # ----------------------------------
-# GE dataframe for dbrks_dscr_all_variables_collated_count table
+# GE dataframe for dscr_all_variables_care_home_beds table
 collated_val_df = pd_collated_df.mask(pd_collated_df == " ") # convert all blanks to NaN for validtion
 collated_validation_df = ge.from_pandas(collated_val_df) # Create great expectations dataframe from pandas datafarme, this holds data from today's files
 
 # COMMAND ----------
 
 # ------------------------------------------------------------------------------------------------------------------------------------
-# Validating that post procesing row are within accepatble count range for dbrks_dscr_all_variables_collated_count
-agg_type_dscr = "Count of dbrks_dscr_all_variables_collated_count table"
+# Validating that post procesing row are within accepatble count range for dscr_all_variables_care_home_beds
+agg_type_dscr = "Count of dscr_all_variables_care_home_beds table"
 collated_count_agg = get_post_load_agg(log_table, collated_count_tbl, agg_type_dscr) # get previous row count from log before logging today's count
 today_previous_validation(collated_count_agg, collated_count_tbl, 10, collated_validation_df, agg_type_dscr)
 
 
 # COMMAND ----------
 
-info = "Checking that ICB_ONS_Code column in all_variables_collated does not have NULLs"
+info = "Checking that ICB_ONS_Code column in dscr_all_variables_care_home_beds does not have NULLs"
 expect = collated_validation_df.expect_column_values_to_not_be_null("ICB_ONS_Code") # Check that has no null or blank values
 test_result(expect, info)
 assert expect.success
@@ -220,7 +220,12 @@ print("#########################################################################
 # Get previous count for Yes for Use a Digital Social Care Record 
 info = "Count of Yes for Use a Digital Social Care Record system column is about same or has increased"
 collated_yes_prev_count = get_post_load_agg(log_table, collated_count_tbl, info) 
-previous_yes_cnt = collated_yes_prev_count["aggregate_value"].values[0]
+
+# When running for the first time there will be no previous count so we use today's count for the test
+if collated_yes_prev_count.empty:
+  previous_yes_cnt = today_yes_collated_count
+else:
+  previous_yes_cnt = collated_yes_prev_count["aggregate_value"].values[0]
 
 print("############### Previous count of YES is shown below #######################")
 print(previous_yes_cnt)
@@ -251,7 +256,7 @@ write_to_sql(df, log_table, "append")
 # COMMAND ----------
 
 # ------------------------------------------------------------------------------------------------------------------------------------
-# Log today's row count for dscr_all_variables_collated_count table
+# Log today's row count for dscr_all_variables_care_home_beds table
 in_row = {"load_date":[date], "tbl_name":[collated_count_tbl], "aggregation":agg_type_dscr, "aggregate_value":[today_collated_count]}
 print("----------- Record to write in table --------------")
 print(in_row)
