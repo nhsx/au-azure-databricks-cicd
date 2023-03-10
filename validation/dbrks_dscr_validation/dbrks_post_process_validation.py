@@ -209,7 +209,6 @@ post_load_unique_column_validation(collated_location_id_prev_count, collated_cou
 
 # ------------------------------------------------------------------------------------------------------------------------------------*****
 # Validating that post procesing row count for Yes in Use a Digital Social Care Record system? column is about same or has increased
-collated_yes_agg = "Count of Yes for Use a Digital Social Care Record system column is about same or has increased"
 yes_df = pd.DataFrame(pd_collated_df["Use a Digital Social Care Record system?"].str.upper())
 yes_only_df = yes_df[yes_df["Use a Digital Social Care Record system?"] == "YES"]
 today_yes_collated_count = len(yes_only_df)
@@ -218,10 +217,19 @@ print("############### Today's count of YES is shown below #####################
 print(today_yes_collated_count)
 print("############################################################################")
 
-collated_yes_prev_count = get_post_load_agg(log_table, collated_count_tbl, collated_yes_agg)
-yes_ge_df = ge.from_pandas(yes_only_df)
-today_previous_validation(collated_yes_prev_count, collated_count_tbl, 0.1, yes_ge_df, collated_yes_agg)
-  
+# Get previous count for Yes for Use a Digital Social Care Record 
+info = "Count of Yes for Use a Digital Social Care Record system column is about same or has increased"
+collated_yes_prev_count = get_post_load_agg(log_table, collated_count_tbl, info) 
+previous_yes_cnt = collated_yes_prev_count["aggregate_value"].values[0]
+
+print("############### Previous count of YES is shown below #######################")
+print(previous_yes_cnt)
+print("############################################################################")
+
+expect = collated_validation_df.expect_table_row_count_to_be_between(min_value=previous_yes_cnt) 
+test_result(expect, info)
+assert expect.success
+
 
 
 # COMMAND ----------
@@ -265,7 +273,7 @@ write_to_sql(df, log_table, "append")
 # COMMAND ----------
 
 # Log today's row count for Use a Digital Social Care Record system? Column with Yes ***
-in_row = {"load_date":[date], "tbl_name":[collated_count_tbl], "aggregation":collated_yes_agg, "aggregate_value":[today_yes_collated_count]}
+in_row = {"load_date":[date], "tbl_name":[collated_count_tbl], "aggregation":info, "aggregate_value":[today_yes_collated_count]}
 print("----------- Record to write in table --------------")
 print(in_row)
 print("----------------------------------------------------")
