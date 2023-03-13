@@ -15,6 +15,11 @@
 			"id": "M020B_M021B",
 			"full_name": "Number and percent of CSUs and CCGs registered for DSPT assessment, that meet or exceed the DSPT standard.",
 			"short_name":"dspt_nhs_csu_ccg_standards_month_count_prop"	
+			},
+			{
+				"id": "M394",
+				"full_name": "Number and percent of trusts DSPT compliance by ICB",
+				"short_name":"dspt_nhs_trusts_standards_compliance_by_ICB"	
 			}
 		]
 	}]},
@@ -37,6 +42,8 @@
 			"source_file": "nhs_dspt_results_snapshot.csv",
 			"reference_path": "/proc/sources/factsanddim/adf_v2/table/odscodes/full/",
 			"reference_file": "table_odscodes_full.parquet",
+			"reference_path2": "proc/sources/ncdr_etp/adf_v2/table/odscodes/trust_mapping/",
+			"reference_file2": "table_odscodes_trust_mapping.parquet",			
 			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_dspt_nhs_orchestrator",
 			"databricks":[    
     			{
@@ -50,6 +57,12 @@
 				"sink_path": "proc/projects/nhsx_slt_analytics/cybersecurity/dspt_nhs_csu_ccg/standards_month_count_prop/",
 				"sink_file": "dspt_nhs_csu_ccg_standards_month_count_prop.csv",
 				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dspt_nhs/dbrks_cybersecurity_dspt_nhs_csu_ccg_standards_month_count_prop"
+				},
+			{
+				"metric": "dspt_nhs_trusts_standards_compliance_by_ICB",
+				"sink_path": "proc/projects/nhsx_slt_analytics/cybersecurity/dspt_nhs_trusts/dspt_nhs_trusts_standards_compliance_by_ICB/",
+				"sink_file": "dspt_nhs_trusts_standards_compliance_by_ICB.csv",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dspt_nhs/dbrks_cybersecurity_dspt_nhs_trusts_standards_compliance_by_ICB"
 				}
 			]
 		},
@@ -59,8 +72,12 @@
 				"sink_table":"dspt_nhs_trust_standards_month_count_prop"
 		   },
 		   {
-			    "metric":"dspt_nhs_csu_ccg_standards_month_count_prop",
-			    "sink_table":"dspt_nhs_csu_ccg_standards_month_count_prop"
+			       "metric":"dspt_nhs_csu_ccg_standards_month_count_prop",
+			       "sink_table":"dspt_nhs_csu_ccg_standards_month_count_prop"
+		    },
+		    {
+			      "metric":"dspt_nhs_trusts_standards_compliance_by_ICB",
+			      "sink_table":"dspt_nhs_trusts_standards_compliance_by_ICB"
 		    }
 
         ]
