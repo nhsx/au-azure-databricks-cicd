@@ -42,7 +42,7 @@
 			"source_file": "nhs_dspt_results_snapshot.csv",
 			"reference_path": "/proc/sources/factsanddim/adf_v2/table/odscodes/full/",
 			"reference_file": "table_odscodes_full.parquet",
-			"reference_path2": "proc/sources/ncdr_etp/adf_v2/table/odscodes/trust_mapping/",
+			"reference_path2": "proc/projects/reference_tables/ods_codes/trust_mapping/",
 			"reference_file2": "table_odscodes_trust_mapping.parquet",			
 			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_dspt_nhs_orchestrator",
 			"databricks":[    
