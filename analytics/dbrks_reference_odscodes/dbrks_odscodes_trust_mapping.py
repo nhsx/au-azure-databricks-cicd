@@ -77,7 +77,7 @@ table_name = config_JSON['pipeline']["staging"]['sink_table']
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
-df_1 = df[["Organisation_Code", "Organisation_Name", "Region_Code", "Region_Name", "STP_Code", "STP_Name", "Effective_To"]]
+df_1 = df[["Organisation_Code", "Organisation_Name", "Region_Code", "Region_Name", "STP_Code", "STP_Name", "Effective_To","ODS_Organisation_Type"]]
 df_1["Effective_To"] = pd.to_datetime(df_1["Effective_To"])
 df_2 = df_1[~df_1['Organisation_Code'].isna()]
 df_3 = df_2[df_2['Effective_To'].isna()].reset_index(drop = True).drop("Effective_To", axis = 1)
