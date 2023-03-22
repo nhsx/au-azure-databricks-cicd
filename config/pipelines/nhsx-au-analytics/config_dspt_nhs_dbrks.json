@@ -20,11 +20,6 @@
 				"id": "M394",
 				"full_name": "Number and percent of trusts DSPT compliance by ICB",
 				"short_name":"dspt_nhs_trusts_standards_compliance_by_ICB"	
-			},
-			{
-				"id": "M394B",
-				"full_name": "Number and percent of social care provider DSPT compliance by ICB",
-				"short_name":"dspt_social_care_provider_standards_compliance_by_ICB"	
 			}
 		]
 	}]},
@@ -68,13 +63,7 @@
 				"sink_path": "proc/projects/nhsx_slt_analytics/cybersecurity/dspt_nhs_trusts/dspt_nhs_trusts_standards_compliance_by_ICB/",
 				"sink_file": "dspt_nhs_trusts_standards_compliance_by_ICB.csv",
 				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dspt_nhs/dbrks_cybersecurity_dspt_nhs_trusts_standards_compliance_by_ICB"
-				},
-			{
-				"metric": "dspt_social_care_provider_standards_compliance_by_ICB",
-				"sink_path": "proc/projects/nhsx_slt_analytics/cybersecurity/dspt_social_care_provider/dspt_social_care_provider_standards_compliance_by_ICB/",
-				"sink_file": "dspt_social_care_provider_standards_compliance_by_ICB.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dspt_nhs/dbrks_cybersecurity_dspt_social_care_provider_standards_compliance_by_ICB"
-				}
+				}			
 			]
 		},
 		"staging": [
@@ -89,11 +78,8 @@
 		    {
 			       "metric":"dspt_nhs_trusts_standards_compliance_by_ICB",
 			       "sink_table":"dspt_nhs_trusts_standards_compliance_by_ICB"
-		    },
-		    {
-			      "metric":"dspt_social_care_provider_standards_compliance_by_ICB",
-			      "sink_table":"dspt_social_care_provider_standards_compliance_by_ICB"
-	           }
+		    }
+		   
 
         ]
     }
