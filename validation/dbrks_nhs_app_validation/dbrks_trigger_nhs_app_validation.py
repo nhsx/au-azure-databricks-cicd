@@ -189,26 +189,27 @@ for column in new_dataframe.columns[2:len(new_dataframe.columns)]:
 # COMMAND ----------
 
 #Test that the all the column have expected type such as int, str etc
-#     "P5NewAppUsers": "int",                #this column have null value
-#     "AcceptedTermsAndConditions": "int",   #this column have null value
-#     "P9VerifiedNHSAppUsers": "int",        #this column have null value
-info = "Checking that all the columns have type integer\n"
+#     "P5NewAppUsers": "float",                #this column have null value
+#     "AcceptedTermsAndConditions": "float",   #this column have null value
+#     "P9VerifiedNHSAppUsers": "float",        #this column have null value
+info = "Checking that all the columns are number\n"
 types = {
     "P5NewAppUsers": "float",
-    "Logins": "int",
-    "RecordViews": "int",
-    "Prescriptions": "int",
-    "NomPharmacy": "int",
-    "AppointmentsBooked": "int",
-    "AppointmentsCancelled": "int",
-    "ODRegistrations": "int",
-    "ODWithdrawals": "int",
-    "ODUpdates": "int",
-    "ODLookups": "int",
-    "RecordViewsDCR": "int",
-    "RecordViewsSCR": "int"
+    "Logins": "float",
+    "RecordViews": "float",
+    "Prescriptions": "float",
+    "NomPharmacy": "float",
+    "AppointmentsBooked": "float",
+    "AppointmentsCancelled": "float",
+    "ODRegistrations": "float",
+    "ODWithdrawals": "float",
+    "ODUpdates": "float",
+    "ODLookups": "float",
+    "RecordViewsDCR": "float",
+    "RecordViewsSCR": "float"
 }
 for column, type_ in types.items():
+    print(column)
     expect = df1.expect_column_values_to_be_of_type(column=column, type_=type_)
     test_result(expect, info)
     assert expect.success
