@@ -37,9 +37,7 @@
 		},
 		"project": {
 			"source_path": "proc/sources/digital_socialcare/email_attachment/parquet/dspt_socialcare/historical/",
-			"source_file": "socialcare_dspt_results_full.parquet",
-			"sink_path": "proc/projects/nhsx_slt_analytics/cybersecurity/dspt_care/standards_year_count_prop/",
-			"sink_file": "dspt_care_standards_year_count_prop.csv",
+			"source_file": "socialcare_dspt_results_full.parquet",			
 			"databricks_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_dspt_socialcare_orchestrator",
 			"databricks":[    
     			{
