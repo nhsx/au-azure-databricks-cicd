@@ -11,10 +11,8 @@
 						"full_name": "Number of patient on virtual ward biweekly",
 						"short_name": "patient_on_virtual_ward_biweekly_count"
 					}
-					
 				]
 			}
-			
 		]
 	},
 	"pipeline": {
@@ -31,21 +29,62 @@
 			"source_path": "raw/ncdr_etp/adf_v2/table/virtualward/full/",
 			"source_file": "virtual_ward_full.csv",
 			"source_schema": [
-				{"name": "Submission", "type": "int"},
-				{"name": "Period_Start", "type": "datetime"},
-				{"name": "Period_End", "type": "datetime"},					
-				{"name": "organisation_code", "type": "String"},
-				{"name": "organisation_name", "type": "String"},
-				{"name": "ICB_Code", "type": "String"},
-				{"name": "ICB_ONS_Code", "type": "String"},
-				{"name": "ICB_Name", "type": "String"},
-				{"name": "Region_Code", "type": "datetime"},
-				{"name": "Region_Name", "type": "datetime"},
-				{"name": "ward_type", "type": "String"},
-				{"name": "diagnosis_cohort_id", "type": "String"},
-				{"name": "current_capacity", "type": "int"},					
-				{"name": "total_number_of_patients_on_ward", "type": "int"}	
-
+				{
+					"name": "Submission",
+					"type": "int"
+				},
+				{
+					"name": "Period_Start",
+					"type": "datetime"
+				},
+				{
+					"name": "Period_End",
+					"type": "datetime"
+				},
+				{
+					"name": "organisation_code",
+					"type": "String"
+				},
+				{
+					"name": "organisation_name",
+					"type": "String"
+				},
+				{
+					"name": "ICB_Code",
+					"type": "String"
+				},
+				{
+					"name": "ICB_ONS_Code",
+					"type": "String"
+				},
+				{
+					"name": "ICB_Name",
+					"type": "String"
+				},
+				{
+					"name": "Region_Code",
+					"type": "datetime"
+				},
+				{
+					"name": "Region_Name",
+					"type": "datetime"
+				},
+				{
+					"name": "ward_type",
+					"type": "String"
+				},
+				{
+					"name": "diagnosis_cohort_id",
+					"type": "String"
+				},
+				{
+					"name": "current_capacity",
+					"type": "int"
+				},
+				{
+					"name": "total_number_of_patients_on_ward",
+					"type": "int"
+				}
 			],
 			"sink_path": "proc/sources/ncdr_etp/adf_v2/table/virtualward/required/",
 			"sink_file": "virtual_ward_required.csv"
@@ -62,21 +101,20 @@
 					"sink_path": "proc/projects/nhsx_slt_analytics/secondarycare/virtualward/patient_on_virtual_ward_biweekly_count/",
 					"sink_file": "patient_on_virtual_ward_biweekly_count.csv",
 					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_virtual_ward/dbrks_secondarycare_virtual_ward_patients_biweek_count"
-				}				
+				}
 			]
 		},
 		"staging": [
 			{
-			"metric": "patient_on_virtual_ward_biweekly_count",
-			"sink_table": "patient_on_virtual_ward_biweekly_count"
-			}		
-			
+				"metric": "patient_on_virtual_ward_biweekly_count",
+				"sink_table": "patient_on_virtual_ward_biweekly_count"
+			}
 		],
 		"validation": [
 			{
-			"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_virtualward_validation/",
-			"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_virtualward"
-		}
+				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_virtual_ward_validation/dbrks_trigger_virtual_ward_validation/",
+				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_virtualward"
+			}
 		]
 	}
 }
