@@ -23,7 +23,7 @@ VERSION:        0.0.1
 
 # Install libs
 # -------------------------------------------------------------------------
-%pip install geojson==2.5.* tabulate requests pandas pathlib azure-storage-file-datalake beautifulsoup4 numpy urllib3 lxml regex pyarrow==5.0.*
+%pip install geojson==2.5.* tabulate requests pandas pathlib azure-storage-file-datalake beautifulsoup4 numpy urllib3 lxml regex pyarrow==5.0.* 
 
 # COMMAND ----------
 
@@ -41,6 +41,8 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 from azure.storage.filedatalake import DataLakeServiceClient
+
+
 
 # Connect to Azure datalake
 # -------------------------------------------------------------------------
