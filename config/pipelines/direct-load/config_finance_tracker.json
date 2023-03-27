@@ -1,0 +1,45 @@
+{
+	"metadata": {
+		"products": [
+			{
+				"product_name": "Digital Social Care",
+				"granularity": "Quaterly",
+				"topic": "Finance Tracker",
+				"metrics": [
+					{
+						"id": "M393",
+						"full_name": "Level of funding allocated and spent",
+						"short_name": "Level of funding allocated and spent"
+					}	
+				]
+			}
+		]
+	},
+	"pipeline": {
+		"name": "trigger_finance_tracker",
+		"folder": "direct_load/",
+		"ingestion": {
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_dscr/dbrks_finance_tracker"
+		},
+		"raw": {
+			"snapshot_source_path": "land/digital_socialcare/manual_upload/timestamp/excel/finance_tracker/"
+		},
+		"proc": {
+			"sink_path": "proc/sources/digital_socialcare/manual_upload/finance_tracker/historical/",
+			"sink_file": "finance_tracker.csv"
+		},
+		"staging": [	
+			{
+				"metric": "finance_tracker",
+				"sink_table": "finance_tracker"
+			}
+           
+		],
+		"validation": [
+			{
+				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_finance_tracker/dbrks_finance_tracker_validation",
+				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_post_process_validation"
+		}
+		]
+	}
+}
