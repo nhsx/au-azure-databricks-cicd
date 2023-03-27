@@ -113,7 +113,7 @@
 		"validation": [
 			{
 				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_virtual_ward_validation/dbrks_trigger_virtual_ward_validation/",
-				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_virtualward"
+				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
 			}
 		]
 	}
