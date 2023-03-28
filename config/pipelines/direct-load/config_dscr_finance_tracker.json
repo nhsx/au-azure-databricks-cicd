@@ -31,7 +31,7 @@
 		"staging": [	
 			{
 				"metric": "finance_tracker",
-				"sink_table": "finance_tracker"
+				"sink_table": "dscr_finance_tracker"
 			}
            
 		],
