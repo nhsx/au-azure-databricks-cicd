@@ -19,7 +19,7 @@
 		"name": "trigger_finance_tracker",
 		"folder": "direct_load/",
 		"ingestion": {
-			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_dscr/dbrks_finance_tracker"
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/direct-load/dbrks_dscr_finance_tracker"
 		},
 		"raw": {
 			"snapshot_source_path": "land/digital_socialcare/manual_upload/timestamp/excel/finance_tracker/"
