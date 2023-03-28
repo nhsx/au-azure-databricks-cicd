@@ -61,7 +61,7 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 # Test
 # -------------------------------------------------------------------------
 file_path_config = "config/pipelines/direct-load"
-file_name_config = "config_finance_tracker.json"
+file_name_config = "config_dscr_finance_tracker.json"
 log_table = "dbo.pre_load_log"
 
 file_system_config = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
