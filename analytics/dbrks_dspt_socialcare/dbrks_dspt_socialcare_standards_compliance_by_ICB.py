@@ -151,7 +151,9 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 df = df_join
 df["Count"] = 1
 
-df_1 = df.groupby(['Date',"CQC registered location - latest DSPT status", 'ICB_Code', 'ICB_Name']).sum().reset_index()
+
+df_1 = df.groupby(['Date',"CQC registered location - latest DSPT status", 'ICB_Code']).sum().reset_index()
+
 
 #Makes changed as outlined in the SOP when the finanical year flag for Standards Met/Exceeded changes
 #----------------------------------------------------------------------------------------------------
@@ -164,7 +166,13 @@ df_3 = df_2[
 (df_2["CQC registered location - latest DSPT status"] == "20/21 Standards Met.") |
 (df_2["CQC registered location - latest DSPT status"] == "20/21 Standards Exceeded.")
 ].reset_index(drop=True)
-df_4 = df_3.groupby(["Date", 'ICB_Code', 'ICB_Name']).sum().reset_index()
+df_4 = df_3.groupby(["Date", "CQC registered location - latest DSPT status", 'ICB_Code']).sum().reset_index()
+
+icb_list = list(df_4['ICB_Code'].unique())
+for icb in icb_list:
+  total = df_4.loc[df_4['ICB_Code'] == icb]['Count'].sum()
+  df_4.loc[df_4['ICB_Code'] == icb, 'Total'] = total
+  
 
 #20/21 and 21/22 FY
 #---------------------------------
@@ -175,7 +183,12 @@ df_6 = df_5[
 (df_5["CQC registered location - latest DSPT status"] == "21/22 Standards Met.") |
 (df_5["CQC registered location - latest DSPT status"] == "21/22 Standards Exceeded.")
 ].reset_index(drop=True)
-df_7 = df_6.groupby(["Date", 'ICB_Code', 'ICB_Name']).sum().reset_index()
+df_7 = df_6.groupby(["Date", "CQC registered location - latest DSPT status", 'ICB_Code']).sum().reset_index()
+
+icb_list = list(df_7['ICB_Code'].unique())
+for icb in icb_list:
+  total = df_7.loc[df_7['ICB_Code'] == icb]['Count'].sum()
+  df_7.loc[df_7['ICB_Code'] == icb, 'Total'] = total
 
 #21/22 and 22/23 FY
 #---------------------------------
@@ -186,19 +199,27 @@ df_9 = df_8[
 (df_8["CQC registered location - latest DSPT status"] == "22/23 Standards Met.") |
 (df_8["CQC registered location - latest DSPT status"] == "22/23 Standards Exceeded.")
 ].reset_index(drop=True)
-df_10 = df_9.groupby(["Date", 'ICB_Code', 'ICB_Name']).sum().reset_index()
+df_10 = df_9.groupby(["Date", "CQC registered location - latest DSPT status", 'ICB_Code']).sum().reset_index()
+
+icb_list = list(df_10['ICB_Code'].unique())
+for icb in icb_list:
+  total = df_10.loc[df_10['ICB_Code'] == icb]['Count'].sum()
+  df_10.loc[df_10['ICB_Code'] == icb, 'Total'] = total
 
 #---------------------------------------------------------------------------------------
 df_fy_appended = pd.concat([df_4, df_7, df_10]).reset_index(drop = True) #------------- Once a new finanical year is added appened additional FY dataframe. ie pd.concat([df_4, df_7, df_10]).reset_index(drop = True)
 #---------------------------------------------------------------------------------------
-df_dates = df_1.groupby("Date").sum().reset_index()
-df_dates_merged = df_fy_appended.merge(df_dates, on = 'Date', how = 'left')
-df_dates_merged_1 = df_dates_merged.rename(columns = { 'Count_x':'Number of social care organizations with a standards met or exceeded DSPT status', 'Count_y':'Total number of social care organizations'})
-df_dates_merged_1["Percent of social care organizations with a standards met or exceeded DSPT status"] = df_dates_merged_1['Number of social care organizations with a standards met or exceeded DSPT status']/df_dates_merged_1['Total number of social care organizations']
-df_dates_merged_2 = df_dates_merged_1.round(4)
-df_dates_merged_2["Date"] = pd.to_datetime(df_dates_merged_2["Date"])
-df_dates_merged_2.index.name = "Unique ID"
-df_processed = df_dates_merged_2.copy()
+#df_dates = df_1.groupby("Date").sum().reset_index()
+#df_dates_merged = df_fy_appended.merge(df_dates, on = 'Date', how = 'left')
+#df_dates_merged_1 = df_dates_merged.rename(columns = { 'Count_x':'Number of social care organizations with a standards met or exceeded DSPT status', 'Count_y':'Total number of social care organizations'})
+#df_dates_merged_1["Percent of social care organizations with a standards met or exceeded DSPT status"] = df_dates_merged_1['Number of social care organizations with a standards met or exceeded DSPT status']/df_dates_merged_1['Total number of social care organizations']
+#df_dates_merged_2 = df_dates_merged_1.round(4)
+#df_dates_merged_2["Date"] = pd.to_datetime(df_dates_merged_2["Date"])
+#df_dates_merged_2.index.name = "Unique ID"
+#df_processed = df_dates_merged_2.copy()
+
+df_fy_appended['Date'] = pd.to_datetime(df_fy_appended['Date'])
+df_processed = df_fy_appended
 
 # COMMAND ----------
 
