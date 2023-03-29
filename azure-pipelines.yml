@@ -28,6 +28,7 @@ steps:
     cp -r $(Build.Repository.LocalPath)/functions/ $(Build.BinariesDirectory)
     cp -r $(Build.Repository.LocalPath)/tables/ $(Build.BinariesDirectory)
     cp -r $(Build.Repository.LocalPath)/validation/ $(Build.BinariesDirectory)
+    cp -r $(Build.Repository.LocalPath)/direct-load/ $(Build.BinariesDirectory)
     cp -r $(Build.Repository.LocalPath)/config/ $(Build.BinariesDirectory)
     
 - task: ArchiveFiles@2
