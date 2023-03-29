@@ -17,7 +17,7 @@
 	},
 	"pipeline": {
 		"name": "trigger_finance_tracker",
-		"folder": "direct_load/",
+		"folder": "nhsx/socialcare_digitalrecord",
 		"ingestion": {
 			"databricks_notebook": "/databricks/au-azure-databricks-cicd/direct-load/dbrks_dscr_finance_tracker"
 		},
