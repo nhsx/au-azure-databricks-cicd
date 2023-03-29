@@ -190,9 +190,9 @@ print("Creating SQL table in SQL Server")
 print("--------------------------------")
 
 table_name = "dct_nhs_app"
-df_sql = spark.sql("SELECT * FROM usage")
+df_sql = spark.sql("SELECT * FROM uptake")
 write_spark_df_to_sql(df_sql, table_name, "overwrite")
-spark.sql("DROP TABLE IF EXISTS usage")
+spark.sql("DROP TABLE IF EXISTS uptake")
 
 print("Finish creating SQL table in SQL Server")
 
