@@ -68,9 +68,9 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']['source_file']
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
-sink_path = config_JSON['pipeline']['project']['sink_path']
-sink_file = config_JSON['pipeline']['project']['sink_file']
-table_name = config_JSON['pipeline']["staging"]['sink_table']
+sink_path = config_JSON['pipeline']['project']['databricks'][0]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][0]['sink_file']
+table_name = config_JSON['pipeline']["staging"][0]['sink_table']
 
 # COMMAND ----------
 
