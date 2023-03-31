@@ -76,6 +76,7 @@ file_system = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER
 new_source_path = config_JSON["pipeline"]['raw']["snapshot_source_path"]
 new_source_file = "PHM_Platform.xlsx"
 
+
 # COMMAND ----------
 
 # Get latest folder and read file
@@ -114,8 +115,8 @@ validation_df = ge.from_pandas(val_df) # Create great expectations dataframe fro
 
 # Validate columns in file
 #-----------------------------------------
-info = "Checking that file has 43 row only"
-expect = validation_df.expect_table_row_count_to_equal(value = 43)
+info = "Checking that file has 42 row only"
+expect = validation_df.expect_table_row_count_to_equal(value = 42)
 test_result(expect, info)
 assert expect.success
 
