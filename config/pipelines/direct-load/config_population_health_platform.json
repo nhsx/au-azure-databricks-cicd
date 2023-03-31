@@ -22,10 +22,10 @@
 			"databricks_notebook": "/databricks/au-azure-databricks-cicd/direct-load/dbrks_population_health_platform"
 		},
 		"raw": {
-			"snapshot_source_path": "land/digital_socialcare/manual_upload/timestamp/excel/population_health_platform/"
+			"snapshot_source_path": "land/nhsengland/manual_upload/timestamp/excel/population_health_platform"
 		},
 		"proc": {
-			"sink_path": "proc/sources/digital_socialcare/manual_upload/population_health_platform/historical/",
+			"sink_path": "proc/sources/population_health_platform/manual_upload/historical/",
 			"sink_file": "population_health_platform.csv"
 		},
 		"staging": [	
