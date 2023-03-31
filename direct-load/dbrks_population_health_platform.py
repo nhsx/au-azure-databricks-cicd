@@ -82,17 +82,27 @@ print(sink_path)
 print(sink_file)
 print(table_name)
 
+new_source_path = 'land/nhsengland/manual_upload/timestamp/excel/population_health_platform/'
 
 # COMMAND ----------
 
 # Pull new dataset
 # -------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, new_source_path)
+print(new_source_path)
+print(latestFolder)
 file_name_list = datalake_listContents(CONNECTION_STRING, file_system, new_source_path+latestFolder)
 file_name_list = [file for file in file_name_list if '.xlsx' in file]
 for new_source_file in file_name_list:
   new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, new_source_file)
-  new_dataframe = pd.read_excel(io.BytesIO(new_dataset), sheet_name = "Sheet1", header = 0, engine='openpyxl') 
+  new_dataframe = pd.read_excel(io.BytesIO(new_dataset), sheet_name = "Summary", header = 0, engine='openpyxl') 
+  
+
+# COMMAND ----------
+
+new_dataframe['PHM Platform Vision'] = np.where(new_dataframe['Survey'].notnull() & np.array(new_dataframe['PHM Platform'] != new_dataframe['Survey']),new_dataframe['Survey'],new_dataframe['PHM Platform'])
+df_processed = new_dataframe.drop(['PHM Platform', 'Survey'], axis=1)
+
 
 # COMMAND ----------
 
@@ -100,12 +110,12 @@ for new_source_file in file_name_list:
 # -----------------------------------------------------------------------
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.BytesIO()
-new_dataframe.to_csv(file_contents)
+df_processed.to_csv(file_contents)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, sink_file)
 
 # COMMAND ----------
 
 # Write metrics to database
 # -------------------------------------------------------------------------
-write_to_sql(new_dataframe, table_name, "overwrite")
+write_to_sql(df_processed, table_name, "overwrite")
 

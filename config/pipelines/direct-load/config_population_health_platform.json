@@ -22,7 +22,7 @@
 			"databricks_notebook": "/databricks/au-azure-databricks-cicd/direct-load/dbrks_population_health_platform"
 		},
 		"raw": {
-			"snapshot_source_path": "land/nhsengland/manual_upload/timestamp/excel/population_health_platform"
+			"snapshot_source_path": "land/nhsengland/manual_upload/timestamp/excel/population_health_platform/"
 		},
 		"proc": {
 			"sink_path": "proc/sources/population_health_platform/manual_upload/historical/",
@@ -37,7 +37,7 @@
 		],
 		"validation": [
 			{
-				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_dscr_validation/dbrks_population_health_platform_validation",
+				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_pop_health_platform_validation/dbrks_population_health_platform_validation",
 				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
 		}
 		]
