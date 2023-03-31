@@ -62,7 +62,7 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 # Load JSON config from Azure datalake
 # -------------------------------------------------------------------------
 file_path_config = "/config/pipelines/direct-load/"
-file_name_config = "config_pop_health_platform.json"
+file_name_config = "config_population_health_platform.json"
 file_system_config = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
