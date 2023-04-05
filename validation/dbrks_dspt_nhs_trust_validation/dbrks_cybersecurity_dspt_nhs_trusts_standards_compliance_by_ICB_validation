@@ -1,0 +1,79 @@
+# Databricks notebook source
+#!/usr/bin python3
+
+# -------------------------------------------------------------------------
+# Copyright (c) 2021 NHS England and NHS Improvement. All rights reserved.
+# Licensed under the MIT License. See license.txt in the project root for
+# license information.
+# -------------------------------------------------------------------------
+
+"""
+FILE:           dbrks_cybersecurity_dspt_nhs_trusts_standards_compliance_by_ICB_validation.py
+DESCRIPTION:
+                To reduce manual checks and improve quality validations need to added to dbrks_cybersecurity_dspt_nhs_trusts_standards_compliance_by_ICB pipeline for DSPT
+USAGE:
+                ...
+CONTRIBUTORS:   Kabir Khan
+CONTACT:        nhsx.data@england.nhs.uk
+CREATED:        4th Apr 2023
+VERSION:        0.0.1
+"""
+
+# COMMAND ----------
+
+# Install libs
+# -------------------------------------------------------------------------------------
+%pip install pandas pathlib azure-storage-file-datalake numpy pyarrow==5.0.* great_expectations openpyxl
+
+# COMMAND ----------
+
+# Imports
+# -------------------------------------------------------------------------
+# Python:
+import os
+import io
+import tempfile
+from datetime import datetime
+import json
+
+# 3rd party:
+import pandas as pd
+import numpy as np
+from pathlib import Path
+from azure.storage.filedatalake import DataLakeServiceClient
+import great_expectations as ge
+
+# Connect to Azure datalake
+# -------------------------------------------------------------------------
+# !env from databricks secrets
+CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONNECTION_STRING")
+
+# COMMAND ----------
+
+# MAGIC %run /Shared/databricks/au-azure-databricks-cicd/functions/dbrks_helper_functions
+
+# COMMAND ----------
+
+# Load parameters and JSON config from Azure datalake
+# -------------------------------------------------------------------------
+
+file_path_config = "config/pipelines/nhsx-au-analytics"
+file_name_config = "config_dspt_nhs_dbrks.json"
+log_table = "dbo.pre_load_log"
+
+file_system_config = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
+config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
+config_JSON = json.loads(io.BytesIO(config_JSON).read())
+
+# COMMAND ----------
+
+# Read parameters from JSON config
+# -------------------------------------------------------------------------
+file_system = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
+new_source_path = config_JSON["pipeline"]['raw']["snapshot_source_path"]
+
+# COMMAND ----------
+
+# Pull new dataset
+# -------------------------
+#TO BE ADDED
