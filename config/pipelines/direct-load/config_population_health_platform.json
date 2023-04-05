@@ -7,9 +7,9 @@
 				"topic": "Population health planning platform",
 				"metrics": [
 					{
-						"id": "M393",
-						"full_name": "Level of funding allocated and spent",
-						"short_name": "Level of funding allocated and spent"
+						"id": "",
+						"full_name": "Population health platform",
+						"short_name": "Population health platform"
 					}	
 				]
 			}
