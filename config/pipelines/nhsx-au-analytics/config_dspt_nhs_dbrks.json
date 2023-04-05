@@ -1,33 +1,35 @@
 {
 	"metadata": {
 		"products": [
-		{
-		"product_name": "Digitise, Connect, Transform (DCT) Dashboard",
-		"Granularity": "National",
-		"topic": "Cyber Security",
-		"metrics": [
 			{
-            "id": "M020A_M021A",
-            "full_name": "Number and percent of Trusts that meet or exceed the DSPT standard.",
-			"short_name":"dspt_nhs_trusts_standards_month_count_prop"
-        	},
-			{
-			"id": "M020B_M021B",
-			"full_name": "Number and percent of CSUs and CCGs registered for DSPT assessment, that meet or exceed the DSPT standard.",
-			"short_name":"dspt_nhs_csu_ccg_standards_month_count_prop"	
-			},
-			{
-				"id": "M394",
-				"full_name": "Number and percent of trusts DSPT compliance by ICB",
-				"short_name":"dspt_nhs_trusts_standards_compliance_by_ICB"	
+				"product_name": "Digitise, Connect, Transform (DCT) Dashboard",
+				"Granularity": "National",
+				"topic": "Cyber Security",
+				"metrics": [
+					{
+						"id": "M020A_M021A",
+						"full_name": "Number and percent of Trusts that meet or exceed the DSPT standard.",
+						"short_name": "dspt_nhs_trusts_standards_month_count_prop"
+					},
+					{
+						"id": "M020B_M021B",
+						"full_name": "Number and percent of CSUs and CCGs registered for DSPT assessment, that meet or exceed the DSPT standard.",
+						"short_name": "dspt_nhs_csu_ccg_standards_month_count_prop"
+					},
+					{
+						"id": "M394",
+						"full_name": "Number and percent of trusts DSPT compliance by ICB",
+						"short_name": "dspt_nhs_trusts_standards_compliance_by_ICB"
+					}
+				]
 			}
 		]
-	}]},
+	},
 	"pipeline": {
 		"name": "trigger_dspt_nhs",
-    	"folder": "nhsx-au-analytics/nhs_digital/dspt_nhs/",
+		"folder": "nhsx-au-analytics/nhs_digital/dspt_nhs/",
 		"raw": {
-			"source_url": "https://www.dsptoolkit.nhs.uk/OrganisationSearch/ExportSearchResults?searchValue=",	
+			"source_url": "https://www.dsptoolkit.nhs.uk/OrganisationSearch/ExportSearchResults?searchValue=",
 			"sink_path": "raw/nhsdigital/adf_v2/csv/nhs_dspt_results/snapshot/",
 			"sink_file": "nhs_dspt_results_snapshot.csv"
 		},
@@ -43,45 +45,48 @@
 			"reference_path": "/proc/sources/factsanddim/adf_v2/table/odscodes/full/",
 			"reference_file": "table_odscodes_full.parquet",
 			"reference_path2": "proc/projects/reference_tables/ods_codes/trust_mapping/",
-			"reference_file2": "table_odscodes_trust_mapping.parquet",			
+			"reference_file2": "table_odscodes_trust_mapping.parquet",
 			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_dspt_nhs_orchestrator",
-			"databricks":[    
-    			{
-				"metric": "dspt_nhs_trusts_standards_month_count_prop",
-				"sink_path": "proc/projects/nhsx_slt_analytics/cybersecurity/dspt_nhs_trusts/standards_month_count_prop/",
-				"sink_file": "dspt_nhs_trusts_standards_month_count_prop.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dspt_nhs/dbrks_cybersecurity_dspt_nhs_trusts_standards_month_count_prop"
-				},    
-    			{
-				"metric": "dspt_nhs_csu_ccg_standards_month_count_prop",
-				"sink_path": "proc/projects/nhsx_slt_analytics/cybersecurity/dspt_nhs_csu_ccg/standards_month_count_prop/",
-				"sink_file": "dspt_nhs_csu_ccg_standards_month_count_prop.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dspt_nhs/dbrks_cybersecurity_dspt_nhs_csu_ccg_standards_month_count_prop"
+			"databricks": [
+				{
+					"metric": "dspt_nhs_trusts_standards_month_count_prop",
+					"sink_path": "proc/projects/nhsx_slt_analytics/cybersecurity/dspt_nhs_trusts/standards_month_count_prop/",
+					"sink_file": "dspt_nhs_trusts_standards_month_count_prop.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dspt_nhs/dbrks_cybersecurity_dspt_nhs_trusts_standards_month_count_prop"
 				},
-			{
-				"metric": "dspt_nhs_trusts_standards_compliance_by_ICB",
-				"sink_path": "proc/projects/nhsx_slt_analytics/cybersecurity/dspt_nhs_trusts/dspt_nhs_trusts_standards_compliance_by_ICB/",
-				"sink_file": "dspt_nhs_trusts_standards_compliance_by_ICB.csv",
-				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dspt_nhs/dbrks_cybersecurity_dspt_nhs_trusts_standards_compliance_by_ICB"
-				}			
+				{
+					"metric": "dspt_nhs_csu_ccg_standards_month_count_prop",
+					"sink_path": "proc/projects/nhsx_slt_analytics/cybersecurity/dspt_nhs_csu_ccg/standards_month_count_prop/",
+					"sink_file": "dspt_nhs_csu_ccg_standards_month_count_prop.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dspt_nhs/dbrks_cybersecurity_dspt_nhs_csu_ccg_standards_month_count_prop"
+				},
+				{
+					"metric": "dspt_nhs_trusts_standards_compliance_by_ICB",
+					"sink_path": "proc/projects/nhsx_slt_analytics/cybersecurity/dspt_nhs_trusts/dspt_nhs_trusts_standards_compliance_by_ICB/",
+					"sink_file": "dspt_nhs_trusts_standards_compliance_by_ICB.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dspt_nhs/dbrks_cybersecurity_dspt_nhs_trusts_standards_compliance_by_ICB"
+				}
 			]
 		},
 		"staging": [
 			{
-			       "metric":"dspt_nhs_trusts_standards_month_count_prop",
-			       "sink_table":"dspt_nhs_trust_standards_month_count_prop"
-		   },
-		   {
-			       "metric":"dspt_nhs_csu_ccg_standards_month_count_prop",
-			       "sink_table":"dspt_nhs_csu_ccg_standards_month_count_prop"
-		    },
-		    {
-			       "metric":"dspt_nhs_trusts_standards_compliance_by_ICB",
-			       "sink_table":"dspt_nhs_trusts_standards_compliance_by_ICB"
-		    }
-		   
-
-        ]
-    }
+				"metric": "dspt_nhs_trusts_standards_month_count_prop",
+				"sink_table": "dspt_nhs_trust_standards_month_count_prop"
+			},
+			{
+				"metric": "dspt_nhs_csu_ccg_standards_month_count_prop",
+				"sink_table": "dspt_nhs_csu_ccg_standards_month_count_prop"
+			},
+			{
+				"metric": "dspt_nhs_trusts_standards_compliance_by_ICB",
+				"sink_table": "dspt_nhs_trusts_standards_compliance_by_ICB"
+			}
+		],
+		"validation": [
+			{
+				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_dspt_nhs_trust_validation/dbrks_cybersecurity_dspt_nhs_trusts_standards_compliance_by_ICB_validation",
+				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
+			}
+		]
+	}
 }
-
