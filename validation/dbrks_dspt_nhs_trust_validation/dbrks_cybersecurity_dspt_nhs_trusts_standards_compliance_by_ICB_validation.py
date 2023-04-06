@@ -155,12 +155,12 @@ write_to_sql(df, log_table, "append")
 
 # COMMAND ----------
 
-# # Count rows in file and write to log table
-# #___________________________________________
-# full_path = reference_path + reference_latestFolder + reference_file
-# row_count = len(ODS_code_df)
-# today = pd.to_datetime('now').strftime("%Y-%m-%d %H:%M:%S")
-# date = datetime.strptime(today, '%Y-%m-%d %H:%M:%S')
-# in_row = {'row_count':[row_count], 'load_date':[date], 'file_to_load':[full_path]}
-# df = pd.DataFrame(in_row)  
-# write_to_sql(df, log_table, "append")
+# Count rows in file and write to log table
+#___________________________________________
+full_path = reference_path + reference_latestFolder + reference_file
+row_count = len(ODS_code_df)
+today = pd.to_datetime('now').strftime("%Y-%m-%d %H:%M:%S")
+date = datetime.strptime(today, '%Y-%m-%d %H:%M:%S')
+in_row = {'row_count':[row_count], 'load_date':[date], 'file_to_load':[full_path]}
+df = pd.DataFrame(in_row)  
+write_to_sql(df, log_table, "append")
