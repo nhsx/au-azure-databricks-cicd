@@ -223,21 +223,36 @@ df_processed = df_fy_appended
 
 # COMMAND ----------
 
-df_processed
+#21/22 and 22/23 FY
+#---------------------------------
+df_latest = df_1.loc[df_1['Date'] >= '2022-09']
+df_latest = df_latest .groupby(["Date", "CQC registered location - latest DSPT status", 'ICB_Code']).sum().reset_index()
+
+icb_list = list(df_latest['ICB_Code'].unique())
+for icb in icb_list:
+  total = df_latest.loc[df_latest['ICB_Code'] == icb]['Count'].sum()
+  df_latest.loc[df_latest['ICB_Code'] == icb, 'Total'] = total
+
+df_latest['Total'] = df_latest['Total'].astype(int)
+df_latest['CQC registered location - latest DSPT status'] = df_latest['CQC registered location - latest DSPT status'].str.replace('.', '')
+
+df_latest = df_latest.rename(columns = {'Date':'Report Date', 'CQC registered location - latest DSPT status':'Standard status', 'Count':'Number of locations with the standard status', 'Total':'Total number of locations'})
+
+df_latest
 
 # COMMAND ----------
 
 # Upload processed data to datalake
 # -------------------------------------------------------------------------
 file_contents = io.StringIO()
-df_processed.to_csv(file_contents)
+df_latest.to_csv(file_contents)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
 
 # COMMAND ----------
 
 # Write data from databricks to dev SQL database
 # -------------------------------------------------------------------------
-write_to_sql(df_processed, table_name, "overwrite")
+write_to_sql(df_latest, table_name, "overwrite")
 
 # COMMAND ----------
 
