@@ -121,12 +121,12 @@ df_sum_prev
 #initialise dictionary to store the minimum and maximum values to compare the current data totals with
 thresholds_dict = {}
 
-#loop through each column calculate thresholds with 20% tolerance and store in the dictionary
+#loop through each column calculate thresholds with 30% tolerance and store in the dictionary
 #thresholds calculated using the get_thresholds function from helper functions
 for column in new_dataframe.columns[2:len(new_dataframe.columns)]:
   print("The threshold for {} is calculated as follows".format(column))
   previous_sum = df_sum_prev.loc[df_sum_prev['comment'].str.contains(column)]['aggregate_value'].values[0] #get the previous sum for each column from the dataframe above^
-  min_val, max_val = get_thresholds(previous_sum, 25)
+  min_val, max_val = get_thresholds(previous_sum, 30)
   min_max = [min_val, max_val]
   thresholds_dict[column] = min_max
   print()

@@ -40,6 +40,7 @@ from dateutil.relativedelta import relativedelta
 import json
 
 # 3rd party:
+import urllib.request
 import pandas as pd
 import numpy as np
 import requests
@@ -89,10 +90,16 @@ req = urllib.request.Request(url, headers={'User-Agent' : "Mozilla/5.0"})
 response = urllib.request.urlopen(req)
 soup = BeautifulSoup(response.read(), "lxml")
 data = soup.select_one("a[href*='erd-data']")
-#csv_url = 'https://digital.nhs.uk' +  data['href']
+csv_url = 'https://digital.nhs.uk' +  data['href']
+
+request = urllib.request.Request(csv_url, headers={'User-Agent' : "Mozilla/5.0"})
+content = urllib.request.urlopen(request)
+
 #csv_url = 'https:' +  data['href']
-csv_url = data['href']
-eps_df_snapshot = pd.read_csv(csv_url)
+#csv_url = data['href']
+
+eps_df_snapshot = pd.read_csv(content)
+display(eps_df_snapshot)
 eps_df_snapshot = eps_df_snapshot.rename(columns = {'% of patients with a nomination': '% with nominated pharm'})
 
 #Extract date from csv URL
