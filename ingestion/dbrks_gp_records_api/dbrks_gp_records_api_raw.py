@@ -82,7 +82,9 @@ sink_file = config_JSON['pipeline']['raw']['appended_file']
 # Scrape new data from NHS Digital webpage
 # -----------------------------------------------------------------------
 url = "https://digital.nhs.uk/services/gp-connect/deployment-and-utilisation"
-response = urllib.request.urlopen(url)
+#response = urllib.request.urlopen(url)
+req = urllib.request.Request(url, headers={'User-Agent' : "Mozilla/5.0"})
+response = urllib.request.urlopen(req)
 soup = BeautifulSoup(response.read(), "lxml")
 date_data = soup.find(lambda tag:tag.name=="p" and "current as of" in tag.text)
 latestDate = search_dates(date_data.text)
