@@ -92,23 +92,9 @@ df1 = df1.set_index(['Date','OdsCode'])
 
 df1 = df1.reindex(mux).unstack().cumsum().ffill().stack().reset_index()
 
-#df1["Cumulative number of NHS app registrations"]=df1.groupby(['OdsCode'])['AcceptedTermsAndConditions'].cumsum(axis=0)
-#df2 = df1.drop(columns = ['AcceptedTermsAndConditions']).reset_index(drop = True)
-#df3 = df2.rename(columns = {'OdsCode': 'Practice code'})
-#df3.index.name = "Unique ID"
-#df_processed = df3.copy()
-
-# COMMAND ----------
-
-
-
-# COMMAND ----------
-
-df2
-
-# COMMAND ----------
-
-df2
+df1 = df1.rename(columns = {'OdsCode': 'Practice code', 'AcceptedTermsAndConditions':'Cumulative number of NHS app registrations'})
+df1.index.name = "Unique ID"
+df_processed = df1.copy()
 
 # COMMAND ----------
 
