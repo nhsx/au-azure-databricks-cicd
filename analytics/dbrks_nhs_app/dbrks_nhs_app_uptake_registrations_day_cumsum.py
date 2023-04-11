@@ -85,16 +85,30 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 df1 = df[["Date", "OdsCode", "AcceptedTermsAndConditions"]].copy()
 df1['Date'] = pd.to_datetime(df1['Date'], infer_datetime_format=True)
 df1['AcceptedTermsAndConditions'] = pd.to_numeric(df1['AcceptedTermsAndConditions'],errors='coerce').fillna(0)
+
 df1=df1.sort_values(['Date']).reset_index(drop=True)
-df1["Cumulative number of NHS app registrations"]=df1.groupby(['OdsCode'])['AcceptedTermsAndConditions'].cumsum(axis=0)
-df2 = df1.drop(columns = ['AcceptedTermsAndConditions']).reset_index(drop = True)
-df3 = df2.rename(columns = {'OdsCode': 'Practice code'})
-df3.index.name = "Unique ID"
-df_processed = df3.copy()
+mux = pd.MultiIndex.from_product([pd.date_range(df1['Date'].min(), df1['Date'].max(),freq='d'), df1['OdsCode'].unique()], names = ['Date', 'OdsCode'])
+df1 = df1.set_index(['Date','OdsCode'])
+
+df1 = df1.reindex(mux).unstack().cumsum().ffill().stack().reset_index()
+
+#df1["Cumulative number of NHS app registrations"]=df1.groupby(['OdsCode'])['AcceptedTermsAndConditions'].cumsum(axis=0)
+#df2 = df1.drop(columns = ['AcceptedTermsAndConditions']).reset_index(drop = True)
+#df3 = df2.rename(columns = {'OdsCode': 'Practice code'})
+#df3.index.name = "Unique ID"
+#df_processed = df3.copy()
 
 # COMMAND ----------
 
 
+
+# COMMAND ----------
+
+df2
+
+# COMMAND ----------
+
+df2
 
 # COMMAND ----------
 
