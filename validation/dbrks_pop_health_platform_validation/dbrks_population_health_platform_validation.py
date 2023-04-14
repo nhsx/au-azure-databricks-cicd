@@ -101,13 +101,12 @@ file_row_count = len(new_dataframe)
 print("########### Number of rows in the file is shown below ###########################################")
 print(file_row_count)
 
-
 # COMMAND ----------
 
 # validate data
 # Greate expectations https://www.architecture-performance.fr/ap_blog/built-in-expectations-in-great-expectations/
 # ----------------------------------
-val_df = new_dataframe.mask(new_dataframe == " ") # convert all blanks to NaN for validtion
+val_df = new_dataframe.mask(new_dataframe == " ") # convert all blanks to NaN for validtion  
 validation_df = ge.from_pandas(val_df) # Create great expectations dataframe from pandas datafarme
 
 
@@ -126,10 +125,12 @@ assert expect.success
 
 info = "Checking data types in file\n"
 types = {
+    "Region Code": "str",
     "Region": "str",
-    "ICS": "str",
-    "PHM Platform": "str",
-    "Survey": "str"
+    "ICB Code": "str",
+    "ICB": "str",
+    "Survey": "str",
+    "Date": "datetime64[ns]"  
 }
 for column, type_ in types.items():
     print(column)
@@ -139,7 +140,7 @@ for column, type_ in types.items():
 
 # COMMAND ----------
 
-# Count rows in file and write to log table
+# Count rows in file and write to log table datetime64[ns] b y
 #___________________________________________
 full_path = new_source_path + latestFolder + new_source_file
 today = pd.to_datetime('now').strftime("%Y-%m-%d %H:%M:%S")
