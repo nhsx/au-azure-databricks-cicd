@@ -82,19 +82,31 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 #Processing
 # ---------------------------------------------------------------------------------------------------
-df1 = df[["Date", "OdsCode", "AcceptedTermsAndConditions"]].copy()
-df1['Date'] = pd.to_datetime(df1['Date'], infer_datetime_format=True)
-df1['AcceptedTermsAndConditions'] = pd.to_numeric(df1['AcceptedTermsAndConditions'],errors='coerce').fillna(0)
+df = df[["Date", "OdsCode", "AcceptedTermsAndConditions"]].copy()
+df['Date'] = pd.to_datetime(df['Date'], infer_datetime_format=True)
+df['AcceptedTermsAndConditions'] = pd.to_numeric(df['AcceptedTermsAndConditions'],errors='coerce').fillna(0)
 
-df1=df1.sort_values(['Date']).reset_index(drop=True)
-mux = pd.MultiIndex.from_product([pd.date_range(df1['Date'].min(), df1['Date'].max(),freq='d'), df1['OdsCode'].unique()], names = ['Date', 'OdsCode'])
-df1 = df1.set_index(['Date','OdsCode'])
+df=df.sort_values(['Date']).reset_index(drop=True)
 
-df1 = df1.reindex(mux).unstack().cumsum().ffill().stack().reset_index()
+df_ref = df.copy()
 
-df1 = df1.rename(columns = {'OdsCode': 'Practice code', 'AcceptedTermsAndConditions':'Cumulative number of NHS app registrations'})
-df1.index.name = "Unique ID"
-df_processed = df1.copy()
+#create a multiindex of every possible ods/date combo 
+mux = pd.MultiIndex.from_product([pd.date_range(df['Date'].min(), df['Date'].max(),freq='d'), df['OdsCode'].unique()], names = ['Date', 'OdsCode'])
+
+#set index to date and ods code to prepare for reindexing
+df = df.set_index(['Date','OdsCode'])
+
+#reindex dataframe to new multiindex
+df = df.reindex(mux)
+df = df.unstack()
+df = df.cumsum()
+df = df.ffill()
+df = df.stack()
+df = df.reset_index()
+
+df = df.rename(columns = {'OdsCode': 'Practice code', 'AcceptedTermsAndConditions':'Cumulative number of NHS app registrations'})
+df.index.name = "Unique ID"
+df_processed = df.copy()
 
 # COMMAND ----------
 
