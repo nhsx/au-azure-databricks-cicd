@@ -84,16 +84,20 @@ df_daily = pd.read_parquet(io.BytesIO(file_1), engine="pyarrow")
 
 # COMMAND ----------
 
+df.columns
+
+# COMMAND ----------
+
 #Processing
 # ---------------------------------------------------------------------------------------------------
 
 #Numerator (Montly)
 # ---------------------------------------------------------------------------------------------------
-df_1 = df[["Monthly", "PKB_appointments", "manageYourReferral"]]
+df_1 = df[["Monthly", "PKB_appointments", "manageYourReferral", "NBS - appointmentBookings"]]
 df_1.iloc[:, 0] = df_1.iloc[:,0].dt.strftime('%Y-%m')
 df_2 = df_1.groupby(df_1.iloc[:,0]).sum().reset_index()
 
-#Numerator (econuslt)
+#Numerator (daily appointments)
 # ---------------------------------------------------------------------------------------------------
 df_daily_1 = df_daily[["Daily", "UsersAppointmentsBooked"]]
 df_daily_1.iloc[:, 0] = df_daily_1.iloc[:,0].dt.strftime('%Y-%m')
@@ -102,13 +106,17 @@ df_daily_2 = df_daily_1.groupby(df_daily_1.iloc[:,0]).sum().reset_index()
 # Join Monthly and Daily Datasets
 # ---------------------------------------------------------------------------------------------------
 df_join = df_daily_2.merge(df_2, how = 'left', left_on = 'Daily', right_on  = 'Monthly').drop(columns = 'Monthly')
-col_list = ["PKB_appointments", "manageYourReferral", "UsersAppointmentsBooked"]
+col_list = ["PKB_appointments", "manageYourReferral", "UsersAppointmentsBooked", "NBS - appointmentBookings"]
 df_join['Number of appointments managed on the NHS App'] = df_join[col_list].sum(axis=1)
 df_join_1 = df_join.drop(columns = col_list)
 df_join_1.rename(columns  = {'Daily': 'Date'}, inplace = True)
 df_join_1.index.name = "Unique ID"
 df_join_1['Date'] = pd.to_datetime(df_join_1['Date'])
 df_processed = df_join_1.copy()
+
+# COMMAND ----------
+
+df_processed
 
 # COMMAND ----------
 
