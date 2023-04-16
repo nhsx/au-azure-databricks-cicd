@@ -84,10 +84,6 @@ df_daily = pd.read_parquet(io.BytesIO(file_1), engine="pyarrow")
 
 # COMMAND ----------
 
-df.columns
-
-# COMMAND ----------
-
 #Processing
 # ---------------------------------------------------------------------------------------------------
 
@@ -113,10 +109,6 @@ df_join_1.rename(columns  = {'Daily': 'Date'}, inplace = True)
 df_join_1.index.name = "Unique ID"
 df_join_1['Date'] = pd.to_datetime(df_join_1['Date'])
 df_processed = df_join_1.copy()
-
-# COMMAND ----------
-
-df_processed
 
 # COMMAND ----------
 
