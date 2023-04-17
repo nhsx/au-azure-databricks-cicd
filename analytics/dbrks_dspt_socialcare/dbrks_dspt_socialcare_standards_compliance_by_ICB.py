@@ -236,9 +236,11 @@ for icb in icb_list:
 df_latest['Total'] = df_latest['Total'].astype(int)
 df_latest['CQC registered location - latest DSPT status'] = df_latest['CQC registered location - latest DSPT status'].str.replace('.', '')
 
+df_latest['Date'] = pd.to_datetime(df_latest['Date'])
 df_latest = df_latest.rename(columns = {'Date':'Report Date', 'CQC registered location - latest DSPT status':'Standard status', 'Count':'Number of locations with the standard status', 'Total':'Total number of locations'})
 
 df_latest
+
 
 # COMMAND ----------
 
