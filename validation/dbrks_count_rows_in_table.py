@@ -10,7 +10,7 @@
 """
 FILE:           dbrks_count_rows_in_table.py
 DESCRIPTION:
-                Databricks notebook to count rows in a table
+                Databricks notebook to count rows SQL in a table
 USAGE:
                 ...
 CONTRIBUTORS:   Abdu Nuhu
