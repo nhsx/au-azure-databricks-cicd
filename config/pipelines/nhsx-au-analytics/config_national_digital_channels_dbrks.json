@@ -538,7 +538,7 @@
 					"metric": "ndc_transactions_nhsapp_research_count",
 					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_transactions_nhsapp_research_count/",
 					"sink_file": "ndc_transactions_nhsapp_research_count.csv",
-					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/ndc_transactions_nhsapp_research_count"
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_nhsapp_research_count"
 				}
 				
 			]
