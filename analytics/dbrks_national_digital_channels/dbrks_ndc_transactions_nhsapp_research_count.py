@@ -67,9 +67,9 @@ file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER
 source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']["source_file_monthly"]
 source_file_2 = config_JSON['pipeline']['project']["source_file_daily"]
-sink_path = config_JSON['pipeline']['project']['databricks'][25]['sink_path']
-sink_file = config_JSON['pipeline']['project']['databricks'][25]['sink_file']  
-table_name = config_JSON['pipeline']["staging"][25]['sink_table']
+sink_path = config_JSON['pipeline']['project']['databricks'][43]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][43]['sink_file']  
+table_name = config_JSON['pipeline']["staging"][43]['sink_table']
 
 # COMMAND ----------
 
@@ -91,20 +91,14 @@ df_daily = pd.read_parquet(io.BytesIO(file_1), engine="pyarrow")
 
 #Numerator (Montly)
 # ---------------------------------------------------------------------------------------------------
-df_1 = df[["Monthly", "bporResearch"]]
-df_1.iloc[:, 0] = df_1.iloc[:,0].dt.strftime('%Y-%m')
-df_2 = df_1.groupby(df_1.iloc[:,0]).sum().reset_index()
+df = df[["Monthly", "bporResearch"]]
+df.iloc[:, 0] = df.iloc[:,0].dt.strftime('%Y-%m')
+df = df.groupby(df.iloc[:,0]).sum().reset_index()
 
-#Numerator (Daily)
-# ---------------------------------------------------------------------------------------------------
-df_daily_1 = df_daily[["Daily", "RecordViews","UsersODRegistrations"]]
-df_daily_1.iloc[:, 0] = df_daily_1.iloc[:,0].dt.strftime('%Y-%m')
-df_daily_2 = df_daily_1.groupby(df_daily_1.iloc[:,0]).sum().reset_index()
-
-df_join_1.rename(columns  = {'Daily': 'Date'}, inplace = True)
-df_join_1.index.name = "Unique ID"
-df_join_1['Date'] = pd.to_datetime(df_join_1['Date'])
-df_processed = df_join_1.copy()
+df.rename(columns  = {'Monthly': 'Date'}, inplace = True)
+df.index.name = "Unique ID"
+df['Date'] = pd.to_datetime(df['Date'])
+df_processed = df.copy()
 
 # COMMAND ----------
 
