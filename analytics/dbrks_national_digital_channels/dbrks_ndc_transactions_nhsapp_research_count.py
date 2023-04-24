@@ -92,9 +92,7 @@ df_daily = pd.read_parquet(io.BytesIO(file_1), engine="pyarrow")
 #Numerator (Montly)
 # ---------------------------------------------------------------------------------------------------
 df = df[["Monthly", "bporResearch"]]
-df.iloc[:, 0] = df.iloc[:,0].dt.strftime('%Y-%m')
-df = df.groupby(df.iloc[:,0]).sum().reset_index()
-
+df = df. replace(np. nan,0) 
 df.rename(columns  = {'Monthly': 'Date'}, inplace = True)
 df.index.name = "Unique ID"
 df['Date'] = pd.to_datetime(df['Date'])
