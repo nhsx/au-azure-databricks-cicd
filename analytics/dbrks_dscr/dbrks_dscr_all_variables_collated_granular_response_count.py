@@ -94,10 +94,10 @@ pir_source_file = pir_config_JSON['pipeline']['project']['source_file']
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
-df_1 = df[['Location ID', 'Dormant (Y/N)','Care home?','Location Inspection Directorate','Location Primary Inspection Category','Location Local Authority','Location ONSPD CCG Code','Location ONSPD CCG','Provider ID','Provider Inspection Directorate','Provider Primary Inspection Category','Provider Postal Code','run_date']]
+df_1 = df[['Location ID','Location Name','Dormant (Y/N)','Care home?','Location Inspection Directorate','Location Primary Inspection Category','Location Local Authority','Location ONSPD CCG Code','Location ONSPD CCG','Provider ID','Provider Name','Provider Local Authority','Provider NHS Region','Provider Inspection Directorate','Provider Primary Inspection Category','Provider Postal Code','run_date']]
 
 df_2 = df_1.drop_duplicates()
-df_3 = df_2.rename(columns = {'Location ID':'Location_Id','Dormant (Y/N)':'Is_Domant','Care home?':'Is_Care_Home','Location Inspection Directorate':'Location_Inspection_Directorate','Location Primary Inspection Category':'Location_Primary_Inspection_Category','Location Local Authority':'Location_Local_Authority','Location ONSPD CCG Code':'CCG_ONS_Code','Location ONSPD CCG':'Location_ONSPD_CCG_Name','Provider ID':'Provider_ID','Provider Inspection Directorate':'Provider_Inspection_Directorate','Provider Primary Inspection Category':'Provider_Primary_Inspection_Category','Provider Postal Code':'Provider_Postal_Code','run_date':'monthly_date'})
+df_3 = df_2.rename(columns = {'Location ID':'Location_Id','Location Name':'Location_Name','Dormant (Y/N)':'Is_Domant','Care home?':'Is_Care_Home','Location Inspection Directorate':'Location_Inspection_Directorate','Location Primary Inspection Category':'Location_Primary_Inspection_Category','Location Local Authority':'Location_Local_Authority','Location ONSPD CCG Code':'CCG_ONS_Code','Location ONSPD CCG':'Location_ONSPD_CCG_Name','Provider ID':'Provider_ID','Provider Name':'Provider_Name','Provider Local Authority':'Provider_Local_Authority','Provider NHS Region':'Provider_NHS_Region','Provider Inspection Directorate':'Provider_Inspection_Directorate','Provider Primary Inspection Category':'Provider_Primary_Inspection_Category','Provider Postal Code':'Provider_Postal_Code','run_date':'monthly_date'})
 
 
 # ref data Processing
@@ -137,14 +137,12 @@ df_pir = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC ### Tab02 ("path" / "collated")
-# MAGIC Calculation of metric Table2 - "collated", i.e. focusses on CQC universe and which submitted PIR responses
+# MAGIC ### Tab03 ("collated-disaggregated")
+# MAGIC Calculation of metric Table3 - "collated-disaggregated", i.e. focusses on CQC universe and which submitted PIR responses
 # MAGIC - Does track full Universe of current locations, i.e. those in latest CQC file (given by df_join)
-# MAGIC - Does intend to keep individual responses but only so far as an individual CQC location level, i.e.:
-# MAGIC 
+# MAGIC - Does intend to keep individual responses but only so far as an individual CQC location level AND PIR type (this latter is the difference to Table2-collated, apart from some additional contextual variables), i.e.:
+# MAGIC
 # MAGIC  a) A step is done to only keep the most recent PIR submission per location and per PIR type (residential / community) - so old submissions or error duplicates are removed
-# MAGIC  
-# MAGIC  b) Since the aim is to simplify on the view of whether a location has a DSCR at all, the PIR DSCR metric is simplified to capture "Does any PIR type from this location report having a DSCR?". If any of the latest PIR type forms indicates "Yes", one of these is retained against the CQC location.
 # MAGIC  
 # MAGIC  caveats:
 # MAGIC  - since the latest CQC file is used, organisations that have since closed won't be considered in terms of their PIR responses.
@@ -158,7 +156,7 @@ df_pir["year"] = pd.to_datetime(df_pir["PIR submission date"]).dt.year
 df_pir["month_year"] = df_pir["months"].astype(str) + "-" + df_pir["year"].astype(str)
 
 # columns needed from PIR (For Tab01)
-df_pir_keep = df_pir[["Location ID","PIR submission date","month_year","PIR type","Use a Digital Social Care Record system?"]] 
+df_pir_keep = df_pir[["Location ID","PIR submission date","month_year","PIR type","Use a Digital Social Care Record system?"]].copy()
 df_pir_keep.rename(columns={"Location ID":"Location_Id"},inplace=True)
 
 ## Add some auxiliaries to indicate more than one submission in a month. Bear also in mind that some (a minority) may be submitting more than once yearly
@@ -167,14 +165,19 @@ aux_group =df_pir_keep.groupby(['Location_Id'],as_index=False)
 
 df_pir_keep['PIRm_n']=aux_group['Use a Digital Social Care Record system?'].transform('count')  # this indicates for the same location how many responses
 
-# what to keep from enriched reference data (For Tab02) (that is useful for Tableau).
+# what to keep from enriched reference data (For Tab03) (that is useful for Tableau).
 df_join_keep = df_join[df_join["Last_Refreshed"]==max(df_join["Last_Refreshed"])][["Location_Id",
+                        "Location_Name",
                         "Location_Primary_Inspection_Category",
                         "Location_Local_Authority",
                         "CCG_ONS_Code","Location_ONSPD_CCG_Name",
                         "ICB_ONS_Code","ICB_Name",
                         "Region_Code","Region_Name",
-                        "Provider_ID", "monthly_date"]].copy()   
+                        "Provider_ID",
+                        "Provider_Name",
+                        "Provider_Local_Authority",
+                        "Provider_NHS_Region",
+                         "monthly_date"]].copy()   
 
 
 # COMMAND ----------
@@ -197,35 +200,39 @@ df_pir_keep.sort_values(['PIR type','Use a Digital Social Care Record system?'])
 
 # COMMAND ----------
 
-# For PIR, keep only one submission per location - if any PIR type says yes, conserve a 'yes' submission (the sort ensures that the tail would capture a yes, if present at all)
+# For PIR, contrary to 'collated' (for coverage calculation purposes), keep latest submission by location AND PIR type (for ICB manager intelligence)
 
-df_pir_keep_unit2 = df_pir_keep_unit.sort_values('Use a Digital Social Care Record system?').groupby(["Location_Id"]).tail(1)
+df_pir_keep_unit2 = df_pir_keep_unit.copy()
 
 
 # COMMAND ----------
 
 # Left join PIR to reference info (since it means to collate)
 
-df_tab02_patch = df_join_keep.merge(df_pir_keep_unit2, how ='left', on ="Location_Id")
+df_tab03_patch = df_join_keep.merge(df_pir_keep_unit2, how ='left', on ="Location_Id")
 
 
 # COMMAND ----------
 
 # Add run date
 # ---------------------------------------------------------------------
-df_tab02_patch["run_date"] = df_join_keep["monthly_date"]
+df_tab03_patch["run_date"] = df_join_keep["monthly_date"]
 
+
+# COMMAND ----------
+
+df_tab03_patch
 
 # COMMAND ----------
 
 # Upload processed data to datalake
 # -------------------------------------------------------------------------
 file_contents = io.StringIO()
-df_tab02_patch.to_csv(file_contents)
+df_tab03_patch.to_csv(file_contents)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
 
 # COMMAND ----------
 
 # Write metrics to database
 # -------------------------------------------------------------------------
-write_to_sql(df_tab02_patch, table_name, "overwrite")
+write_to_sql(df_tab03_patch, table_name, "overwrite")
