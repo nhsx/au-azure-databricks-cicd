@@ -237,9 +237,10 @@ df_tab01_sampler_agg["date_ran"] = datetime.now().strftime('%d-%m-%Y')
 
 # Upload processed data to datalake
 # -------------------------------------------------------------------------
+current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.StringIO()
 df_tab01_sampler_agg.to_csv(file_contents)
-datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
+datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, sink_file)
 
 # COMMAND ----------
 

@@ -134,9 +134,10 @@ df_processed = df_dates_merged_2.copy()
 
 # Upload processed data to datalake
 # -------------------------------------------------------------------------
+current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.StringIO()
 df_processed.to_csv(file_contents)
-datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
+datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, sink_file)
 
 # COMMAND ----------
 

@@ -36,7 +36,7 @@
 		]
 	},
 	"pipeline": {
-		"name": "trigger_dscr",
+		"name": "trigger_digitised_socialcare_record",
 		"folder": "nhsx-au-analytics/digital_socialcare/dscr/",
 		"ingestion": {
 			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_dscr/dbrks_dscr_results_raw"

@@ -220,9 +220,10 @@ df_tab02_patch["run_date"] = df_join_keep["monthly_date"]
 
 # Upload processed data to datalake
 # -------------------------------------------------------------------------
+current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.StringIO()
 df_tab02_patch.to_csv(file_contents)
-datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
+datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, sink_file)
 
 # COMMAND ----------
 
