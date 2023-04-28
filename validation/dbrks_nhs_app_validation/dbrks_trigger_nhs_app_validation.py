@@ -88,15 +88,10 @@ for new_source_file in file_name_list:
 # COMMAND ----------
 
 #get the totals for each column and store the totals in a dataframe
-sum_of_current_cols = {'column_name':list(new_dataframe.columns)[2:len(new_dataframe.columns)]}
-list_of_sums = []
-for column in new_dataframe.columns[2:len(new_dataframe.columns)]:
-  list_of_sums.append(new_dataframe[column].sum())
+df_sum_of_current_cols = new_dataframe.sum().to_frame()
+df_sum_of_current_cols = df_sum_of_current_cols.drop(['Date','OdsCode'], axis=0).reset_index()
+df_sum_of_current_cols = df_sum_of_current_cols.rename(columns={'index':'column_name', 0:'column_sum'})
 
-sum_of_current_cols['column_sum'] = list_of_sums
-
-#print the dataframe of totals for the current data
-df_sum_of_current_cols = pd.DataFrame(sum_of_current_cols)
 print('############################# - SUMS FOR EACH COLUMN FROM CURRENT RUN SHOWN BELOW ###############################')
 df_sum_of_current_cols
 
