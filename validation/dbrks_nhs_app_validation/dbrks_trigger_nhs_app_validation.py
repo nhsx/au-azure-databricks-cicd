@@ -98,6 +98,16 @@ df_sum_of_current_cols
 
 # COMMAND ----------
 
+#get the daily totals for each column and store the totals in a dataframe
+df_sum_of_current_cols_daily = new_dataframe
+df_sum_of_current_cols_daily['Date'] = pd.to_datetime(df_sum_of_current_cols_daily['Date'])
+df_sum_of_current_cols_daily = df_sum_of_current_cols_daily.resample('D', on='Date').sum().reset_index()
+
+print('############################# - SUMS FOR EACH COLUMN DAILY FROM CURRENT RUN SHOWN BELOW ###############################')
+df_sum_of_current_cols_daily
+
+# COMMAND ----------
+
 #load in the sums of each column for the previous dataset and store this in a dataframe
 df_sum_prev = pd.DataFrame(columns=['load_date', 'file_name', 'aggregation', 'aggregate_value', 'comment'])
 for column in new_dataframe.columns[2:len(new_dataframe.columns)]:
@@ -158,8 +168,26 @@ df1 = ge.from_pandas(val_df) # Create great expectations dataframe from pandas d
 
 # COMMAND ----------
 
+# validate daily data
+# ----------------------------------
+#replace zeros with nan, so that 
+val_df2 = df_sum_of_current_cols_daily.replace(0, np.nan)
+df2 = ge.from_pandas(val_df2) # Create great expectations dataframe from pandas datafarme
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC ## Tests Begin
+
+# COMMAND ----------
+
+#test that no single day is zero for each column
+
+for column in df2.columns[1:len(new_dataframe.columns)]:
+  info = "Checing no daily totals are zero for "+column
+  expect = df2.expect_column_values_to_not_be_null(column =[column])
+  test_result(expect, info)
+  assert expect.success
 
 # COMMAND ----------
 
