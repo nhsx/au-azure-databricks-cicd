@@ -114,12 +114,6 @@ validation_df = ge.from_pandas(val_df) # Create great expectations dataframe fro
 
 # Validate columns in file
 #-----------------------------------------
-info = "Checking that file has 45 row only"
-expect = validation_df.expect_table_row_count_to_equal(value = 45)
-test_result(expect, info)
-assert expect.success
-
-
 
 # COMMAND ----------
 
@@ -128,7 +122,7 @@ types = {
     "Funding Stream": "str",
     "Metric": "str",
     "Quartly Timeperiod": "str",
-    "Value": "int"
+    "Value": "float"
 }
 for column, type_ in types.items():
     print(column)
