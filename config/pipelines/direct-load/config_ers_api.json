@@ -1,0 +1,61 @@
+{
+    "metadata": {
+        "products": [
+            {
+                "product_name": "Digitise, Connect, Transform (DCT) Dashboard",
+                "Granularity": "National",
+                "topic": "e_RS_API",
+                "metrics": [
+                    {
+                        "id": "M387",
+                        "full_name": "Number of providers accessing e_RS by API",
+                        "short_name": "ers_api_month_count"
+                    }
+                ]
+            }
+        ]
+    },
+    "pipeline": {
+        "name": "trigger_e_rs_api",
+        "folder": "nhsx-au-analytics/nhsdigital/e_rs_api/",
+        "ingestion": {
+            "source_path": "Shared Documents/nhsx_au_ingestion/e_rs_api/"
+        },
+
+        "raw": {
+            "source_path": "land/sharepoint/Shared Documents/nhsx_au_ingestion/e_rs_api/"
+        },
+
+        "project": {
+			"source_path": "land/sharepoint/Shared Documents/nhsx_au_ingestion/e_rs_api/",
+			"source_file": "e_rs_api.csv",
+			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_e_rs_api_orchestrator",
+			"databricks": [				
+				{
+					"metric": "e_rs_api_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/e_rs_api/e_rs_api_month_count/",
+					"sink_file": "e_rs_api_month_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/direct-load/dbrks_e_rs_api_month_count"
+				},
+                {
+					"metric": "e_rs_api_month_prop",
+					"sink_path": "proc/projects/nhsx_slt_analytics/e_rs_api/e_rs_api_month_prop/",
+					"sink_file": "e_rs_api_month_prop.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/direct-load/dbrks_e_rs_api_month_prop"
+				}
+            ]
+        },
+
+        "staging": [
+        {
+            "metric": "e_rs_api_month_count",
+            "sink_table": "e_rs_api_month_count"
+        },
+        {
+            "metric": "e_rs_api_month_prop",
+            "sink_table": "e_rs_api_month_prop"
+        }
+    ]
+    }
+}
+
