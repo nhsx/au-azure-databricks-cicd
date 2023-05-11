@@ -23,7 +23,8 @@
         },
 
         "raw": {
-            "source_path": "land/sharepoint/Shared Documents/nhsx_au_ingestion/e_rs_api/"
+            "source_path": "land/sharepoint/Shared Documents/nhsx_au_ingestion/e_rs_api/",
+            "sink_file": "e_rs_api.csv"
         },
 
         "project": {
@@ -37,13 +38,13 @@
 					"metric": "e_rs_api_month_count",
 					"sink_path": "proc/projects/nhsx_slt_analytics/e_rs_api/e_rs_api_month_count/",
 					"sink_file": "e_rs_api_month_count.csv",
-					"databricks_notebook": "/databricks/au-azure-databricks-cicd/direct-load/dbrks_e_rs_api_month_count"
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/direct-load/dbrks_e_rs_api/dbrks_e_rs_api_month_count"
 				},
                 {
 					"metric": "e_rs_api_month_prop",
 					"sink_path": "proc/projects/nhsx_slt_analytics/e_rs_api/e_rs_api_month_prop/",
 					"sink_file": "e_rs_api_month_prop.csv",
-					"databricks_notebook": "/databricks/au-azure-databricks-cicd/direct-load/dbrks_e_rs_api_month_prop"
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/direct-load/dbrks_e_rs_api/dbrks_e_rs_api_month_prop"
 				}
             ]
         },
