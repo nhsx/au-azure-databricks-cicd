@@ -8,7 +8,7 @@
                 "metrics": [
                     {
                         "id": "M387",
-                        "full_name": "Number of providers accessing e_RS by API",
+                        "full_name": "Number of providers accessing E_RS by API",
                         "short_name": "ers_api_month_count"
                     }
                 ]
