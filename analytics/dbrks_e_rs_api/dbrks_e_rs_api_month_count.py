@@ -54,7 +54,7 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 # Load JSON config from Azure datalake
 # -------------------------------------------------------------------------
 file_path_config = "/config/pipelines/nhsx-au-analytics/"
-file_name_config = "config_ers_api.json"
+file_name_config = "config_esr_api.json"
 file_system_config = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
@@ -76,11 +76,21 @@ table_name = config_JSON['pipeline']["staging"][0]['sink_table']
 # -------------------------------------------------------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
-df = pd.read_csv(io.BytesIO(file))
+df = pd.read_csv(io.BytesIO(file),encoding='ISO-8859-1')
 df1 = df[["ODS", "Organisation", "DateCreated","Report_End_Date"]]
 df1['Report_End_Date'] = pd.to_datetime(df1['Report_End_Date'])
 df1.index.name = "Unique ID"
 df_processed = df1.copy()
+
+
+# latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
+# file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
+# df = pd.read_csv(io.BytesIO(file),encoding='ISO-8859-1')
+
+
+# latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
+# file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
+# df = pd.read_csv(io.BytesIO(file))
 
 # COMMAND ----------
 
