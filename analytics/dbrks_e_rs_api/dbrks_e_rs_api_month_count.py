@@ -1,19 +1,17 @@
 # Databricks notebook source
-#!/usr/bin python3
-
 # -------------------------------------------------------------------------
-# Copyright (c) |2021 NHS England and NHS Improvement. All rights reserved.
+# Copyright (c) 2021 NHS England and NHS Improvement. All rights reserved.
 # Licensed under the MIT License. See license.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
 
 """
-FILE:           dbrks_e_rs_api_month_prop.py
+FILE:          dbrks_e_rs_api_month_count.py
 DESCRIPTION:
-                Databricks notebook with processing code for DCT metric: ERS Api Month Prop (M387B)
+                Databricks notebook with processing code for DCT Metrics: ERS Api Month Count (M387)
 USAGE:
                 ...
-CONTRIBUTORS:   Everistus Oputa, Muhammad-Faaiz Shanawas
+CONTRIBUTORS:   Everistus Oputa
 CONTACT:        nhsx.data@england.nhs.uk
 CREATED:        11 May 2023
 VERSION:        0.0.1
@@ -23,7 +21,7 @@ VERSION:        0.0.1
 
 # Install libs
 # -------------------------------------------------------------------------
-%pip install geojson==2.5.* tabulate requests pandas pathlib azure-storage-file-datalake beautifulsoup4 openpyxl numpy urllib3 lxml regex pyarrow==8.0.*
+%pip install geojson==2.5.* tabulate requests pandas pathlib azure-storage-file-datalake beautifulsoup4 numpy urllib3 lxml regex pyarrow==8.0.*
 
 # COMMAND ----------
 
@@ -55,9 +53,9 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 
 # Load JSON config from Azure datalake
 # -------------------------------------------------------------------------
-file_path_config = "/config/pipelines/direct-load/"
+file_path_config = "/config/pipelines/nhsx-au-analytics/"
 file_name_config = "config_ers_api.json"
-file_system_config = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
+file_system_config = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
@@ -68,57 +66,32 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']['source_file']
-reference_path = config_JSON['pipeline']['project']['denominator_source_path']
-reference_file = config_JSON['pipeline']['project']['denominator_source_file']
-sink_path = config_JSON['pipeline']['project']['databricks'][1]['sink_path']
-sink_file = config_JSON['pipeline']['project']['databricks'][1]['sink_file']
-table_name = config_JSON['pipeline']['staging'][1]['sink_table'] 
+sink_path = config_JSON['pipeline']['project']['databricks'][0]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][0]['sink_file']
+table_name = config_JSON['pipeline']["staging"][0]['sink_table']
 
 # COMMAND ----------
 
-
-#  #Numerator data ingestion and processing
-# # -------------------------------------------------------------------------------------------------
+# Processing
+# -------------------------------------------------------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
-df = pd.read_excel(io.BytesIO(file))
+df = pd.read_csv(io.BytesIO(file))
+df1 = df[["ODS", "Organisation", "DateCreated","Report_End_Date"]]
+df1['Report_End_Date'] = pd.to_datetime(df1['Report_End_Date'])
+df1.index.name = "Unique ID"
+df_processed = df1.copy()
 
 # COMMAND ----------
 
-#Denominator data ingestion and processing
-# -------------------------------------------------------------------------
-latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, reference_path)
-file = datalake_download(CONNECTION_STRING, file_system,reference_path+latestFolder, reference_file)
-df_ref = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
-
-# COMMAND ----------
-
-#filter denominator for acute trusts and 'Effective_To' == None
-df_acute = df_ref.loc[df_ref['NHSE_Organisation_Type'] == 'ACUTE TRUST']
-df_acute = df_acute[df_acute['Effective_To'].isnull()]
-df_acute = df_acute.groupby(['Last_Refreshed']).count()
-df_acute
-
-# COMMAND ----------
-
-df_output = df.groupby(['Report_End _Date']).count()
-df_output = df_output[['ODS\xa0']]
-df_output = df_output.rename(columns = {'ODS\xa0':'Organisation Count'})
-df_output['Acute Trusts Count'] = df_acute['NHSE_Organisation_Type'][0]
-df_output = df_output.reset_index()
-df_output = df_output.rename(columns = {'Report_End _Date':'Date'})
-df_output
-
-# COMMAND ----------
-
-# Upload output dataframe to datalake
+# Upload processed data to datalake
 # -------------------------------------------------------------------------
 file_contents = io.StringIO()
-df_output.to_csv(file_contents)
+df_processed.to_csv(file_contents)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
 
 # COMMAND ----------
 
 # Write data from databricks to dev SQL database
 # -------------------------------------------------------------------------
-write_to_sql(df_output, table_name, "append")
+write_to_sql(df_processed, table_name, "overwrite")
