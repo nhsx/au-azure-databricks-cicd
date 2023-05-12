@@ -10,12 +10,12 @@
 """
 FILE:           dbrks_e_rs_api_orchestrator.py
 DESCRIPTION:
-                Orchestrator databricks notebook which runs the processing notebooks for NHSX Analyticus unit metrics within the Virtual Ward Data
+                Orchestrator databricks notebook which runs the processing notebooks for DCT ESR API Metric
 USAGE:
                 ...
-CONTRIBUTORS:   Everistus Oputa and Silas
+CONTRIBUTORS:   Everistus Oputa 
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        22 Feb 2023
+CREATED:        11 May 2023
 VERSION:        0.0.1
 """
 
@@ -55,7 +55,7 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 
 #Download JSON config from Azure datalake
 file_path_config = "/config/pipelines/nhsx-au-analytics/"
-file_name_config = "config_ers_api.json"
+file_name_config = "config_esr_api.json"
 file_system_config = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
