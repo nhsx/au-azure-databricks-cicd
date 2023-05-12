@@ -76,14 +76,6 @@ table_name = config_JSON['pipeline']['staging'][1]['sink_table']
 
 # COMMAND ----------
 
-config_JSON['pipeline']['project']['source_file']
-
-# COMMAND ----------
-
-source_file = 'e_rs_api.xlsx'
-
-# COMMAND ----------
-
 
 #  #Numerator data ingestion and processing
 # # -------------------------------------------------------------------------------------------------
@@ -93,116 +85,42 @@ df = pd.read_excel(io.BytesIO(file))
 
 # COMMAND ----------
 
-df
+#Denominator data ingestion and processing
+# -------------------------------------------------------------------------
+latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, reference_path)
+file = datalake_download(CONNECTION_STRING, file_system,reference_path+latestFolder, reference_file)
+df_ref = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 # COMMAND ----------
 
-
-#  #Numerator data ingestion and processing
-# # -------------------------------------------------------------------------------------------------
-latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
-file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
-df = pd.read_csv(io.BytesIO(file))
-df1 = df[["Period_End", "ICB_Code","total_number_of_patients_on_ward"]].copy()
-df1['total_number_of_patients_on_ward'] = df1['total_number_of_patients_on_ward'].astype(int)
-df1 = df1.groupby(['Period_End','ICB_Code'], as_index=False).sum()
-df1['Period_End'] = pd.to_datetime(df1['Period_End'], infer_datetime_format=True)
-# df2 = df1[df1['Period_End'] >= '2022-04-14'].reset_index(drop = True)  #--------- taking dates from 
-# df3 = df2[['Period_End','ICB_Code', 'total_number_of_patients_on_ward']]
-# df4 = df3.rename(columns = {'Period_End': 'Biweekly Date','ICB_Code': 'ORG_CODE','total_number_of_patients_on_ward': 'Total Number of Patients on Virtual Ward'})
-# #df4.index.name = "Unique ID"
-# #df_processed = df4.copy()
-
-# #Denominator data ingestion and processing
-# # -------------------------------------------------------------------------
-# latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, reference_path)
-# file = datalake_download(CONNECTION_STRING, file_system,reference_path+latestFolder, reference_file)
-# df_ref = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
-# df_ref_1 = df_ref[['EXTRACT_DATE','ORG_TYPE','ORG_CODE','SEX','AGE','NUMBER_OF_PATIENTS']]
-# df_ref_1['NUMBER_OF_PATIENTS'] = df_ref_1['NUMBER_OF_PATIENTS'].astype(int)
-# df_ref_1 = df_ref_1[(df_ref_1['ORG_TYPE']=='STP') & (df_ref_1['SEX'].isin(['FEMALE','MALE']))]
-# df_ref_1.replace('95+', 95, inplace=True)
-# df_ref_1.drop(df_ref_1[df_ref_1['AGE'] == 'ALL'].index, inplace = True)
-# df_ref_1["AGE"] = pd.to_numeric(df_ref_1["AGE"])
-# df_ref_1 = df_ref_1.loc[df_ref_1["AGE"] >= 16] #---------required age for virtual ward stay is 16+ and ALLin the file to be eliminated 
-# df_ref_1 = df_ref_1.drop('AGE', axis=1)
-# df_ref_1 = df_ref_1.groupby(['EXTRACT_DATE','ORG_CODE'], as_index=False).sum()
-# df_ref_1['EXTRACT_DATE'] = pd.to_datetime(df_ref_1['EXTRACT_DATE'], infer_datetime_format=True)
-# df2 = df_ref_1[['EXTRACT_DATE','ORG_CODE','NUMBER_OF_PATIENTS']]
-
-# #Joined data processing
-# df_join = df2.merge(df4, how ='outer', on = 'ORG_CODE')
-# df_join_1 = df_join.drop(columns = ['EXTRACT_DATE']).rename(columns = {'Biweekly Date':'Biweekly Date','ORG_CODE': 'ICB_CODE','NUMBER_OF_PATIENTS': 'STP Population)','Total Number of Patients on Virtual Ward':'Total Number of Patients on Virtual Ward'})
-# df_join_1['Number of patients on Virtual ward (per 100,000 )'] = df_join_1["Total Number of Patients on Virtual Ward"]/(df_join_1['STP Population)']/100000)
-# df_join_2 = df_join_1.round(2)
-# df_join_2.index.name = "Unique ID"
-# df_join_2["Biweekly Date"] = pd.to_datetime(df_join_2["Biweekly Date"])
-# df_processed = df_join_2.copy()
-
-
-
+#filter denominator for acute trusts and 'Effective_To' == None
+df_acute = df_ref.loc[df_ref['NHSE_Organisation_Type'] == 'ACUTE TRUST']
+df_acute = df_acute[df_acute['Effective_To'].isnull()]
+df_acute = df_acute.groupby(['Last_Refreshed']).count()
+df_acute
 
 # COMMAND ----------
 
-
-#  #Numerator data ingestion and processing
-# # -------------------------------------------------------------------------------------------------
-latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
-file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
-df = pd.read_csv(io.BytesIO(file))
-df1 = df[["Period_End", "ICB_Code","total_number_of_patients_on_ward"]].copy()
-df1['total_number_of_patients_on_ward'] = df1['total_number_of_patients_on_ward'].astype(int)
-df1 = df1.groupby(['Period_End','ICB_Code'], as_index=False).sum()
-df1['Period_End'] = pd.to_datetime(df1['Period_End'], infer_datetime_format=True)
-# df2 = df1[df1['Period_End'] >= '2022-04-14'].reset_index(drop = True)  #--------- taking dates from 
-# df3 = df2[['Period_End','ICB_Code', 'total_number_of_patients_on_ward']]
-# df4 = df3.rename(columns = {'Period_End': 'Biweekly Date','ICB_Code': 'ORG_CODE','total_number_of_patients_on_ward': 'Total Number of Patients on Virtual Ward'})
-# #df4.index.name = "Unique ID"
-# #df_processed = df4.copy()
-
-# #Denominator data ingestion and processing
-# # -------------------------------------------------------------------------
-# latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, reference_path)
-# file = datalake_download(CONNECTION_STRING, file_system,reference_path+latestFolder, reference_file)
-# df_ref = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
-# df_ref_1 = df_ref[['EXTRACT_DATE','ORG_TYPE','ORG_CODE','SEX','AGE','NUMBER_OF_PATIENTS']]
-# df_ref_1['NUMBER_OF_PATIENTS'] = df_ref_1['NUMBER_OF_PATIENTS'].astype(int)
-# df_ref_1 = df_ref_1[(df_ref_1['ORG_TYPE']=='STP') & (df_ref_1['SEX'].isin(['FEMALE','MALE']))]
-# df_ref_1.replace('95+', 95, inplace=True)
-# df_ref_1.drop(df_ref_1[df_ref_1['AGE'] == 'ALL'].index, inplace = True)
-# df_ref_1["AGE"] = pd.to_numeric(df_ref_1["AGE"])
-# df_ref_1 = df_ref_1.loc[df_ref_1["AGE"] >= 16] #---------required age for virtual ward stay is 16+ and ALLin the file to be eliminated 
-# df_ref_1 = df_ref_1.drop('AGE', axis=1)
-# df_ref_1 = df_ref_1.groupby(['EXTRACT_DATE','ORG_CODE'], as_index=False).sum()
-# df_ref_1['EXTRACT_DATE'] = pd.to_datetime(df_ref_1['EXTRACT_DATE'], infer_datetime_format=True)
-# df2 = df_ref_1[['EXTRACT_DATE','ORG_CODE','NUMBER_OF_PATIENTS']]
-
-# #Joined data processing
-# df_join = df2.merge(df4, how ='outer', on = 'ORG_CODE')
-# df_join_1 = df_join.drop(columns = ['EXTRACT_DATE']).rename(columns = {'Biweekly Date':'Biweekly Date','ORG_CODE': 'ICB_CODE','NUMBER_OF_PATIENTS': 'STP Population)','Total Number of Patients on Virtual Ward':'Total Number of Patients on Virtual Ward'})
-# df_join_1['Number of patients on Virtual ward (per 100,000 )'] = df_join_1["Total Number of Patients on Virtual Ward"]/(df_join_1['STP Population)']/100000)
-# df_join_2 = df_join_1.round(2)
-# df_join_2.index.name = "Unique ID"
-# df_join_2["Biweekly Date"] = pd.to_datetime(df_join_2["Biweekly Date"])
-# df_processed = df_join_2.copy()
-
-
-
+df_output = df.groupby(['Report_End _Date']).count()
+df_output = df_output[['ODS\xa0']]
+df_output = df_output.rename(columns = {'ODS\xa0':'Organisation Count'})
+df_output['Acute Trusts Count'] = df_acute['NHSE_Organisation_Type'][0]
+df_output
 
 # COMMAND ----------
 
-df_processed
-
-# COMMAND ----------
-
-# Upload processed data to datalake
+# Upload output dataframe to datalake
 # -------------------------------------------------------------------------
 file_contents = io.StringIO()
-df_processed.to_csv(file_contents)
+df_output.to_csv(file_contents)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
 
 # COMMAND ----------
 
 # Write data from databricks to dev SQL database
 # -------------------------------------------------------------------------
-write_to_sql(df_processed, table_name, "overwrite")
+write_to_sql(df_output, table_name, "append")
+
+# COMMAND ----------
+
+

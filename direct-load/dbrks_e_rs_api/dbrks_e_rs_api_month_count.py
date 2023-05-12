@@ -53,7 +53,7 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 
 # Load JSON config from Azure datalake
 # -------------------------------------------------------------------------
-file_path_config = "/config/pipelines/nhsx-au-analytics/"
+file_path_config = "/config/pipelines/direct-load/"
 file_name_config = "config_ers_api.json"
 file_system_config = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
@@ -66,9 +66,9 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']['source_file']
-sink_path = config_JSON['pipeline']['project']['sink_path']
-sink_file = config_JSON['pipeline']['project']['sink_file']
-table_name = config_JSON['pipeline']["staging"]['sink_table']
+sink_path = config_JSON['pipeline']['project']['databricks'][0]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][0]['sink_file']
+table_name = config_JSON['pipeline']["staging"][0]['sink_table']
 
 # COMMAND ----------
 
