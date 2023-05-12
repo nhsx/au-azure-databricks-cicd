@@ -105,6 +105,8 @@ df_output = df.groupby(['Report_End _Date']).count()
 df_output = df_output[['ODS\xa0']]
 df_output = df_output.rename(columns = {'ODS\xa0':'Organisation Count'})
 df_output['Acute Trusts Count'] = df_acute['NHSE_Organisation_Type'][0]
+df_output = df_output.reset_index()
+df_output = df_output.rename(columns = {'Report_End _Date':'Date'})
 df_output
 
 # COMMAND ----------
@@ -120,7 +122,3 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestF
 # Write data from databricks to dev SQL database
 # -------------------------------------------------------------------------
 write_to_sql(df_output, table_name, "append")
-
-# COMMAND ----------
-
-
