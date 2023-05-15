@@ -70,13 +70,9 @@ source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']['source_file']
 reference_path = config_JSON['pipeline']['project']['denominator_source_path']
 reference_file = config_JSON['pipeline']['project']['denominator_source_file']
-sink_path = config_JSON['pipeline']['project']['databricks'][1]['sink_path']
-sink_file = config_JSON['pipeline']['project']['databricks'][1]['sink_file']
-table_name = config_JSON['pipeline']['staging'][1]['sink_table'] 
-
-# COMMAND ----------
-
-table_name
+sink_path = config_JSON['pipeline']['project']['databricks'][3]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][3]['sink_file']
+table_name = config_JSON['pipeline']['staging'][3]['sink_table'] 
 
 # COMMAND ----------
 
@@ -89,19 +85,40 @@ df = pd.read_csv(io.BytesIO(file),encoding='ISO-8859-1')
 
 # COMMAND ----------
 
+df = df.rename(columns = {'ODS\xa0':'ODS'})
+
+#remove all the spaces from the end of the ODS codes
+list_of_ODS = list(df['ODS'])
+for i in list_of_ODS:
+  if '\xa0' in i:
+    list_of_ODS[list_of_ODS.index(i)] = i.replace('\xa0', '')
+
+#replace the ODS codes without spaces in the dataframe
+df['ODS'] = list_of_ODS
+df
+
+# COMMAND ----------
+
 #Denominator data ingestion and processing
 # -------------------------------------------------------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, reference_path)
 file = datalake_download(CONNECTION_STRING, file_system,reference_path+latestFolder, reference_file)
 df_ref = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
+df_ref = df_ref.rename(columns = {'Organisation_Code':'ODS'})
 
 # COMMAND ----------
 
 #filter denominator for acute trusts and 'Effective_To' == None
 df_acute = df_ref.loc[df_ref['NHSE_Organisation_Type'] == 'ACUTE TRUST']
 df_acute = df_acute[df_acute['Effective_To'].isnull()]
-df_acute = df_acute.groupby(['Last_Refreshed']).count()
+df_acute  = df_acute[['ODS', 'STP_Code']]
 
+
+# COMMAND ----------
+
+df_merged = df_ref.merge(df, on = 'ODS', how = 'right')
+#df_merged.loc[df_merged['STP_Code'].isna()]
+df_merged
 
 # COMMAND ----------
 
@@ -112,6 +129,10 @@ df_output['Acute Trusts Count'] = df_acute['NHSE_Organisation_Type'][0]
 df_output = df_output.reset_index()
 df_output = df_output.rename(columns = {'Report_End _Date':'Date'})
 
+
+# COMMAND ----------
+
+df
 
 # COMMAND ----------
 
@@ -126,3 +147,7 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestF
 # Write data from databricks to dev SQL database
 # -------------------------------------------------------------------------
 write_to_sql(df_output, table_name, "overwrite")
+
+# COMMAND ----------
+
+
