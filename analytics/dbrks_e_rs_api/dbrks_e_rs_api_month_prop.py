@@ -97,7 +97,7 @@ df_ref = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 df_acute = df_ref.loc[df_ref['NHSE_Organisation_Type'] == 'ACUTE TRUST']
 df_acute = df_acute[df_acute['Effective_To'].isnull()]
 df_acute = df_acute.groupby(['Last_Refreshed']).count()
-df_acute
+
 
 # COMMAND ----------
 
@@ -107,7 +107,7 @@ df_output = df_output.rename(columns = {'ODS\xa0':'Organisation Count'})
 df_output['Acute Trusts Count'] = df_acute['NHSE_Organisation_Type'][0]
 df_output = df_output.reset_index()
 df_output = df_output.rename(columns = {'Report_End _Date':'Date'})
-df_output
+
 
 # COMMAND ----------
 
@@ -121,4 +121,4 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestF
 
 # Write data from databricks to dev SQL database
 # -------------------------------------------------------------------------
-write_to_sql(df_output, table_name, "append")
+write_to_sql(df_output, table_name, "overwrite")
