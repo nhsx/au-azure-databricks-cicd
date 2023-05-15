@@ -72,6 +72,10 @@
 	    {
 		"metric": "e_rs_api_month_count_by_ICB",
 		"sink_table": "e_rs_api_month_count_by_ICB"
+	    },
+			{
+		"metric": "e_rs_api_month_prop_by_ICB",
+		"sink_table": "e_rs_api_month_prop_by_ICB"
 	    }
 	],
     
