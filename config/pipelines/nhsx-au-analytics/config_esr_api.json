@@ -19,15 +19,17 @@
 	    "name": "trigger_e_rs_api",
 	    "folder": "nhsx-au-analytics/nhsdigital/e_rs_api/",
 	    "ingestion": {
-		"source_path": "Shared Documents/nhsx_au_ingestion/e_rs_api/"
+		"source_path": "Shared Documents/nhsx_au_ingestion/e_rs_api/",
+		"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_e_rs_api/dbrks_e_rs_api_raw"
 	    },
     
 	    "raw": {
 		"source_path": "land/sharepoint/Shared Documents/nhsx_au_ingestion/e_rs_api/",
-		"sink_file": "e_rs_api.csv"
+		"appended_path": "raw/nhsx/sharepoint/csv/e_sr_api/full/",
+		"appended_file": "e_rs_api.csv"
 	    },
 	    "proc": {
-			    "source_path": "land/sharepoint/Shared Documents/nhsx_au_ingestion/e_rs_api/",
+			    "source_path": "raw/nhsx/sharepoint/csv/e_sr_api/full/",
 			    "source_file": "e_rs_api.csv",
 			    "sink_path": "proc/sources/nhsx/sharepoint/csv/e_rs_api/full/",
 			    "sink_file": "e_rs_api.csv"
