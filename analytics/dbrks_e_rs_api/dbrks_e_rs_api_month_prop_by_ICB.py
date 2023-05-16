@@ -113,6 +113,39 @@ df_acute = df_ref.loc[df_ref['NHSE_Organisation_Type'] == 'ACUTE TRUST']
 df_acute = df_acute[df_acute['Effective_To'].isnull()]
 df_acute  = df_acute[['ODS', 'STP_Code']]
 
+# COMMAND ----------
+
+df_stp_to_ods = df_acute[['ODS', 'STP_Code']]
+df_stp_to_ods
+
+# COMMAND ----------
+
+df_ers_merged = pd.merge(df, df_stp_to_ods, on = 'ODS', how = 'left')
+df_ers_merged.loc[df_ers_merged['STP_Code'].isna()]
+
+# COMMAND ----------
+
+df_ers_merged = pd.merge(df, df_stp_to_ods, on = 'ODS', how = 'left')
+df_ers_merged = df_ers_merged.groupby(['Report_End _Date', 'STP_Code']).count().reset_index()
+df_ers_merged = df_ers_merged[['Report_End _Date', 'STP_Code', 'ODS']]
+df_ers_merged = df_ers_merged.rename(columns = {'ODS':'ERS_API_Trusts'})
+df_ers_merged.shape
+
+# COMMAND ----------
+
+#get the stp grouping for denominator of acute trusts
+df_acute = df_acute.groupby(['STP_Code']).count().reset_index()
+df_acute = df_acute.rename(columns = {'ODS':'Acute_Trusts'})
+df_acute
+
+# COMMAND ----------
+
+df_ers_merged = df_ers_merged.merge(df_acute, on = 'STP_Code')
+df_ers_merged
+
+# COMMAND ----------
+
+df_ers_merged['Acute_Trusts'].sum()
 
 # COMMAND ----------
 
