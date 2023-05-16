@@ -95,7 +95,6 @@ for i in list_of_ODS:
 
 #replace the ODS codes without spaces in the dataframe
 df['ODS'] = list_of_ODS
-df
 
 # COMMAND ----------
 
@@ -115,57 +114,41 @@ df_acute  = df_acute[['ODS', 'STP_Code']]
 
 # COMMAND ----------
 
-df_stp_to_ods = df_acute[['ODS', 'STP_Code']]
-df_stp_to_ods
+#get a list of unique dates 
+list_of_dates = list(df['Report_End _Date'].unique())
+#initiate output dataframe
+df_output = pd.DataFrame(columns = ['E_RS Submitted Trusts', 'Acute Trusts', 'STP_Code', 'Report_End _Date'])
 
-# COMMAND ----------
+#for each upload date in ers data run the following code
+for date in list_of_dates:
+  #filter ers data for current data and append to reference data to get stp code
+  df_ers = df.loc[df['Report_End _Date'] == date]
+  df_ers = df_ers.merge(df_acute, on = 'ODS', how = 'left')
+  df_ers = df_ers[['ODS', 'STP_Code']]
+  #group by stp code and rename the column to merge with output dataframe
+  df_ers = df_ers.groupby(['STP_Code']).count().reset_index()
+  df_ers = df_ers.rename(columns = {'ODS' : 'E_RS Submitted Trusts'})
 
-df_ers_merged = pd.merge(df, df_stp_to_ods, on = 'ODS', how = 'left')
-df_ers_merged.loc[df_ers_merged['STP_Code'].isna()]
+  #get the denominator dataframe of acute trusts and group by stp code
+  df_process = df_acute.copy()
+  df_process = df_process.rename(columns={'ODS':'Acute Trusts'})
+  df_process = df_process.groupby(['STP_Code']).count().reset_index()
+  #add in the current date as a column for each row (42)
+  df_process['Report_End _Date'] = [date]*42
 
-# COMMAND ----------
+  #create the temp dataframe with same headers as output dataframe
+  df_temp = pd.DataFrame(columns = ['E_RS Submitted Trusts', 'Acute Trusts', 'STP_Code', 'Report_End _Date'])
 
-df_ers_merged = pd.merge(df, df_stp_to_ods, on = 'ODS', how = 'left')
-df_ers_merged = df_ers_merged.groupby(['Report_End _Date', 'STP_Code']).count().reset_index()
-df_ers_merged = df_ers_merged[['Report_End _Date', 'STP_Code', 'ODS']]
-df_ers_merged = df_ers_merged.rename(columns = {'ODS':'ERS_API_Trusts'})
-df_ers_merged.shape
+  #merge the numerator and denominator dataframes into df_final
+  df_processed = df_temp.append(df_ers)[['E_RS Submitted Trusts', 'STP_Code']]
+  df_final = pd.merge(df_process, df_processed, on = 'STP_Code', how = 'left')
 
-# COMMAND ----------
+  #add the df_final dataframe to df_output for each upload date
+  df_output = pd.concat([df_output, df_final], ignore_index=True)
 
-#get the stp grouping for denominator of acute trusts
-df_acute = df_acute.groupby(['STP_Code']).count().reset_index()
-df_acute = df_acute.rename(columns = {'ODS':'Acute_Trusts'})
-df_acute
-
-# COMMAND ----------
-
-df_ers_merged = df_ers_merged.merge(df_acute, on = 'STP_Code')
-df_ers_merged
-
-# COMMAND ----------
-
-df_ers_merged['Acute_Trusts'].sum()
-
-# COMMAND ----------
-
-df_merged = df_ref.merge(df, on = 'ODS', how = 'right')
-#df_merged.loc[df_merged['STP_Code'].isna()]
-df_merged
-
-# COMMAND ----------
-
-df_output = df.groupby(['Report_End _Date']).count()
-df_output = df_output[['ODS\xa0']]
-df_output = df_output.rename(columns = {'ODS\xa0':'Organisation Count'})
-df_output['Acute Trusts Count'] = df_acute['NHSE_Organisation_Type'][0]
-df_output = df_output.reset_index()
-df_output = df_output.rename(columns = {'Report_End _Date':'Date'})
+df_output = df_output.fillna(0)
 
 
-# COMMAND ----------
-
-df
 
 # COMMAND ----------
 
