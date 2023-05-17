@@ -81,7 +81,7 @@ table_name = config_JSON['pipeline']['staging'][1]['sink_table']
 # # -------------------------------------------------------------------------------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
-df = pd.read_excel(io.BytesIO(file), engine = 'openpyxl')
+df = pd.read_csv(io.BytesIO(file), encoding = "ISO-8859-1")
 
 # COMMAND ----------
 
