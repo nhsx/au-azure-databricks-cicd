@@ -47,7 +47,7 @@
 					    "sink_file": "e_rs_api_month_count.csv",
 					    "databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_e_rs_api/dbrks_e_rs_api_month_count"
 				    },
-		    {
+		    		{
 					    "metric": "e_rs_api_month_prop_by_ICB",
 					    "sink_path": "proc/projects/nhsx_slt_analytics/e_rs_api/e_rs_api_month_prop_by_ICB/",
 					    "sink_file": "e_rs_api_month_prop_by_ICB.csv",
