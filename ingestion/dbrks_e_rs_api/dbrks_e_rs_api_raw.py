@@ -93,12 +93,16 @@ for new_source_file in file_name_list:
 
 # COMMAND ----------
 
+historical_source_path+latestFolder+historical_source_file
+
+# COMMAND ----------
+
 # Pull historical dataset
 # -----------------------------------------------------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, historical_source_path)
 historical_dataset = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, historical_source_file)
 # historical_dataframe = pd.read_csv(io.BytesIO(historical_dataset))
-historical_dataframe =  pd.read_csv(io.BytesIO(historical_dataset),encoding='ISO-8859-1')
+historical_dataframe =  pd.read_excel(io.BytesIO(historical_dataset),encoding='ISO-8859-1')
 historical_dataframe['Report_End _Date'] = pd.to_datetime(historical_dataframe['Report_End _Date']).dt.strftime('%Y-%m-%d')
 
 # Append new data to historical data
@@ -117,5 +121,5 @@ else:
 # Upload hsitorical appended data to datalake
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.StringIO()
-historical_dataframe.to_csv(file_contents, index=False)
+historical_dataframe.to_excel(file_contents, index=False)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, sink_file)

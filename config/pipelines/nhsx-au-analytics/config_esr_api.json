@@ -26,17 +26,17 @@
 	    "raw": {
 		"source_path": "land/sharepoint/Shared Documents/nhsx_au_ingestion/e_rs_api/",
 		"appended_path": "raw/nhsx/sharepoint/csv/e_sr_api/full/",
-		"appended_file": "e_rs_api.csv"
+		"appended_file": "e_rs_api.xlsx"
 	    },
 	    "proc": {
 			    "source_path": "raw/nhsx/sharepoint/csv/e_sr_api/full/",
-			    "source_file": "e_rs_api.csv",
+			    "source_file": "e_rs_api.xslx",
 			    "sink_path": "proc/sources/nhsx/sharepoint/csv/e_rs_api/full/",
-			    "sink_file": "e_rs_api.csv"
+			    "sink_file": "e_rs_api.xlsx"
 	    },
 	    "project": {
 			    "source_path": "proc/sources/nhsx/sharepoint/csv/e_rs_api/full/",
-			    "source_file": "e_rs_api.csv",
+			    "source_file": "e_rs_api.xlsx",
 		"denominator_source_path": "proc/sources/ncdr_etp/adf_v2/table/odscodes/trust_mapping/",
 		"denominator_source_file": "table_odscodes_trust_mapping.parquet",
 			    "databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_e_rs_api_orchestrator",
