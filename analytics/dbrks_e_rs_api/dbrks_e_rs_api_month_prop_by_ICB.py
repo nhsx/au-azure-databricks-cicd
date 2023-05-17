@@ -70,9 +70,9 @@ source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']['source_file']
 reference_path = config_JSON['pipeline']['project']['denominator_source_path']
 reference_file = config_JSON['pipeline']['project']['denominator_source_file']
-sink_path = config_JSON['pipeline']['project']['databricks'][2]['sink_path']
-sink_file = config_JSON['pipeline']['project']['databricks'][2]['sink_file']
-table_name = config_JSON['pipeline']['staging'][2]['sink_table'] 
+sink_path = config_JSON['pipeline']['project']['databricks'][1]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][1]['sink_file']
+table_name = config_JSON['pipeline']['staging'][1]['sink_table'] 
 
 # COMMAND ----------
 
@@ -81,7 +81,7 @@ table_name = config_JSON['pipeline']['staging'][2]['sink_table']
 # # -------------------------------------------------------------------------------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
-df = pd.read_csv(io.BytesIO(file),encoding='ISO-8859-1')
+df = pd.read_excel(io.BytesIO(file), engine = 'openpyxl')
 
 # COMMAND ----------
 
