@@ -30,7 +30,7 @@
 	    },
 	    "proc": {
 			    "source_path": "raw/nhsx/sharepoint/csv/e_sr_api/full/",
-			    "source_file": "e_rs_api.xslx",
+			    "source_file": "e_rs_api.csv",
 			    "sink_path": "proc/sources/nhsx/sharepoint/csv/e_rs_api/full/",
 			    "sink_file": "e_rs_api.csv"
 	    },
