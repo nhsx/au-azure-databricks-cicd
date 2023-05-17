@@ -87,7 +87,7 @@ file_name_list = [file for file in file_name_list if '.xlsx' in file]
 for new_source_file in file_name_list:
   new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, new_source_file)
   new_dataframe = pd.read_excel(io.BytesIO(new_dataset),  engine  = 'openpyxl') 
-  new_dataframe['Report_End _Date']=  pd.to_datetime(new_dataframe['Report_End _Date']).dt.strftime('%Y-%m')
+  new_dataframe['Report_End _Date']=  pd.to_datetime(new_dataframe['Report_End _Date']).dt.strftime('%Y-%m-%d')
   new_dataframe = new_dataframe.loc[:, ~new_dataframe.columns.str.contains('^Unnamed')]
   new_dataframe.columns = new_dataframe.columns.str.rstrip()
 
@@ -99,7 +99,7 @@ latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, historical_
 historical_dataset = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, historical_source_file)
 # historical_dataframe = pd.read_csv(io.BytesIO(historical_dataset))
 historical_dataframe =  pd.read_csv(io.BytesIO(historical_dataset),encoding='ISO-8859-1')
-historical_dataframe['Report_End _Date'] = pd.to_datetime(historical_dataframe['Report_End _Date']).dt.strftime('%Y-%m')
+historical_dataframe['Report_End _Date'] = pd.to_datetime(historical_dataframe['Report_End _Date']).dt.strftime('%Y-%m-%d')
 
 # Append new data to historical data
 # -----------------------------------------------------------------------
