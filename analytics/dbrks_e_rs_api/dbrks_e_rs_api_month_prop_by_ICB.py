@@ -155,8 +155,9 @@ df_output = df_output.fillna(0)
 # Upload output dataframe to datalake
 # -------------------------------------------------------------------------
 file_contents = io.StringIO()
+current_date = datetime.now().strftime('%Y-%m-%d') + '/'
 df_output.to_csv(file_contents)
-datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
+datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date, sink_file)
 
 # COMMAND ----------
 
