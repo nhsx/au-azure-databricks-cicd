@@ -103,7 +103,7 @@ historical_dataframe = pd.read_parquet(io.BytesIO(historical_dataset), engine="p
 # Append new data to historical data
 # -----------------------------------------------------------------------
 
-# Get dates which stored as string from from df to convert them to datetime
+# Get dates which are stored as string in the df for convertion to datetime
 new_df_dates = new_dataframe[['run_date']].copy()
 historical_df_dates = historical_dataframe[['run_date']].copy()
 
@@ -111,10 +111,10 @@ historical_df_dates = historical_dataframe[['run_date']].copy()
 new_df_dates['run_date'] = pd.to_datetime(new_df_dates["run_date"])
 historical_df_dates['run_date'] = pd.to_datetime(historical_df_dates['run_date'])
 
-# Get today's run_date. run_date is added manually to the and is the for all rows in a given file
+# Get today's run_date. run_date is added manually to the downloaded file and is same rows in a given file
 today_run_date = new_df_dates['run_date'].values[0]
 
-# If run_date is in historical file then it means is not new and should not be appended
+# If run_date is in historical file then it means the date is not new and should not be appended
 if today_run_date not in historical_df_dates['run_date'].values:
   historical_dataframe = historical_dataframe.append(new_dataframe)
   historical_dataframe = historical_dataframe.sort_values(by=['run_date'])
