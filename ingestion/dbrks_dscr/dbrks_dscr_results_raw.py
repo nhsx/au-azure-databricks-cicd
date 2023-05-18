@@ -102,14 +102,26 @@ historical_dataframe = pd.read_parquet(io.BytesIO(historical_dataset), engine="p
 
 # Append new data to historical data
 # -----------------------------------------------------------------------
-date_from_new_dataframe = new_dataframe["run_date"].values.max()
-if date_from_new_dataframe != historical_dataframe['run_date'].values.max():
+
+# Get dates which stored as string from from df to convert them to datetime
+new_df_dates = new_dataframe[['run_date']].copy()
+historical_df_dates = historical_dataframe[['run_date']].copy()
+
+# Convert string to datetime
+new_df_dates['run_date'] = pd.to_datetime(new_df_dates["run_date"])
+historical_df_dates['run_date'] = pd.to_datetime(historical_df_dates['run_date'])
+
+# Get today's run_date. run_date is added manually to the and is the for all rows in a given file
+today_run_date = new_df_dates['run_date'].values[0]
+
+# If run_date is in historical file then it means is not new and should not be appended
+if today_run_date not in historical_df_dates['run_date'].values:
   historical_dataframe = historical_dataframe.append(new_dataframe)
   historical_dataframe = historical_dataframe.sort_values(by=['run_date'])
   historical_dataframe = historical_dataframe.reset_index(drop=True)
   historical_dataframe = historical_dataframe.astype(str)
 else:
-  print("data already exists")
+  print('data already exists')
 
 # COMMAND ----------
 
