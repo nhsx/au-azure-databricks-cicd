@@ -163,50 +163,54 @@ df["Count"] = 1
 
 #uncomment this if on 21/22/ and 22/23 status are needed 
 #---------------------------------------------------------------------------------------------------------------------------------------
-# df = df[df["CQC registered location - latest DSPT status"].isin(["21/22 Approaching Standards.", 
-#                                                                    "21/22 Standards Exceeded.", 
-#                                                                    "21/22 Standards Met.", 
-#                                                                    "21/22 Standards Not Met.",
-#                                                                    "22/23 Approaching Standards.",
-#                                                                    "22/23 Standards Exceeded.",
-#                                                                    "22/23 Standards Me.",
-#                                                                    "Not Individually Registered.",                                                     
-#                                                                    "Not Published." ])].reset_index(drop=True) #------ select required FY for the DSPT standard 
+'''
+df = df[df["CQC registered location - latest DSPT status"].isin(["21/22 Approaching Standards.", 
+                                                                   "21/22 Standards Exceeded.", 
+                                                                   "21/22 Standards Met.", 
+                                                                   "21/22 Standards Not Met.",
+                                                                   "22/23 Approaching Standards.",
+                                                                   "22/23 Standards Exceeded.",
+                                                                   "22/23 Standards Me.",
+                                                                   "Not Individually Registered.",                                                     
+                                                                   "Not Published." ])].reset_index(drop=True) #------ select required FY for the DSPT standard 
+'''
+df = df[["Date","CQC registered location - latest DSPT status","ICB_Code"]]
+#df = df['CQC registered location - latest DSPT status'].astype(str)
 
-                                                                  
+#generate df for 21/22 standards only
+df1 = df[df["CQC registered location - latest DSPT status"].isin(["21/22 Approaching Standards.", 
+                                                                  "21/22 Standards Exceeded.", 
+                                                                  "21/22 Standards Met.", 
+                                                                 #"Not Individually Registered.",                                                     
+                                                                 #"Not Published.",
+                                                                  "21/22 Standards Not Met."])].reset_index(drop=True)     
+                                   
 
-# Generating Number of Social Care Organisation Dspt Status
-df_latest = df[["Date","CQC registered location - latest DSPT status","ICB_Code"]].copy()
-df_latest = df.loc[df['Date'] >= '2022-09']
-df_latest['CQC registered location - latest DSPT status'] = df_latest['CQC registered location - latest DSPT status'].astype(str)
-df_latest = df_latest.groupby(['Date','ICB_Code','CQC registered location - latest DSPT status'], as_index=False).size()
-df5 = df_latest[['Date','ICB_Code','CQC registered location - latest DSPT status','size']]
-#df6 = df5.rename(columns = {'Date': 'Date','ICB_Code':'ICB_Code','CQC registered location - latest DSPT status':'ICB_Code':'CQC registered location - latest DSPT status','size':'Total'})
+df1 = df1.loc[df1['Date'] >= '2022-09']    
+df2 = df1.groupby(['Date','ICB_Code'], as_index=False).size()      
+df1 = df1.groupby(['Date', 'ICB_Code','CQC registered location - latest DSPT status'], as_index=False).size()                                              
+df1 = df1.rename(columns = {'size':'Number of locations with standard status'})
+df1 = df1.merge(df2, on = ['ICB_Code', 'Date'], how = 'left')
+df1 = df1.rename(columns = {'size':'Total number of locations'})
 
+#generate df for 21/22 standards only
+df3 = df[df["CQC registered location - latest DSPT status"].isin(["22/23 Approaching Standards.", 
+                                                                  "22/23 Standards Exceeded.", 
+                                                                  "22/23 Standards Met.", 
+                                                                  "22/23 Standards Not Met.",
+                                                                  "Not Individually Registered.",                                                     
+                                                                  "Not Published."])].reset_index(drop=True)  
+                                                                                                        
 
-# Generating Total number of socialcare organisation per ICB by date
-df_latest = df[["Date", "ICB_Code"]].copy()
-df_latest = df.loc[df['Date'] >= '2022-09']
-df_latest['ICB_Code'] = df_latest['ICB_Code'].astype(str)
-df_latest = df_latest.groupby(['Date','ICB_Code'], as_index=False).size()
-df2 = df_latest[['Date','ICB_Code','size']]
-df3 = df2.rename(columns = {'Date': 'Date','ICB_Code':'ICB_Code','size':'Total'})
+df3 = df3.loc[df3['Date'] >= '2022-09']    
+df4 = df3.groupby(['Date','ICB_Code'], as_index=False).size()      
+df3 = df3.groupby(['Date', 'ICB_Code','CQC registered location - latest DSPT status'], as_index=False).size()                                              
+df3 = df3.rename(columns = {'size':'Number of locations with standard status'})
+df3 = df3.merge(df4, on = ['ICB_Code', 'Date'], how = 'left')
+df3 = df3.rename(columns = {'size':'Total number of locations'})
 
+df_processed = pd.concat([df1, df3], ignore_index=True)
 
-#Joined data processing for social care dspt status and Total number social care organisation
-df_join = pd.merge(df3,df5, on = ['ICB_Code','Date']) 
-df_join_1 = df_join.rename(columns = {'Date':'Report Date','ICB_Code': 'ICB_CODE','CQC registered location - latest DSPT status': 'Standard status','size':'Number of locations with the standard status','Total':'Total number of locations'})
-# df_join_1["Percent of Trusts with a standards met or exceeded DSPT status"] = df_join_1["Number of Trusts with the standard status"]/df_join_1["Total number of Trusts"]  (apply similar formular for social care if the percentage is needed as well)
-df_join_1 = df_join_1.round(2)
-#df_join_1['Report Date'] = pd.to_datetime(df_join_1['Report Date'])
-df_join_1.index.name = "Unique ID"
-df_processed = df_join_1.copy()
-
-
-
-# COMMAND ----------
-
-display(df_processed )
 
 # COMMAND ----------
 
@@ -214,11 +218,11 @@ display(df_processed )
 # -------------------------------------------------------------------------
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.StringIO()
-df_latest.to_csv(file_contents)
+df_processed.to_csv(file_contents)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, sink_file)
 
 # COMMAND ----------
 
 # Write data from databricks to dev SQL database
 # -------------------------------------------------------------------------
-write_to_sql(df_latest, table_name, "overwrite")
+write_to_sql(df_processed, table_name, "overwrite")
