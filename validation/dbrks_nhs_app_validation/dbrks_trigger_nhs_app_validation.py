@@ -82,24 +82,33 @@ file_name_list = datalake_listContents(CONNECTION_STRING, file_system, new_sourc
 file_name_list = [file for file in file_name_list if 'nhs_app_table_snapshot' in file]
 for new_source_file in file_name_list:
   new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, new_source_file)
+  ##added code to ensure columns are read as int64 type. Loads dataframe, grabs column names and uses them to create a dictionary specifying datatype, then reloads the dataframe with correct datatypes
   new_dataframe = pd.read_csv(io.BytesIO(new_dataset))
+  column_types = list(new_dataframe.columns[2:len(new_dataframe)])
+  column_types = {k:'float' for k in column_types}
+  new_dataframe = pd.read_csv(io.BytesIO(new_dataset), dtype = column_types)
   new_dataframe['Date'] = pd.to_datetime(new_dataframe['Date']).dt.strftime("%Y-%m-%d")
 
 # COMMAND ----------
 
 #get the totals for each column and store the totals in a dataframe
-sum_of_current_cols = {'column_name':list(new_dataframe.columns)[2:len(new_dataframe.columns)]}
-list_of_sums = []
-for column in new_dataframe.columns[2:len(new_dataframe.columns)]:
-  list_of_sums.append(new_dataframe[column].sum())
+df_sum_of_current_cols = new_dataframe.sum().to_frame()
+df_sum_of_current_cols = df_sum_of_current_cols.drop(['Date','OdsCode'], axis=0).reset_index()
+df_sum_of_current_cols = df_sum_of_current_cols.rename(columns={'index':'column_name', 0:'column_sum'})
 
-sum_of_current_cols['column_sum'] = list_of_sums
-
-#print the dataframe of totals for the current data
-df_sum_of_current_cols = pd.DataFrame(sum_of_current_cols)
 print('############################# - SUMS FOR EACH COLUMN FROM CURRENT RUN SHOWN BELOW ###############################')
 df_sum_of_current_cols
 
+
+# COMMAND ----------
+
+#get the daily totals for each column and store the totals in a dataframe
+df_sum_of_current_cols_daily = new_dataframe
+df_sum_of_current_cols_daily['Date'] = pd.to_datetime(df_sum_of_current_cols_daily['Date'])
+df_sum_of_current_cols_daily = df_sum_of_current_cols_daily.resample('D', on='Date').sum().reset_index()
+
+print('############################# - SUMS FOR EACH COLUMN DAILY FROM CURRENT RUN SHOWN BELOW ###############################')
+df_sum_of_current_cols_daily
 
 # COMMAND ----------
 
@@ -155,6 +164,11 @@ min_ods_count, max_ods_count = get_thresholds(previous_ods_count['aggregate_valu
 
 # COMMAND ----------
 
+#new_dataframe['P5NewAppUsers'].unique()
+new_dataframe
+
+# COMMAND ----------
+
 # validate data
 # Greate expectations https://www.architecture-performance.fr/ap_blog/built-in-expectations-in-great-expectations/
 # ----------------------------------
@@ -163,8 +177,26 @@ df1 = ge.from_pandas(val_df) # Create great expectations dataframe from pandas d
 
 # COMMAND ----------
 
+# validate daily data
+# ----------------------------------
+#replace zeros with nan, so that 
+val_df2 = df_sum_of_current_cols_daily.replace(0, np.nan)
+df2 = ge.from_pandas(val_df2) # Create great expectations dataframe from pandas datafarme
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC ## Tests Begin
+
+# COMMAND ----------
+
+#test that no single day is zero for each column
+
+for column in df2.columns[1:len(new_dataframe.columns)]:
+  info = "Checing no daily totals are zero for "+column
+  expect = df2.expect_column_values_to_not_be_null(column =[column])
+  test_result(expect, info)
+  assert expect.success
 
 # COMMAND ----------
 
@@ -292,7 +324,3 @@ count_row = {"load_date": [date], "file_name": [full_path], "aggregation": ["cou
 agg_log_tbl = "dbo.pre_load_agg_log"
 df_count = pd.DataFrame(count_row)  
 write_to_sql(df_count, agg_log_tbl, "append")
-
-# COMMAND ----------
-
-
