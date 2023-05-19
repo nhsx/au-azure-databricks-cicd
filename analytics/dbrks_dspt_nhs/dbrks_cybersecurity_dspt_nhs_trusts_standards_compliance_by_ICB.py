@@ -74,6 +74,11 @@ table_name = config_JSON['pipeline']["staging"][2]['sink_table']
 
 # COMMAND ----------
 
+reference_latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, reference_path)
+reference_file = datalake_download(CONNECTION_STRING, file_system, reference_path+reference_latestFolder, reference_file)
+
+# COMMAND ----------
+
 def datalake_list_folders(CONNECTION_STRING, file_system, source_path):
   try:
       service_client = DataLakeServiceClient.from_connection_string(CONNECTION_STRING)
@@ -91,137 +96,156 @@ def datalake_list_folders(CONNECTION_STRING, file_system, source_path):
 
 # COMMAND ----------
 
-folders = datalake_list_folders(CONNECTION_STRING, file_system, source_path)
-folders
+def get_latest_dates(dates):
+    # Convert the list of dates to datetime objects
+    datetime_dates = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
+
+    # Create a dictionary to store the latest date for each month
+    latest_dates = {}
+    
+    # Iterate over the datetime_dates and update the latest_dates dictionary
+    for date in datetime_dates:
+        month = date.month
+        if month not in latest_dates or date > latest_dates[month]:
+            latest_dates[month] = date
+
+    # Return the list of latest dates
+    return list(latest_dates.values())
 
 # COMMAND ----------
 
-folder = folders[0]
-folder
+all_folders = datalake_list_folders(CONNECTION_STRING, file_system, source_path)
+latest_dates = get_latest_dates(all_folders)
+latest_folders = []
+for i in latest_dates:
+  latest_folders.append(datetime.strftime(i, "%Y-%m-%d"))
+latest_folders
+
 
 # COMMAND ----------
 
 # Processing 
 # -------------------------------------------------------------------------
+df_processed = pd.DataFrame(columns = ['Report Date', 'Dspt_edition',	'ICB_CODE',	'Total number of Trusts',	'Snapshot Date'])
+for folder in latest_folders:
+  latestFolder = folder + '/'
+  file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
+  DSPT_df = pd.read_csv(io.BytesIO(file))
+  ODS_code_df = pd.read_parquet(io.BytesIO(reference_file), engine="pyarrow")
 
-latestFolder = folder
-reference_latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, reference_path)
-file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
-reference_file = datalake_download(CONNECTION_STRING, file_system, reference_path+reference_latestFolder, reference_file)
-DSPT_df = pd.read_csv(io.BytesIO(file))
-ODS_code_df = pd.read_parquet(io.BytesIO(reference_file), engine="pyarrow")
+  # Make all ODS codes in DSPT dataframe capital
+  # -------------------------------------------------------------------------
+  DSPT_df['Code'] = DSPT_df['Code'].str.upper()
+  DSPT_df = DSPT_df.rename(columns = {'Code': 'Organisation_Code'})
 
-# Make all ODS codes in DSPT dataframe capital
-# -------------------------------------------------------------------------
-DSPT_df['Code'] = DSPT_df['Code'].str.upper()
-DSPT_df = DSPT_df.rename(columns = {'Code': 'Organisation_Code'})
+  # Join DSPT data with ODS table on ODS code
+  # -------------------------------------------------------------------------
+  DSPT_ODS = ODS_code_df.merge(DSPT_df, how ='outer', on = 'Organisation_Code')
 
-# Join DSPT data with ODS table on ODS code
-# -------------------------------------------------------------------------
-DSPT_ODS = ODS_code_df.merge(DSPT_df, how ='outer', on = 'Organisation_Code')
+  # Creation of final dataframe with all currently open NHS Trusts
+  # -------------------------------------------------------------------------
+  DSPT_ODS_selection_2 = DSPT_ODS[ 
+  (DSPT_ODS["Organisation_Code"].str.contains("RT4|RQF|RYT|0DH|0AD|0AP|0CC|0CG|0CH|0DG")==False)].reset_index(drop=True) #------ change exclusion codes for CCGs and CSUs through time. Please see SOP
+  DSPT_ODS_selection_3 = DSPT_ODS_selection_2[DSPT_ODS_selection_2.ODS_Organisation_Type.isin(["NHS TRUST", "CARE TRUST"])].reset_index(drop=True)
 
-# Creation of final dataframe with all currently open NHS Trusts
-# -------------------------------------------------------------------------
-DSPT_ODS_selection_2 = DSPT_ODS[ 
-(DSPT_ODS["Organisation_Code"].str.contains("RT4|RQF|RYT|0DH|0AD|0AP|0CC|0CG|0CH|0DG")==False)].reset_index(drop=True) #------ change exclusion codes for CCGs and CSUs through time. Please see SOP
-DSPT_ODS_selection_3 = DSPT_ODS_selection_2[DSPT_ODS_selection_2.ODS_Organisation_Type.isin(["NHS TRUST", "CARE TRUST"])].reset_index(drop=True)
-
-# Creation of final dataframe with all currently open NHS Trusts which meet or exceed the DSPT standard
-# --------------------------------------------------------------------------------------------------------
-DSPT_ODS_selection_3 = DSPT_ODS_selection_3.rename(columns = {"Status":"Latest Status"})
-
-DSPT_ODS_selection_3
+  # Creation of final dataframe with all currently open NHS Trusts which meet or exceed the DSPT standard
+  # --------------------------------------------------------------------------------------------------------
+  DSPT_ODS_selection_3 = DSPT_ODS_selection_3.rename(columns = {"Status":"Latest Status"})
 
 
+  # Processing - Generating final dataframe for staging to SQL database
+  # -------------------------------------------------------------------------
+  # Generating Total_no_trusts
+
+  #2019/2020
+  df1 = DSPT_ODS_selection_3[["Organisation_Code", "STP_Code", 'Latest Status']].copy()
+  list_of_statuses1 = ["19/20 Approaching Standards", 
+                        "19/20 Standards Exceeded", 
+                        "19/20 Standards Met", 
+                        "19/20 Standards Not Met"]
+
+  if pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m') < '2021-07-01' and pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m') > '2020-07-01':
+    list_of_statuses1.append('Not Published')
+    
+  df1 = df1[df1['Latest Status'].isin(list_of_statuses1)]
+
+  df1['Organisation_Code'] = df1['Organisation_Code'].astype(str)
+  df1 = df1.groupby(['STP_Code'], as_index=False).count()
+  df1['date_string'] = str(datetime.now().strftime("%Y-%m"))
+  df1['dspt_edition'] = "2019/2020"   #------ change DSPT edition through time. Please see SOP
+  df1 = df1[['date_string','dspt_edition','STP_Code', 'Organisation_Code']]
+  df1 = df1.rename(columns = {'date_string': 'Date','dspt_edition': 'Dspt_edition','STP_Code': 'ICB_Code','Organisation_Code':'Total_no_trusts'})
 
 
-# COMMAND ----------
+  #2020/2021
+  df2 = DSPT_ODS_selection_3[["Organisation_Code", "STP_Code", 'Latest Status']].copy()
+  list_of_statuses2 = ["20/21 Approaching Standards", 
+                      "20/21 Standards Exceeded", 
+                      "20/21 Standards Met", 
+                      "20/21 Standards Not Met"]
 
-DSPT_ODS_selection_3['Latest Status'].unique()
+  if pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m') < '2022-07-01' and pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m') > '2021-07-01':
+    list_of_statuses2.append('Not Published') 
 
-# COMMAND ----------
-
-pd.to_datetime('01/07/2022')
-
-# COMMAND ----------
-
-import time
-pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m') < '2022-07-01' and pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m') > '2023-07-01'
-
-# COMMAND ----------
-
-# Processing - Generating final dataframe for staging to SQL database
-# -------------------------------------------------------------------------
-# Generating Total_no_trusts
-
-#2019/2020
-df1 = DSPT_ODS_selection_3[["Organisation_Code", "STP_Code", 'Latest Status']].copy()
-list_of_statuses1 = ["19/20 Approaching Standards", 
-                      "19/20 Standards Exceeded", 
-                      "19/20 Standards Met", 
-                      "19/20 Standards Not Met"]
-
-if pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m') < '2020-07-01' and pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m') > '2019-07-01':
-  list_of_statuses1.append('Not Published')
-  
-df1 = df1[df1['Latest Status'].isin(list_of_statuses1)]
-
-df1['Organisation_Code'] = df1['Organisation_Code'].astype(str)
-df1 = df1.groupby(['STP_Code'], as_index=False).count()
-df1['date_string'] = str(datetime.now().strftime("%Y-%m"))
-df1['dspt_edition'] = "2019/2020"   #------ change DSPT edition through time. Please see SOP
-df1 = df1[['date_string','dspt_edition','STP_Code', 'Organisation_Code']]
-df1 = df1.rename(columns = {'date_string': 'Date','dspt_edition': 'Dspt_edition','STP_Code': 'ICB_Code','Organisation_Code':'Total_no_trusts'})
-
-#2020/2021
-df2 = DSPT_ODS_selection_3[["Organisation_Code", "STP_Code", 'Latest Status']].copy()
-list_of_statuses2 = ["20/21 Approaching Standards", 
-                    "20/21 Standards Exceeded", 
-                    "20/21 Standards Met", 
-                    "20/21 Standards Not Met"]
-
-if pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m') < '2021-07-01' and pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m') > '2020-07-01':
-  list_of_statuses2.append('Not Published') 
-
-df2 = df2[df2['Latest Status'].isin(list_of_statuses2)]
-                        
-df2['Organisation_Code'] = df2['Organisation_Code'].astype(str)
-df2 = df2.groupby(['STP_Code'], as_index=False).count()
-df2['date_string'] = str(datetime.now().strftime("%Y-%m"))
-df2['dspt_edition'] = "2021/2022"   #------ change DSPT edition through time. Please see SOP
-df2 = df2[['date_string','dspt_edition','STP_Code', 'Organisation_Code']]
-df2 = df2.rename(columns = {'date_string': 'Date','dspt_edition': 'Dspt_edition','STP_Code': 'ICB_Code','Organisation_Code':'Total_no_trusts'})
-
-
-#2021/2022
-df2 = DSPT_ODS_selection_3[["Organisation_Code", "STP_Code", 'Latest Status']].copy()
-df2 = df2[df2['Latest Status'].isin(["22/23 Approaching Standards", 
-                                      "22/23 Standards Exceeded", 
-                                      "22/23 Standards Met", 
-                                      "22/23 Standards Not Met"])]
-                                      
-df2['Organisation_Code'] = df2['Organisation_Code'].astype(str)
-df2 = df2.groupby(['STP_Code'], as_index=False).count()                                    
-df2['date_string'] = str(datetime.now().strftime("%Y-%m"))
-df2['dspt_edition'] = "2022/2023"   #------ change DSPT edition through time. Please see SOP      
-df5 = df2[['date_string','dspt_edition','STP_Code', 'Organisation_Code']] 
-df5 = df5.rename(columns = {'date_string': 'Date','dspt_edition': 'Dspt_edition','STP_Code': 'ICB_Code','Organisation_Code':'Total_no_trusts'})                         
-
-
-#Joined data processing
-df_join = pd.concat([df4, df5], ignore_index=True)
-df_join_1 = df_join.rename(columns = {'Date':'Report Date','ICB_Code': 'ICB_CODE','Dspt_edition': 'Dspt_edition','Total_no_trusts':'Total number of Trusts','status':'Standard status','status number':'Number of Trusts with the standard status'})
-# df_join_1["Percent of Trusts with a standards met or exceeded DSPT status"] = df_join_1["Number of Trusts with the standard status"]/df_join_1["Total number of Trusts"]
-df_join_1 = df_join_1.round(2)
-df_join_1['Report Date'] = pd.to_datetime(df_join_1['Report Date'])
-df_join_1.index.name = "Unique ID"
-df_processed = df_join_1.copy()
+  df2 = df2[df2['Latest Status'].isin(list_of_statuses2)]
+                          
+  df2['Organisation_Code'] = df2['Organisation_Code'].astype(str)
+  df2 = df2.groupby(['STP_Code'], as_index=False).count()
+  df2['date_string'] = str(datetime.now().strftime("%Y-%m"))
+  df2['dspt_edition'] = "2020/2021"   #------ change DSPT edition through time. Please see SOP
+  df2 = df2[['date_string','dspt_edition','STP_Code', 'Organisation_Code']]
+  df2 = df2.rename(columns = {'date_string': 'Date','dspt_edition': 'Dspt_edition','STP_Code': 'ICB_Code','Organisation_Code':'Total_no_trusts'})
 
 
 
-# COMMAND ----------
+  #2021/2022
+  df3 = DSPT_ODS_selection_3[["Organisation_Code", "STP_Code", 'Latest Status']].copy()
+  list_of_statuses3 = ["21/22 Approaching Standards", 
+                                        "21/22 Standards Exceeded", 
+                                        "21/22 Standards Met", 
+                                        "21/22 Standards Not Met"]
 
-df_processed
+  if pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m') < '2023-07-01' and pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m') > '2022-07-01':
+    list_of_statuses3.append('Not Published')     
+
+  df3 = df3[df3['Latest Status'].isin(list_of_statuses3)]
+
+  df3['Organisation_Code'] = df3['Organisation_Code'].astype(str)
+  df3 = df3.groupby(['STP_Code'], as_index=False).count()                                    
+  df3['date_string'] = str(datetime.now().strftime("%Y-%m"))
+  df3['dspt_edition'] = "2021/2022"   #------ change DSPT edition through time. Please see SOP      
+  df3 = df3[['date_string','dspt_edition','STP_Code', 'Organisation_Code']] 
+  df3 = df3.rename(columns = {'date_string': 'Date','dspt_edition': 'Dspt_edition','STP_Code': 'ICB_Code','Organisation_Code':'Total_no_trusts'})    
+
+  #2022/2023
+  df4 = DSPT_ODS_selection_3[["Organisation_Code", "STP_Code", 'Latest Status']].copy()
+  list_of_statuses4 = ["22/23 Approaching Standards", 
+                                        "22/23 Standards Exceeded", 
+                                        "22/23 Standards Met", 
+                                        "22/23 Standards Not Met"]
+
+  if pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m') < '2024-07-01' and pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m') > '2023-07-01':
+    list_of_statuses4.append('Not Published')     
+
+  df4 = df4[df4['Latest Status'].isin(list_of_statuses4)]
+                                  
+  df4['Organisation_Code'] = df4['Organisation_Code'].astype(str)
+  df4 = df4.groupby(['STP_Code'], as_index=False).count()                                    
+  df4['date_string'] = str(datetime.now().strftime("%Y-%m"))
+  df4['dspt_edition'] = "2021/2022"   #------ change DSPT edition through time. Please see SOP      
+  df4 = df4[['date_string','dspt_edition','STP_Code', 'Organisation_Code']] 
+  df4 = df4.rename(columns = {'date_string': 'Date','dspt_edition': 'Dspt_edition','STP_Code': 'ICB_Code','Organisation_Code':'Total_no_trusts'}) 
+
+
+  #Joined data processing
+  df_join = pd.concat([df1, df2, df3, df4], ignore_index=True)
+  df_join_1 = df_join.rename(columns = {'Date':'Report Date','ICB_Code': 'ICB_CODE','Dspt_edition': 'Dspt_edition','Total_no_trusts':'Total number of Trusts','status':'Standard status','status number':'Number of Trusts with the standard status'})
+  # df_join_1["Percent of Trusts with a standards met or exceeded DSPT status"] = df_join_1["Number of Trusts with the standard status"]/df_join_1["Total number of Trusts"]
+  df_join_1 = df_join_1.round(2)
+  df_join_1['Report Date'] = pd.to_datetime(df_join_1['Report Date'])
+  df_join_1.index.name = "Unique ID"
+  df_join_1['Snapshot Date'] = [folder[:-3]]*df_join_1.shape[0]
+  df_processed = pd.concat([df_processed, df_join_1], ignore_index=True) 
 
 # COMMAND ----------
 
