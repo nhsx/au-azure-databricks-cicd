@@ -58,7 +58,7 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 # -------------------------------------------------------------------------
 
 file_path_config = "config/pipelines/nhsx-au-analytics"
-file_name_config = "config_ers_api.json"
+file_name_config = "config_esr_api.json"
 log_table = "dbo.pre_load_log"
 
 file_system_config = dbutils.secrets.get(scope="AzureDataLake", key="DATALAKE_CONTAINER_NAME")
