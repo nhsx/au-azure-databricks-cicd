@@ -74,6 +74,10 @@ table_name = config_JSON['pipeline']["staging"][2]['sink_table']
 
 # COMMAND ----------
 
+
+
+# COMMAND ----------
+
 # Processing 
 # -------------------------------------------------------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
@@ -112,11 +116,35 @@ DSPT_ODS_selection_4 = DSPT_ODS_selection_3[DSPT_ODS_selection_3["Latest Status"
 
 # COMMAND ----------
 
+def datalake_list_folders(CONNECTION_STRING, file_system, source_path):
+  try:
+      service_client = DataLakeServiceClient.from_connection_string(CONNECTION_STRING)
+      file_system_client = service_client.get_file_system_client(file_system=file_system)
+      pathlist = list(file_system_client.get_paths(source_path))
+      folders = []
+      # remove file_path and source_file from list
+      for path in pathlist:
+        folders.append(path.name.replace(source_path.strip("/"), "").lstrip("/").rsplit("/", 1)[0])
+        folders.sort(key=lambda date: datetime.strptime(date, "%Y-%m-%d"), reverse=True)
+      
+      return folders
+  except Exception as e:
+      print(e)
+datalake_list_folders(CONNECTION_STRING, file_system, source_path)
+
+# COMMAND ----------
+
 # Processing - Generating final dataframe for staging to SQL database
 # -------------------------------------------------------------------------
 # Generating Total_no_trusts
 
-df1 = DSPT_ODS_selection_3[["Organisation_Code", "STP_Code"]].copy()
+df1 = DSPT_ODS_selection_3[["Organisation_Code", "STP_Code", 'Latest Status']].copy()
+df1 = df1[df1['Latest Status'].isin(["21/22 Approaching Standards", 
+                                      "21/22 Standards Exceeded", 
+                                      "21/22 Standards Met", 
+                                      "21/22 Standards Not Met",
+                                      "Not Published"])]
+
 df1['Organisation_Code'] = df1['Organisation_Code'].astype(str)
 df1 = df1.groupby(['STP_Code'], as_index=False).count()
 df1['date_string'] = str(datetime.now().strftime("%Y-%m"))
@@ -124,18 +152,22 @@ df1['dspt_edition'] = "2021/2022"   #------ change DSPT edition through time. Pl
 df3 = df1[['date_string','dspt_edition','STP_Code', 'Organisation_Code']]
 df4 = df3.rename(columns = {'date_string': 'Date','dspt_edition': 'Dspt_edition','STP_Code': 'ICB_Code','Organisation_Code':'Total_no_trusts'})
 
-# Generating Number of Trusts with a standards met or exceeded DSPT status
-df1 = DSPT_ODS_selection_4[["Latest Status", "STP_Code"]].copy()
-df1['Latest Status'] = df1['Latest Status'].astype(str)
-df1 = df1.groupby(['Latest Status','STP_Code'], as_index=False).size()
-df1['date_string'] = str(datetime.now().strftime("%Y-%m"))
-df1['dspt_edition'] = "2021/2022" 
-df2 = df1[['STP_Code', 'size','Latest Status']]
-df3 = df2.rename(columns = {'STP_Code': 'ICB_Code','Latest Status':'status','size':'status number'})
+df2 = DSPT_ODS_selection_3[["Organisation_Code", "STP_Code", 'Latest Status']].copy()
+df2 = df2[df2['Latest Status'].isin(["22/23 Approaching Standards", 
+                                      "22/23 Standards Exceeded", 
+                                      "22/23 Standards Met", 
+                                      "22/23 Standards Not Met"])]
+                                      
+df2['Organisation_Code'] = df2['Organisation_Code'].astype(str)
+df2 = df2.groupby(['STP_Code'], as_index=False).count()                                    
+df2['date_string'] = str(datetime.now().strftime("%Y-%m"))
+df2['dspt_edition'] = "2022/2023"   #------ change DSPT edition through time. Please see SOP      
+df5 = df2[['date_string','dspt_edition','STP_Code', 'Organisation_Code']] 
+df5 = df5.rename(columns = {'date_string': 'Date','dspt_edition': 'Dspt_edition','STP_Code': 'ICB_Code','Organisation_Code':'Total_no_trusts'})                         
 
 
 #Joined data processing
-df_join = df3.merge(df4, how ='outer', on = 'ICB_Code')
+df_join = pd.concat([df4, df5], ignore_index=True)
 df_join_1 = df_join.rename(columns = {'Date':'Report Date','ICB_Code': 'ICB_CODE','Dspt_edition': 'Dspt_edition','Total_no_trusts':'Total number of Trusts','status':'Standard status','status number':'Number of Trusts with the standard status'})
 # df_join_1["Percent of Trusts with a standards met or exceeded DSPT status"] = df_join_1["Number of Trusts with the standard status"]/df_join_1["Total number of Trusts"]
 df_join_1 = df_join_1.round(2)

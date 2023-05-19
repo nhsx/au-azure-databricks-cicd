@@ -56,6 +56,21 @@ def datalake_latestFolder(CONNECTION_STRING, file_system, source_path):
   except Exception as e:
       print(e)
 
+def datalake_list_folders(CONNECTION_STRING, file_system, source_path):
+  try:
+      service_client = DataLakeServiceClient.from_connection_string(CONNECTION_STRING)
+      file_system_client = service_client.get_file_system_client(file_system=file_system)
+      pathlist = list(file_system_client.get_paths(source_path))
+      folders = []
+      # remove file_path and source_file from list
+      for path in pathlist:
+        folders.append(path.name.replace(source_path.strip("/"), "").lstrip("/").rsplit("/", 1)[0])
+        folders.sort(key=lambda date: datetime.strptime(date, "%Y-%m-%d"), reverse=True)
+      
+      return folders
+  except Exception as e:
+      print(e)
+
 def write_to_sql(df_processed, table_name, write_mode = str):
   sparkDF=spark.createDataFrame(df_processed)
   server_name = dbutils.secrets.get(scope="sqldatabase", key="SERVER_NAME")
