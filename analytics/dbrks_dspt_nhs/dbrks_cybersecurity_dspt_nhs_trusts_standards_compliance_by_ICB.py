@@ -74,13 +74,37 @@ table_name = config_JSON['pipeline']["staging"][2]['sink_table']
 
 # COMMAND ----------
 
+def datalake_list_folders(CONNECTION_STRING, file_system, source_path):
+  try:
+      service_client = DataLakeServiceClient.from_connection_string(CONNECTION_STRING)
+      file_system_client = service_client.get_file_system_client(file_system=file_system)
+      pathlist = list(file_system_client.get_paths(source_path))
+      folders = []
+      # remove file_path and source_file from list
+      for path in pathlist:
+        folders.append(path.name.replace(source_path.strip("/"), "").lstrip("/").rsplit("/", 1)[0])
+        folders.sort(key=lambda date: datetime.strptime(date, "%Y-%m-%d"))
+      
+      return folders
+  except Exception as e:
+      print(e)
 
+# COMMAND ----------
+
+folders = datalake_list_folders(CONNECTION_STRING, file_system, source_path)
+folders
+
+# COMMAND ----------
+
+folder = folders[0]
+folder
 
 # COMMAND ----------
 
 # Processing 
 # -------------------------------------------------------------------------
-latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
+
+latestFolder = folder
 reference_latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, reference_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 reference_file = datalake_download(CONNECTION_STRING, file_system, reference_path+reference_latestFolder, reference_file)
@@ -106,31 +130,23 @@ DSPT_ODS_selection_3 = DSPT_ODS_selection_2[DSPT_ODS_selection_2.ODS_Organisatio
 # --------------------------------------------------------------------------------------------------------
 DSPT_ODS_selection_3 = DSPT_ODS_selection_3.rename(columns = {"Status":"Latest Status"})
 
-DSPT_ODS_selection_4 = DSPT_ODS_selection_3[DSPT_ODS_selection_3["Latest Status"].isin(["21/22 Approaching Standards", 
-                                                                                         "21/22 Standards Exceeded", 
-                                                                                         "21/22 Standards Met", 
-                                                                                         "21/22 Standards Not Met",
-                                                                                         "Not Published"                                                                                    
-                                                                                       ])].reset_index(drop=True) #------ change financial year for DSPT standard through time. Please see SOP
+DSPT_ODS_selection_3
+
+
 
 
 # COMMAND ----------
 
-def datalake_list_folders(CONNECTION_STRING, file_system, source_path):
-  try:
-      service_client = DataLakeServiceClient.from_connection_string(CONNECTION_STRING)
-      file_system_client = service_client.get_file_system_client(file_system=file_system)
-      pathlist = list(file_system_client.get_paths(source_path))
-      folders = []
-      # remove file_path and source_file from list
-      for path in pathlist:
-        folders.append(path.name.replace(source_path.strip("/"), "").lstrip("/").rsplit("/", 1)[0])
-        folders.sort(key=lambda date: datetime.strptime(date, "%Y-%m-%d"), reverse=True)
-      
-      return folders
-  except Exception as e:
-      print(e)
-datalake_list_folders(CONNECTION_STRING, file_system, source_path)
+DSPT_ODS_selection_3['Latest Status'].unique()
+
+# COMMAND ----------
+
+pd.to_datetime('01/07/2022')
+
+# COMMAND ----------
+
+import time
+pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m') < '2022-07-01' and pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m') > '2023-07-01'
 
 # COMMAND ----------
 
@@ -138,20 +154,46 @@ datalake_list_folders(CONNECTION_STRING, file_system, source_path)
 # -------------------------------------------------------------------------
 # Generating Total_no_trusts
 
+#2019/2020
 df1 = DSPT_ODS_selection_3[["Organisation_Code", "STP_Code", 'Latest Status']].copy()
-df1 = df1[df1['Latest Status'].isin(["21/22 Approaching Standards", 
-                                      "21/22 Standards Exceeded", 
-                                      "21/22 Standards Met", 
-                                      "21/22 Standards Not Met",
-                                      "Not Published"])]
+list_of_statuses1 = ["19/20 Approaching Standards", 
+                      "19/20 Standards Exceeded", 
+                      "19/20 Standards Met", 
+                      "19/20 Standards Not Met"]
+
+if pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m') < '2020-07-01' and pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m') > '2019-07-01':
+  list_of_statuses1.append('Not Published')
+  
+df1 = df1[df1['Latest Status'].isin(list_of_statuses1)]
 
 df1['Organisation_Code'] = df1['Organisation_Code'].astype(str)
 df1 = df1.groupby(['STP_Code'], as_index=False).count()
 df1['date_string'] = str(datetime.now().strftime("%Y-%m"))
-df1['dspt_edition'] = "2021/2022"   #------ change DSPT edition through time. Please see SOP
-df3 = df1[['date_string','dspt_edition','STP_Code', 'Organisation_Code']]
-df4 = df3.rename(columns = {'date_string': 'Date','dspt_edition': 'Dspt_edition','STP_Code': 'ICB_Code','Organisation_Code':'Total_no_trusts'})
+df1['dspt_edition'] = "2019/2020"   #------ change DSPT edition through time. Please see SOP
+df1 = df1[['date_string','dspt_edition','STP_Code', 'Organisation_Code']]
+df1 = df1.rename(columns = {'date_string': 'Date','dspt_edition': 'Dspt_edition','STP_Code': 'ICB_Code','Organisation_Code':'Total_no_trusts'})
 
+#2020/2021
+df2 = DSPT_ODS_selection_3[["Organisation_Code", "STP_Code", 'Latest Status']].copy()
+list_of_statuses2 = ["20/21 Approaching Standards", 
+                    "20/21 Standards Exceeded", 
+                    "20/21 Standards Met", 
+                    "20/21 Standards Not Met"]
+
+if pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m') < '2021-07-01' and pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m') > '2020-07-01':
+  list_of_statuses2.append('Not Published') 
+
+df2 = df2[df2['Latest Status'].isin(list_of_statuses2)]
+                        
+df2['Organisation_Code'] = df2['Organisation_Code'].astype(str)
+df2 = df2.groupby(['STP_Code'], as_index=False).count()
+df2['date_string'] = str(datetime.now().strftime("%Y-%m"))
+df2['dspt_edition'] = "2021/2022"   #------ change DSPT edition through time. Please see SOP
+df2 = df2[['date_string','dspt_edition','STP_Code', 'Organisation_Code']]
+df2 = df2.rename(columns = {'date_string': 'Date','dspt_edition': 'Dspt_edition','STP_Code': 'ICB_Code','Organisation_Code':'Total_no_trusts'})
+
+
+#2021/2022
 df2 = DSPT_ODS_selection_3[["Organisation_Code", "STP_Code", 'Latest Status']].copy()
 df2 = df2[df2['Latest Status'].isin(["22/23 Approaching Standards", 
                                       "22/23 Standards Exceeded", 
