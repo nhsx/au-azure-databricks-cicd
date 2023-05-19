@@ -70,7 +70,7 @@
     
 	"validation": [
 	    {
-		"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_dscr_validation/dbrks_dscr_e_rs_api_file_validation",
+		"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_e_rs_api_validation/dbrks_e_rs_api_file_validation",
 		"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
 	}
 	]
