@@ -225,6 +225,11 @@
 						"id": "M270",
 						"full_name": "Research",
 						"short_name": "ndc_transactions_nhsapp_research_count"
+					},
+					{
+						"id": "M271",
+						"full_name": "% user base logging in last three months",
+						"short_name": "ndc_dashboard_user_base_loggingin_3month_prop"
 					}
 				]
 			}
@@ -539,6 +544,12 @@
 					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_transactions_nhsapp_research_count/",
 					"sink_file": "ndc_transactions_nhsapp_research_count.csv",
 					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_nhsapp_research_count"
+				},
+				{
+					"metric": "ndc_dashboard_user_base_loggingin_3month_prop",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_report/ndc_dashboard_user_base_loggingin_3month_prop/",
+					"sink_file": "ndc_dashboard_user_base_loggingin_3month_prop.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_dashboard_user_base_loggingin_3month_prop"
 				}
 				
 			]
@@ -719,6 +730,10 @@
 			{
 				"metric": "ndc_transactions_nhsapp_research_count",
 				"sink_table": "ndc_transactions_nhsapp_research_count"
+			},
+			{
+				"metric": "ndc_dashboard_user_base_loggingin_3month_prop",
+				"sink_table": "ndc_dashboard_user_base_loggingin_3month_prop"
 			}
 		]
 	}
