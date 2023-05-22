@@ -181,8 +181,8 @@ df = df[["Date","CQC registered location - latest DSPT status","ICB_Code"]]
 df1 = df[df["CQC registered location - latest DSPT status"].isin(["21/22 Approaching Standards.", 
                                                                   "21/22 Standards Exceeded.", 
                                                                   "21/22 Standards Met.", 
-                                                                 #"Not Individually Registered.",                                                     
-                                                                 #"Not Published.",
+                                                                  "Not Individually Registered.",                                                     
+                                                                  "Not Published.",
                                                                   "21/22 Standards Not Met."])].reset_index(drop=True)     
                                    
 
@@ -197,9 +197,7 @@ df1 = df1.rename(columns = {'size':'Total number of locations'})
 df3 = df[df["CQC registered location - latest DSPT status"].isin(["22/23 Approaching Standards.", 
                                                                   "22/23 Standards Exceeded.", 
                                                                   "22/23 Standards Met.", 
-                                                                  "22/23 Standards Not Met.",
-                                                                  "Not Individually Registered.",                                                     
-                                                                  "Not Published."])].reset_index(drop=True)  
+                                                                  "22/23 Standards Not Met."])].reset_index(drop=True)  
                                                                                                         
 
 df3 = df3.loc[df3['Date'] >= '2022-09']    
