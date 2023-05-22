@@ -66,9 +66,21 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']['source_file']
-sink_path = config_JSON['pipeline']['project']['databricks'][0]['sink_path']
-sink_file = config_JSON['pipeline']['project']['databricks'][0]['sink_file']
-table_name = config_JSON['pipeline']["staging"][0]['sink_table']
+reference_path = config_JSON['pipeline']['project']['denominator_source_path']
+reference_file = config_JSON['pipeline']['project']['denominator_source_file']
+sink_path = config_JSON['pipeline']['project']['databricks'][1]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][1]['sink_file']
+table_name = config_JSON['pipeline']['staging'][1]['sink_table'] 
+
+# COMMAND ----------
+
+#Denominator data ingestion and processing
+# -------------------------------------------------------------------------
+latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, reference_path)
+file = datalake_download(CONNECTION_STRING, file_system,reference_path+latestFolder, reference_file)
+df_ref = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
+df_ref = df_ref.rename(columns = {'Organisation_Code':'ODS'})
+df_ref = df_ref[['ODS', 'STP_Code']]
 
 # COMMAND ----------
 
@@ -83,6 +95,15 @@ df1['Report_End _Date'] = pd.to_datetime(df1['Report_End _Date'])
 df1.index.name = "Unique ID"
 df_processed = df1.copy()
 
+list_of_ODS = df_processed['ODS']
+new_ODS_list = []
+for i in list_of_ODS:
+  if '\xa0' in i:
+    new_ODS_list.append(i.replace('\xa0', ''))
+  else:
+    new_ODS_list.append(i)
+
+df_processed['ODS'] = new_ODS_list
 
 # latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 # file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
@@ -92,6 +113,11 @@ df_processed = df1.copy()
 # latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 # file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 # df = pd.read_csv(io.BytesIO(file))
+
+# COMMAND ----------
+
+df_processed = df_processed.merge(df_ref, on = 'ODS', how = 'left')
+df_processed
 
 # COMMAND ----------
 

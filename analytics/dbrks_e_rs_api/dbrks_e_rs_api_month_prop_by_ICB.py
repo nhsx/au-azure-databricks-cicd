@@ -152,6 +152,10 @@ df_output = df_output.fillna(0)
 
 # COMMAND ----------
 
+df_output
+
+# COMMAND ----------
+
 # Upload output dataframe to datalake
 # -------------------------------------------------------------------------
 file_contents = io.StringIO()
