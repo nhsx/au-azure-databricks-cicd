@@ -126,7 +126,7 @@ for i in latest_dates:
 
 # Processing 
 # -------------------------------------------------------------------------
-df_processed = pd.DataFrame(columns = ['Report Date', 'ICB_Code', 'Latest Status', 'Number of Trusts with standard status', 'Total number of Trusts',	'DSPT_Edition', 'Snapshot Date'])
+df_processed = pd.DataFrame(columns = ['ICB_Code', 'Latest Status', 'Number of Trusts with standard status', 'Total number of Trusts', 'Snapshot Date'])
 for folder in latest_folders:
   latestFolder = folder + '/'
   file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
@@ -176,7 +176,7 @@ for folder in latest_folders:
   df1b = df1.groupby(['STP_Code', 'Latest Status'], as_index=False).size()  
   df1b = df1b.rename(columns = {'size':'Number of Trusts with standard status'})
   df1 = pd.merge(df1a, df1b, on = ['STP_Code'], how = 'left')
-  df1['DSPT_Edition'] = "2019/2020" 
+
 
   #2020/2021
   df2 = DSPT_ODS_selection_3[["Organisation_Code", "STP_Code", 'Latest Status']].copy()
@@ -197,7 +197,7 @@ for folder in latest_folders:
   df2b = df2.groupby(['STP_Code', 'Latest Status'], as_index=False).size()  
   df2b = df2b.rename(columns = {'size':'Number of Trusts with standard status'})
   df2 = pd.merge(df2a, df2b, on = ['STP_Code'], how = 'left')
-  df2['DSPT_Edition'] = "2020/2021" 
+
 
 
   #2021/2022
@@ -219,7 +219,7 @@ for folder in latest_folders:
   df3b = df3.groupby(['STP_Code', 'Latest Status'], as_index=False).size()
   df3b = df3b.rename(columns = {'size':'Number of Trusts with standard status'})
   df3 = pd.merge(df3a, df3b, on = ['STP_Code'], how = 'left')
-  df3['DSPT_Edition'] = "2021/2022" 
+
 
   #2022/2023
   df4 = DSPT_ODS_selection_3[["Organisation_Code", "STP_Code", 'Latest Status']].copy()
@@ -240,7 +240,7 @@ for folder in latest_folders:
   df4b = df4.groupby(['STP_Code', 'Latest Status'], as_index = False).size()
   df4b = df4b.rename(columns = {'size':'Number of Trusts with standard status'})  
   df4 = pd.merge(df4a, df4b, on = ['STP_Code'], how = 'left')
-  df4['DSPT_Edition'] = "2022/2023" 
+
 
 
   #Joined data processing
@@ -248,9 +248,8 @@ for folder in latest_folders:
   df_join_1 = df_join.rename(columns = {'STP_Code':'ICB_Code'})
   # df_join_1["Percent of Trusts with a standards met or exceeded DSPT status"] = df_join_1["Number of Trusts with the standard status"]/df_join_1["Total number of Trusts"]
   #df_join_1 = df_join_1.round(2)
-  df_join_1['Report Date'] = pd.to_datetime('today').date()
   df_join_1.index.name = "Unique ID"
-  df_join_1['Snapshot Date'] = [folder[:-3]]*df_join_1.shape[0]
+  df_join_1['Snapshot Date'] = folder
   df_processed = pd.concat([df_processed, df_join_1], ignore_index=True) 
 
 
