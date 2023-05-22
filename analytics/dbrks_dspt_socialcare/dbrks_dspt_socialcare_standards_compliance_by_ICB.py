@@ -214,6 +214,10 @@ df_processed = pd.concat([df1, df3], ignore_index=True)
 
 # COMMAND ----------
 
+df_processed
+
+# COMMAND ----------
+
 # Upload processed data to datalake
 # -------------------------------------------------------------------------
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
