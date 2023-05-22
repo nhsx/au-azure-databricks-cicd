@@ -160,6 +160,10 @@ df["Count"] = 1
 
 # COMMAND ----------
 
+df['Date']
+
+# COMMAND ----------
+
 
 #uncomment this if on 21/22/ and 22/23 status are needed 
 #---------------------------------------------------------------------------------------------------------------------------------------
@@ -202,12 +206,14 @@ df3 = df[df["CQC registered location - latest DSPT status"].isin(["22/23 Approac
 
 df3 = df3.loc[df3['Date'] >= '2022-09']    
 df4 = df3.groupby(['Date','ICB_Code'], as_index=False).size()      
-df3 = df3.groupby(['Date', 'ICB_Code','CQC registered location - latest DSPT status'], as_index=False).size()                                              
+df3 = df3.groupby(['Date', 'ICB_Code','CQC registered location - latest DSPT status'], as_index=False).size()
+                                             
 df3 = df3.rename(columns = {'size':'Number of locations with standard status'})
 df3 = df3.merge(df4, on = ['ICB_Code', 'Date'], how = 'left')
 df3 = df3.rename(columns = {'size':'Total number of locations'})
 
 df_processed = pd.concat([df1, df3], ignore_index=True)
+df_processed['Date'] = df_processed['Date'] + '-01'
 
 
 # COMMAND ----------
