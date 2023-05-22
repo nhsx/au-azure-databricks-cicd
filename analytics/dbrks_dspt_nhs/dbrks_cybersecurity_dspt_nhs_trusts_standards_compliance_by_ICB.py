@@ -119,14 +119,14 @@ latest_dates = get_latest_dates(all_folders)
 latest_folders = []
 for i in latest_dates:
   latest_folders.append(datetime.strftime(i, "%Y-%m-%d"))
-latest_folders
+#latest_folders
 
 
 # COMMAND ----------
 
 # Processing 
 # -------------------------------------------------------------------------
-df_processed = pd.DataFrame(columns = ['Report Date', 'Dspt_edition',	'ICB_CODE',	'Total number of Trusts',	'Snapshot Date'])
+df_processed = pd.DataFrame(columns = ['Report Date', 'ICB_Code', 'Latest Status', 'Number of Trusts with standard status', 'Total number of Trusts',	'DSPT_Edition', 'Snapshot Date'])
 for folder in latest_folders:
   latestFolder = folder + '/'
   file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
@@ -170,12 +170,13 @@ for folder in latest_folders:
   df1 = df1[df1['Latest Status'].isin(list_of_statuses1)]
 
   df1['Organisation_Code'] = df1['Organisation_Code'].astype(str)
-  df1 = df1.groupby(['STP_Code'], as_index=False).count()
-  df1['date_string'] = str(datetime.now().strftime("%Y-%m"))
-  df1['dspt_edition'] = "2019/2020"   #------ change DSPT edition through time. Please see SOP
-  df1 = df1[['date_string','dspt_edition','STP_Code', 'Organisation_Code']]
-  df1 = df1.rename(columns = {'date_string': 'Date','dspt_edition': 'Dspt_edition','STP_Code': 'ICB_Code','Organisation_Code':'Total_no_trusts'})
-
+  df1a = df1.groupby(['STP_Code'], as_index=False).count() 
+  df1a.drop(['Latest Status'], axis = 1, inplace = True)
+  df1a = df1a.rename(columns = {'Organisation_Code':'Total number of Trusts'})
+  df1b = df1.groupby(['STP_Code', 'Latest Status'], as_index=False).size()  
+  df1b = df1b.rename(columns = {'size':'Number of Trusts with standard status'})
+  df1 = pd.merge(df1a, df1b, on = ['STP_Code'], how = 'left')
+  df1['DSPT_Edition'] = "2019/2020" 
 
   #2020/2021
   df2 = DSPT_ODS_selection_3[["Organisation_Code", "STP_Code", 'Latest Status']].copy()
@@ -188,14 +189,15 @@ for folder in latest_folders:
     list_of_statuses2.append('Not Published') 
 
   df2 = df2[df2['Latest Status'].isin(list_of_statuses2)]
-                          
-  df2['Organisation_Code'] = df2['Organisation_Code'].astype(str)
-  df2 = df2.groupby(['STP_Code'], as_index=False).count()
-  df2['date_string'] = str(datetime.now().strftime("%Y-%m"))
-  df2['dspt_edition'] = "2020/2021"   #------ change DSPT edition through time. Please see SOP
-  df2 = df2[['date_string','dspt_edition','STP_Code', 'Organisation_Code']]
-  df2 = df2.rename(columns = {'date_string': 'Date','dspt_edition': 'Dspt_edition','STP_Code': 'ICB_Code','Organisation_Code':'Total_no_trusts'})
 
+  df2['Organisation_Code'] = df2['Organisation_Code'].astype(str)
+  df2a = df2.groupby(['STP_Code'], as_index=False).count() 
+  df2a.drop(['Latest Status'], axis = 1, inplace = True)
+  df2a = df2a.rename(columns = {'Organisation_Code':'Total number of Trusts'})
+  df2b = df2.groupby(['STP_Code', 'Latest Status'], as_index=False).size()  
+  df2b = df2b.rename(columns = {'size':'Number of Trusts with standard status'})
+  df2 = pd.merge(df2a, df2b, on = ['STP_Code'], how = 'left')
+  df2['DSPT_Edition'] = "2020/2021" 
 
 
   #2021/2022
@@ -211,11 +213,13 @@ for folder in latest_folders:
   df3 = df3[df3['Latest Status'].isin(list_of_statuses3)]
 
   df3['Organisation_Code'] = df3['Organisation_Code'].astype(str)
-  df3 = df3.groupby(['STP_Code'], as_index=False).count()                                    
-  df3['date_string'] = str(datetime.now().strftime("%Y-%m"))
-  df3['dspt_edition'] = "2021/2022"   #------ change DSPT edition through time. Please see SOP      
-  df3 = df3[['date_string','dspt_edition','STP_Code', 'Organisation_Code']] 
-  df3 = df3.rename(columns = {'date_string': 'Date','dspt_edition': 'Dspt_edition','STP_Code': 'ICB_Code','Organisation_Code':'Total_no_trusts'})    
+  df3a = df3.groupby(['STP_Code'], as_index=False).count() 
+  df3a.drop(['Latest Status'], axis = 1, inplace = True)
+  df3a = df3a.rename(columns = {'Organisation_Code':'Total number of Trusts'})
+  df3b = df3.groupby(['STP_Code', 'Latest Status'], as_index=False).size()
+  df3b = df3b.rename(columns = {'size':'Number of Trusts with standard status'})
+  df3 = pd.merge(df3a, df3b, on = ['STP_Code'], how = 'left')
+  df3['DSPT_Edition'] = "2021/2022" 
 
   #2022/2023
   df4 = DSPT_ODS_selection_3[["Organisation_Code", "STP_Code", 'Latest Status']].copy()
@@ -228,24 +232,31 @@ for folder in latest_folders:
     list_of_statuses4.append('Not Published')     
 
   df4 = df4[df4['Latest Status'].isin(list_of_statuses4)]
-                                  
+                       
   df4['Organisation_Code'] = df4['Organisation_Code'].astype(str)
-  df4 = df4.groupby(['STP_Code'], as_index=False).count()                                    
-  df4['date_string'] = str(datetime.now().strftime("%Y-%m"))
-  df4['dspt_edition'] = "2021/2022"   #------ change DSPT edition through time. Please see SOP      
-  df4 = df4[['date_string','dspt_edition','STP_Code', 'Organisation_Code']] 
-  df4 = df4.rename(columns = {'date_string': 'Date','dspt_edition': 'Dspt_edition','STP_Code': 'ICB_Code','Organisation_Code':'Total_no_trusts'}) 
+  df4a = df4.groupby(['STP_Code'], as_index=False).count()  
+  df4a.drop(['Latest Status'], axis = 1, inplace = True)                                 
+  df4a = df4a.rename(columns = {'Organisation_Code':'Total number of Trusts'})
+  df4b = df4.groupby(['STP_Code', 'Latest Status'], as_index = False).size()
+  df4b = df4b.rename(columns = {'size':'Number of Trusts with standard status'})  
+  df4 = pd.merge(df4a, df4b, on = ['STP_Code'], how = 'left')
+  df4['DSPT_Edition'] = "2022/2023" 
 
 
   #Joined data processing
   df_join = pd.concat([df1, df2, df3, df4], ignore_index=True)
-  df_join_1 = df_join.rename(columns = {'Date':'Report Date','ICB_Code': 'ICB_CODE','Dspt_edition': 'Dspt_edition','Total_no_trusts':'Total number of Trusts','status':'Standard status','status number':'Number of Trusts with the standard status'})
+  df_join_1 = df_join.rename(columns = {'STP_Code':'ICB_Code'})
   # df_join_1["Percent of Trusts with a standards met or exceeded DSPT status"] = df_join_1["Number of Trusts with the standard status"]/df_join_1["Total number of Trusts"]
-  df_join_1 = df_join_1.round(2)
-  df_join_1['Report Date'] = pd.to_datetime(df_join_1['Report Date'])
+  #df_join_1 = df_join_1.round(2)
+  df_join_1['Report Date'] = pd.to_datetime('today').date()
   df_join_1.index.name = "Unique ID"
   df_join_1['Snapshot Date'] = [folder[:-3]]*df_join_1.shape[0]
   df_processed = pd.concat([df_processed, df_join_1], ignore_index=True) 
+
+
+# COMMAND ----------
+
+display(df_processed)
 
 # COMMAND ----------
 
