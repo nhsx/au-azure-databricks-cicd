@@ -1,0 +1,87 @@
+{
+	"metadata": {
+	    "products": [
+		{
+		    "product_name": "Digitise, Connect, Transform (DCT) Dashboard",
+		    "Granularity": "National",
+		    "topic": "Clinical Trial",
+		    "metrics": [
+			{
+			    "id": "TBD",
+			    "full_name": "Volume of Trials Supported by NHS DigiTrials",
+			    "short_name": "trial_volume_month_count"
+			},
+			{
+				"id": "TBD",
+				"full_name": "Number of Researchers Granted Access to NSDE",
+				"short_name": "number_of_researcher_month_count"
+			}
+			
+		    ]
+		    
+		}
+	    ]
+	},
+	"pipeline": {
+	    "name": "trigger_clinical_trial",
+	    "folder": "nhsx-au-analytics/sharepoint/clinical_trial/",
+	    "ingestion": {
+		"source_path": "Shared Documents/nhsx_au_ingestion/clinical_trial/",
+		"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_clinical_trial/dbrks_clinical_trial_raw"
+	    },
+    
+	    "raw": {
+		"source_path": "land/sharepoint/Shared Documents/nhsx_au_ingestion/clinical_trial/",
+		"appended_path": "raw/nhsx/sharepoint/csv/clinical_trial/full/",
+		"appended_file": "clinical_trial.csv"
+	    },
+	    "proc": {
+			    "source_path": "raw/nhsx/sharepoint/csv/clinical_trial/full/",
+			    "source_file": "clinical_trial.csv",
+			    "sink_path": "proc/sources/nhsx/sharepoint/csv/clinical_trial/full/",
+			    "sink_file": "clinical_trial.csv"
+	    },
+	    "project": {
+			    "source_path": "proc/sources/nhsx/sharepoint/csv/clinical_trial/full/",
+			    "source_file": "clinical_trial.csv",
+		            "denominator_source_path": "proc/sources/ncdr_etp/adf_v2/table/odscodes/trust_mapping/",
+		            "denominator_source_file": "table_odscodes_trust_mapping.parquet",
+			    "databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_clinical_trial_orchestrator",
+			    "databricks": [				
+				    {
+					    "metric": "trial_volume_month_count",
+					    "sink_path": "proc/projects/nhsx_slt_analytics/clinical_trial/trial_volume_month_count/",
+					    "sink_file": "trial_volume_month_count.csv",
+					    "databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_clinical_trial/dbrks_trial_volume_month_count"
+				    },
+		    		{
+					    "metric": "number_of_researcher_month_count",
+					    "sink_path": "proc/projects/nhsx_slt_analytics/clinical_trial/number_of_researcher_month_count/",
+					    "sink_file": "number_of_researcher_month_count.csv",
+					    "databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_clinical_trial/dbrks_number_of_researcher_month_count"
+				    }
+				
+		]
+	    },
+    
+	    "staging": [
+	    {
+		"metric": "trial_volume_month_count",
+		"sink_table": "trial_volume_month_count"
+	    },
+			{
+		"metric": "number_of_researcher_month_count",
+		"sink_table": "number_of_researcher_month_count"
+	    }
+	],
+    
+	"validation": [
+	    {
+		"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_clinical_trial_validation/dbrks_clinical_trial_file_validation",
+		"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
+	}
+	]
+	}
+    }
+    
+    

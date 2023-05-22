@@ -1,0 +1,75 @@
+{
+	"metadata": {
+		"products": [
+			{
+				"product_name": "Digitise, Connect, Transform (DCT) Dashboard",
+				"granularity": "ICB level",
+				"topic": "Electronic Patient Record (EPR)",
+				"metrics": [
+					{
+						"id": "TBD",
+						"full_name": "(Electronice Patient Record Bi Weekly Data)",
+						"short_name": "epr_data_biweekly_count"
+					},
+					{
+						"id": "TBD",
+						"full_name": "TBD)",
+						"short_name": "TBD)"
+					}
+					
+				]
+			}
+		]
+	},
+	"pipeline": {
+		"name": "trigger_epr",
+		"folder": "nhsx-au-analytics/nhsdigital/epr/",
+		"ingestion": {
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_epr/dbrks_epr_raw"
+		},
+		"raw": {
+			"snapshot_source_path": "land/nhsdigital/manual_upload/timestamp/excel/epr/",
+			"appended_path": "raw/nhsdigital/manual_upload/parquet/epr/historical/",
+			"appended_file": "epr_data_historical.parquet"
+		},
+		"proc": {
+			"source_path": "raw/nhsdigital/manual_upload/parquet/epr/historical/",
+			"source_file": "epr_data_historical.parquet",
+			"sink_path": "proc/sources/nhsdigital/manual_upload/parquet/epr/historical/",
+			"sink_file": "epr_data_historical.parquet"
+		},
+		"project": {
+			"source_path": "proc/sources/nhsdigital/manual_upload/parquet/epr/historical/",
+			"source_file": "epr_data_historical.parquet",
+			"denominator_source_path": "proc/sources/ncdr_etp/adf_v2/table/odscodes/trust_mapping/",
+		        "denominator_source_file": "table_odscodes_trust_mapping.parquet",
+			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_epr_orchestrator",
+			"databricks": [				
+				{
+					"metric": "epr_data_biweekly_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/epr/epr_data_biweekly_count/",
+					"sink_file": "epr_data_biweekly_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_epr/dbrks_epr_data_biweekly_count"
+				}
+               
+				
+			]
+		},
+		"staging": [	
+			{
+				"metric": "epr_data_biweekly_count",
+				"sink_table": "epr_data_biweekly_count"
+			}
+           
+		],
+		"validation": [
+			{
+				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_epr_validation/dbrks_epr_file_validation",
+				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_epr_validation/dbrks_post_process_validation"
+		}
+		]
+	}
+}
+
+
+
