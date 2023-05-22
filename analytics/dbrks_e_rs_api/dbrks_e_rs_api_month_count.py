@@ -70,7 +70,7 @@ reference_path = config_JSON['pipeline']['project']['denominator_source_path']
 reference_file = config_JSON['pipeline']['project']['denominator_source_file']
 sink_path = config_JSON['pipeline']['project']['databricks'][0]['sink_path']
 sink_file = config_JSON['pipeline']['project']['databricks'][0]['sink_file']
-table_name = config_JSON['pipeline']['staging'][01]['sink_table'] 
+table_name = config_JSON['pipeline']['staging'][0]['sink_table'] 
 
 # COMMAND ----------
 
