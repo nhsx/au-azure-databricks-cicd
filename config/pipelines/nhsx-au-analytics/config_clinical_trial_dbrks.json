@@ -49,14 +49,14 @@
 			    "databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_clinical_trial_orchestrator",
 			    "databricks": [				
 				    {
-					    "metric": "trial_volume_month_count",
-					    "sink_path": "proc/projects/nhsx_slt_analytics/clinical_trial/trial_volume_month_count/",
-					    "sink_file": "trial_volume_month_count.csv",
+					    "metric": "clinical_trial_volume_month_count",
+					    "sink_path": "proc/projects/nhsx_slt_analytics/clinical_trial/clinical_trial_volume_month_count/",
+					    "sink_file": "clinical_trial_volume_month_count.csv",
 					    "databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_clinical_trial/dbrks_trial_volume_month_count"
 				    },
 		    		{
 					    "metric": "number_of_researcher_month_count",
-					    "sink_path": "proc/projects/nhsx_slt_analytics/clinical_trial/number_of_researcher_month_count/",
+					    "sink_path": "proc/projects/nhsx_slt_analytics/clinical_trial/number_of_clinical_trial_researcher_month_count/",
 					    "sink_file": "number_of_researcher_month_count.csv",
 					    "databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_clinical_trial/dbrks_number_of_researcher_month_count"
 				    }
@@ -66,12 +66,12 @@
     
 	    "staging": [
 	    {
-		"metric": "trial_volume_month_count",
-		"sink_table": "trial_volume_month_count"
+		"metric": "clinical_trial_volume_month_count",
+		"sink_table": "clinical_trial_volume_month_count"
 	    },
 			{
-		"metric": "number_of_researcher_month_count",
-		"sink_table": "number_of_researcher_month_count"
+		"metric": "number_of_clinical_trial_researcher_month_count",
+		"sink_table": "number_of_clinical_trial_researcher_month_count"
 	    }
 	],
     
