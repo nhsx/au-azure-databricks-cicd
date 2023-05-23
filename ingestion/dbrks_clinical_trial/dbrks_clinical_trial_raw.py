@@ -15,7 +15,7 @@ DESCRIPTION:
 USAGE:
                 ...
 CONTRIBUTORS:   Everistus OPuta
-CONTACT:        data@nhsx.nhs.uk
+CONTACT:        nhsx.data@england.nhs.uk
 CREATED:        21 May. 2022
 VERSION:        0.0.1
 """
