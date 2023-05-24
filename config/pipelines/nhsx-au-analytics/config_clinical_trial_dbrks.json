@@ -73,8 +73,7 @@
 		"metric": "number_of_clinical_trial_researcher_month_count",
 		"sink_table": "number_of_clinical_trial_researcher_month_count"
 	    }
-	],
-    
+	]
 	
 	}
     }
