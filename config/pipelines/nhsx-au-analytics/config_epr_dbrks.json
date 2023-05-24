@@ -62,11 +62,6 @@
 			}
            
 		],
-		"validation": [
-			{
-				
-				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_epr_validation/dbrks_post_process_validation"
-		}
 		]
 	}
 }

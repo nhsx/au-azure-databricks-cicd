@@ -97,6 +97,14 @@ df_processed = df1.copy()
 
 # COMMAND ----------
 
+df_processed['metric'].unique()
+
+# COMMAND ----------
+
+df_processed = df_processed.loc[df_processed['metric'].isin(['Number of researcher target', 'Number of researcher actual'])]
+
+# COMMAND ----------
+
 # Upload processed data to datalake
 # -------------------------------------------------------------------------
 file_contents = io.StringIO()

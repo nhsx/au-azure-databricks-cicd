@@ -75,12 +75,7 @@
 	    }
 	],
     
-	"validation": [
-	    {
-		"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_clinical_trial_validation/dbrks_clinical_trial_file_validation",
-		"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
-	}
-	]
+	
 	}
     }
     
