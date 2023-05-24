@@ -124,6 +124,7 @@ for i in latest_dates:
 
 # COMMAND ----------
 
+'''
 # Processing 
 # -------------------------------------------------------------------------
 df_processed = pd.DataFrame(columns = ['ICB_Code', 'Latest Status', 'Number of Trusts with standard status', 'Total number of Trusts', 'Snapshot Date'])
@@ -251,11 +252,94 @@ for folder in latest_folders:
   df_join_1.index.name = "Unique ID"
   df_join_1['Snapshot Date'] = folder
   df_processed = pd.concat([df_processed, df_join_1], ignore_index=True) 
+'''
 
 
 # COMMAND ----------
 
-display(df_processed)
+# Processing 
+# -------------------------------------------------------------------------
+df_processed = pd.DataFrame(columns = ['ICB_Code', 'Latest Status', 'Number of Trusts with standard status', 'Total number of Trusts', 'Snapshot Date'])
+for folder in latest_folders:
+  latestFolder = folder + '/'
+  file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
+  DSPT_df = pd.read_csv(io.BytesIO(file))
+  ODS_code_df = pd.read_parquet(io.BytesIO(reference_file), engine="pyarrow")
+
+  # Make all ODS codes in DSPT dataframe capital
+  # -------------------------------------------------------------------------
+  DSPT_df['Code'] = DSPT_df['Code'].str.upper()
+  DSPT_df = DSPT_df.rename(columns = {'Code': 'Organisation_Code'})
+
+  # Join DSPT data with ODS table on ODS code
+  # -------------------------------------------------------------------------
+  DSPT_ODS = ODS_code_df.merge(DSPT_df, how ='outer', on = 'Organisation_Code')
+
+  # Creation of final dataframe with all currently open NHS Trusts
+  # -------------------------------------------------------------------------
+  DSPT_ODS_selection_2 = DSPT_ODS[ 
+  (DSPT_ODS["Organisation_Code"].str.contains("RT4|RQF|RYT|0DH|0AD|0AP|0CC|0CG|0CH|0DG")==False)].reset_index(drop=True) #------ change exclusion codes for CCGs and CSUs through time. Please see SOP
+  DSPT_ODS_selection_3 = DSPT_ODS_selection_2[DSPT_ODS_selection_2.ODS_Organisation_Type.isin(["NHS TRUST", "CARE TRUST"])].reset_index(drop=True)
+
+  # Creation of final dataframe with all currently open NHS Trusts which meet or exceed the DSPT standard
+  # --------------------------------------------------------------------------------------------------------
+  DSPT_ODS_selection_3 = DSPT_ODS_selection_3.rename(columns = {"Status":"Latest Status"})
+
+
+  # Processing - Generating final dataframe for staging to SQL database
+  # -------------------------------------------------------------------------
+  # Generating Total_no_trusts
+
+  #2019/2020
+  df1 = DSPT_ODS_selection_3[["Organisation_Code", "STP_Code", 'Latest Status']].copy()
+  list_of_statuses1 = ["19/20 Approaching Standards", 
+                        "19/20 Standards Exceeded", 
+                        "19/20 Standards Met", 
+                        "19/20 Standards Not Met",
+                        "20/21 Approaching Standards", 
+                        "20/21 Standards Exceeded", 
+                        "20/21 Standards Met", 
+                        "20/21 Standards Not Met",
+                        "21/22 Approaching Standards", 
+                        "21/22 Standards Exceeded", 
+                        "21/22 Standards Met", 
+                        "21/22 Standards Not Met",
+                        "22/23 Approaching Standards", 
+                        "22/23 Standards Exceeded", 
+                        "22/23 Standards Met", 
+                        "22/23 Standards Not Met",
+                        'Not Published']
+  
+#if the date is not within the financial year remove outdated statuses from the list
+  max_date = pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m')
+  if max_date > '2021-07-01':
+    list_of_statuses1 = list_of_statuses1[4:]   
+  elif max_date > '2022-07-01':
+    list_of_statuses1 = llist_of_statuses1[8:]
+  elif max_date > '2023-07-01':
+    list_of_statuses1 = llist_of_statuses1[12:]
+    
+  df1 = df1[df1['Latest Status'].isin(list_of_statuses1)]
+
+  df1['Organisation_Code'] = df1['Organisation_Code'].astype(str)
+  df1a = df1.groupby(['STP_Code'], as_index=False).count() 
+  df1a.drop(['Latest Status'], axis = 1, inplace = True)
+  df1a = df1a.rename(columns = {'Organisation_Code':'Total number of Trusts'})
+  df1b = df1.groupby(['STP_Code', 'Latest Status'], as_index=False).size()  
+  df1b = df1b.rename(columns = {'size':'Number of Trusts with standard status'})
+  df1 = pd.merge(df1a, df1b, on = ['STP_Code'], how = 'left')
+
+
+
+
+  #Joined data processing
+  df_join_1 = df1.rename(columns = {'STP_Code':'ICB_Code'})
+  # df_join_1["Percent of Trusts with a standards met or exceeded DSPT status"] = df_join_1["Number of Trusts with the standard status"]/df_join_1["Total number of Trusts"]
+  #df_join_1 = df_join_1.round(2)
+  df_join_1.index.name = "Unique ID"
+  df_join_1['Snapshot Date'] = folder
+  df_processed = pd.concat([df_processed, df_join_1], ignore_index=True) 
+
 
 # COMMAND ----------
 
