@@ -90,10 +90,10 @@ df_ref = df_ref[['ODS', 'STP_Code','Organisation_Name']]
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
-df1 = df[["Organisation Code", "Trust Type", "EPR Group","Current EPR Status","Bi Weekly Report Date"]]
-df1 = df1.rename(columns = {'Organisation Code':'ODS','Trust Type':'Trust_Type','EPR Group':'EPR_Group','Current EPR Status':'Current_EPR_Status','Bi Weekly Report Date':'Bi_Weekly_Report_Date'})
+df1 = df[["Organisation Code", "Trust Type", "EPR Group","Current EPR Status","BiWeekly_Date"]]
+df1 = df1.rename(columns = {'Organisation Code':'ODS','Trust Type':'Trust_Type','EPR Group':'EPR_Group','Current EPR Status':'Current_EPR_Status','BiWeekly_Date':'Bi_Weekly_Report_Date'})
 # df1 = df.copy()
-df1['Date'] = pd.to_datetime(df1['Bi_Weekly_Report_Date'])
+# df1['Date'] = pd.to_datetime(df1['Bi_Weekly_Report_Date'])
 df1.index.name = "Unique ID"
 df_processed = df1.copy()
 
