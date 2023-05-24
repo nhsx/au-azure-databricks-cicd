@@ -87,7 +87,7 @@ file_name_list = [file for file in file_name_list if '.xlsx' in file]
 for new_source_file in file_name_list:
   new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, new_source_file)
   new_dataframe = pd.read_excel(io.BytesIO(new_dataset),  engine  = 'openpyxl') 
-  new_dataframe['Date'] = pd.to_datetime(new_dataframe['Bi_Weekly_Date']).dt.strftime('%Y-%m')
+  new_dataframe['Date'] = pd.to_datetime(new_dataframe['Bi_Weekly_Date']).dt.strftime('%Y-%m-%d')
 
 
 # COMMAND ----------
@@ -98,7 +98,7 @@ latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, historical_
 print(historical_source_path)
 historical_dataset = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, historical_source_file)
 historical_dataframe = pd.read_parquet(io.BytesIO(historical_dataset), engine="pyarrow")
-historical_dataframe['Date'] = pd.to_datetime(historical_dataframe['Bi_Weekly_Date']).dt.strftime('%Y-%m')
+historical_dataframe['Date'] = pd.to_datetime(historical_dataframe['Bi_Weekly_Date']).dt.strftime('%Y-%m-%d)
 
 # Append new data to historical data
 # -----------------------------------------------------------------------
