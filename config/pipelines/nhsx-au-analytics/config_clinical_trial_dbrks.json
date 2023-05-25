@@ -73,9 +73,13 @@
 		"metric": "number_of_clinical_trial_researcher_month_count",
 		"sink_table": "number_of_clinical_trial_researcher_month_count"
 	    }
+			],
+    
+	"validation": [
+			{
+		"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_e_rs_api_validation/dbrks_e_rs_api_file_validation",
+		"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
+	}
 	]
-	
 	}
     }
-    
-    
