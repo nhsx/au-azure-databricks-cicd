@@ -85,13 +85,11 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 #Numerator
 # ---------------------------------------------------------------------------------------------------
-df_1 = df[["Monthly", "PKB_appointments"]]
-df_1.iloc[:, 0] = df_1.iloc[:,0].dt.strftime('%Y-%m')
-df_2 = df_1.groupby(df_1.iloc[:,0]).sum().reset_index()
-df_2.rename(columns  = {'Monthly': 'Date', "PKB_appointments": 'Number of secondary care appointments made via the NHS App'}, inplace = True)
-df_2.index.name = "Unique ID"
-df_2['Date'] = pd.to_datetime(df_2['Date'])
-df_processed = df_2.copy()
+df = df[['Monthly', 'PKB_appointments', 'NBS - appointmentBookings']]
+df['Number of secondary care appointments made via the NHS App'] = df['PKB_appointments'] + df['NBS - appointmentBookings']
+df = df[['Monthly', 'Number of secondary care appointments made via the NHS App']]
+df.index.name = 'Unique ID'
+df_processed = df.copy()
 
 # COMMAND ----------
 
