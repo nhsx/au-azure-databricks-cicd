@@ -1,0 +1,85 @@
+{
+	"metadata":  {
+		"products": [
+			{
+			"product_name": "Reference Data",
+			"topic": "ons_population",
+			"metrics": [
+				{
+            			"id": "R003",
+            			"full_name": "csv file for ONS population at ICB level, source from ONS API",
+	 			"short_name":"ons_population_api"
+        			}
+				]
+			}
+		]
+	},
+	"pipeline": {
+		"name": "trigger_ons_population_api",
+    	"folder": "reference_tables/ons_population_api/",
+		"ingestion": {
+			"databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_reference_shapefile_orchestrator"
+		},
+		"raw": {
+			"source_path": "raw/factsanddim/adf_v2/table/odscodes/full/",
+			"source_file": "ons_population_api.parquet",
+			"databricks":[    
+    			{
+				"metric": "ons_population_api",
+				"shapefile_sink_path": "raw/ons_geoportal/api/ons_census/icb_population/snapshot/",
+				"shapefile_sink_file": "ons_population_api.csv",
+				"code_maping_sink_path": "raw/ons_geoportal/api/table/icb_population/snapshot/",
+				"code_maping_sink_file": "table_ons_population_api.parquet",
+				"markdown_sink_path": "raw/documentation/odscodes_mapping/table/ccg_ods_shapefile_mapping/snapshot/",
+				"markdown_sink_file": "table_ccg_ods_shapefile_mapping_snapshot.markdown",
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_reference_shapefile/dbrks_reference_ons_population_api_raw"
+				}	
+			]
+		},
+		"proc": [
+				{
+				"metric": "ons_population_api",
+				"source_path": "raw/ons_geoportal/api/table/icb_population/snapshot/",
+				"source_file": "table_ons_population_api.parquet",
+				"shapefile_source_path": "raw/ons_geoportal/webscrape/shapefile/ccg_boundaries/snapshot/",
+				"shapefile_source_file": "ons_population_api.csv",
+				"sink_path": "proc/sources/ons_geoportal/api/table/icb_population/snapshot/",
+				"sink_file": "table_ons_population_api.parquet",
+				"shapefile_sink_path": "proc/sources/ons_geoportal/webscrape/shapefile/ccg_boundaries/snapshot/",
+				"shapefile_sink_file": "ons_population_api.csv"
+				}
+		],
+		"project": [
+				{
+				"metric": "ons_population_api",
+				"source_path": "proc/sources/ons_geoportal/api/table/icb_population/snapshot/",
+				"source_file": "table_ons_population_api.parquet",
+				"sink_path": "proc/projects/reference_tables/table/icb_population/snapshot/",
+				"sink_file": "table_ons_population_api.parquet",
+				"shapefile_source_path": "proc/sources/ons_geoportal/webscrape/shapefile/ccg_boundaries/snapshot/",
+				"shapefile_source_file": "ons_population_api.csv",
+				"shapefile_sink_path": "proc/projects/reference_shapefiles/csv/ccg_boundaries/snapshot/",
+				"shapefile_sink_file": "proc_ons_population_api.csv"
+				}
+		],
+		"project_databricks": {
+				"databricks_orchestrator_notebook":"/databricks/au-azure-databricks-cicd/orchestration/dbrks_reference_shapefile_processing_orchestrator",
+				"databricks":[
+					{"metric": "ons_population_api",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_reference_shapefile/dbrks_reference_ons_population_api"}
+				]
+			},
+		"staging":[    
+    			{
+				"metric": "ons_population_api",
+				"sink_table": "ons_population_api",
+				"shapefile_stored_procedure": "[dbo].[stored_proc_ons_population_api]",
+				"shapefile_source_path": "proc/projects/reference_shapefiles/csv/ccg_boundaries/snapshot/",
+				"shapefile_source_file": "proc_ons_population_api.csv",
+				"shapefile_sink_table": "ons_population_api",
+				"shapefile_format_column_stored_procedure": "[dbo].[stored_proc_format_clmn_ons_population_api]" 
+				}
+			]
+	}
+}
+
