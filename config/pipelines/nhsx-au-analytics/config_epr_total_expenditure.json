@@ -1,0 +1,63 @@
+{
+	"metadata": {
+	    "products": [
+		{
+		    "product_name": "Digitise, Connect, Transform (DCT) Dashboard",
+		    "Granularity": "National",
+		    "topic": "EPR Total Expenditure",
+		    "metrics": [
+			{
+			    "id": "TBD",
+			    "full_name": "(Electronice Patient Record Total Expenditure",
+			    "short_name": "epr_total_expenditure_month_count"
+			}
+			
+		    ]
+		    
+		}
+	    ]
+	},
+	"pipeline": {
+	    "name": "trigger_epr_total_expenditure",
+	    "folder": "nhsx-au-analytics/sharepoint/epr_total_expenditure/",
+	    "ingestion": {
+		"source_path": "Shared Documents/nhsx_au_ingestion/epr_total_expenditure/",
+		"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_epr_total_expenditure/dbrks_epr_total_expenditure_raw"
+	    },
+    
+	    "raw": {
+		"source_path": "land/sharepoint/Shared Documents/nhsx_au_ingestion/epr_total_expenditure/",
+		"appended_path": "raw/nhsx/sharepoint/csv/epr_total_expenditure/full/",
+		"appended_file": "epr_total_expenditure_historical.csv"
+	    },
+	    "proc": {
+			    "source_path": "raw/nhsx/sharepoint/csv/epr_total_expenditure/full/",
+			    "source_file": "epr_total_expenditure_historical.csv",
+			    "sink_path": "proc/sources/nhsx/sharepoint/csv/epr_total_expenditure/full/",
+			    "sink_file": "epr_total_expenditure_historical.csv"
+	    },
+	    "project": {
+			    "source_path": "proc/sources/nhsx/sharepoint/csv/epr_total_expenditure/full/",
+			    "source_file": "epr_total_expenditure_historical.csv",
+		            "denominator_source_path": "proc/sources/ncdr_etp/adf_v2/table/odscodes/trust_mapping/",
+		            "denominator_source_file": "table_odscodes_trust_mapping.parquet",
+			    "databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_epr_total_expenditure_orchestrator",
+			    "databricks": [				
+				    {
+					    "metric": "epr_total_expenditure_month_count",
+					    "sink_path": "proc/projects/nhsx_slt_analytics/epr_total_expenditure/epr_total_expenditure_month_count/",
+					    "sink_file": "epr_total_expenditure_month_count.csv",
+					    "databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_epr_total_expenditure/dbrks_tepr_total_expenditure_month_count"
+				    }
+				
+		]
+	    },
+    
+	    "staging": [
+	    {
+		"metric": "epr_total_expenditure_month_count",
+		"sink_table": "epr_total_expenditure_month_count"
+	    }
+			]
+	}
+    }
