@@ -117,7 +117,7 @@ df_join_1 = df_join.drop(columns = ['EXTRACT_DATE']).rename(columns = {'Biweekly
 df_join_1['VW Capacity (per 100,000 )'] = df_join_1["Virtual Ward Capacity at ICB level"]/(df_join_1['ICB Population)']/100000)
 df_join_2 = df_join_1.round(2)
 df_join_2.index.name = "Unique ID"
-df_join_2["Date"] = pd.to_datetime(df_join_2["Date"])
+df_join_2["Biweekly Date"] = pd.to_datetime(df_join_2["Biweekly Date"])
 df_processed = df_join_2.copy()
 
 
