@@ -47,6 +47,7 @@
 		,
 		"project": 
 				{
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_reference_shapefile/dbrks_reference_ons_population_api",
 				"metric": "ons_population_api",
 				"source_path": "proc/sources/ons_geoportal/api/table/icb_population/snapshot/",
 				"source_file": "table_ons_population_api.parquet",
