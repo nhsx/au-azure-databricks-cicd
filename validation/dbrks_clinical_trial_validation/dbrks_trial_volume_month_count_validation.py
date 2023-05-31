@@ -57,7 +57,7 @@ CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CON
 # Load JSON config from Azure datalake
 # -------------------------------------------------------------------------
 file_path_config = "/config/pipelines/nhsx-au-analytics/"
-file_name_config = "config_epr_dbrks.json"
+file_name_config = "config_clinical_trial_dbrks.json"
 file_system_config = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, file_name_config)
 config_JSON = json.loads(io.BytesIO(config_JSON).read())
@@ -73,11 +73,11 @@ source_file = config_JSON['pipeline']['project']['source_file']
 
 # COMMAND ----------
 
-# Pull dataframe
+# Processing
 # -------------------------------------------------------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
-df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
+df = pd.read_csv(io.BytesIO(file))
 
 # COMMAND ----------
 
@@ -117,3 +117,7 @@ date = datetime.strptime(today, '%Y-%m-%d %H:%M:%S')
 in_row = {'row_count':[row_count], 'load_date':[date], 'file_to_load':[full_path]}
 df = pd.DataFrame(in_row)  
 write_to_sql(df, log_table, "append")
+
+# COMMAND ----------
+
+

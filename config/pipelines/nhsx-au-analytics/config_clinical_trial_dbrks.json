@@ -77,7 +77,7 @@
     
 	"validation": [
 			{
-		"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_e_rs_api_validation/dbrks_e_rs_api_file_validation",
+		"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_clinical_trial_validation/dbrks_trial_volume_month_count_validation",
 		"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
 	}
 	]
