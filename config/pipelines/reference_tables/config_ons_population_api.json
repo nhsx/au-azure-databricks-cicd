@@ -36,7 +36,7 @@
 				}	
 			]
 		},
-		"proc": [
+		"proc": 
 				{
 				"metric": "ons_population_api",
 				"source_path": "raw/ons_geoportal/api/table/icb_population/snapshot/",
@@ -44,8 +44,8 @@
 				"sink_path": "proc/sources/ons_geoportal/api/table/icb_population/snapshot/",
 				"sink_file": "table_ons_population_api.parquet"
 				}
-		],
-		"project": [
+		,
+		"project": 
 				{
 				"metric": "ons_population_api",
 				"source_path": "proc/sources/ons_geoportal/api/table/icb_population/snapshot/",
@@ -57,7 +57,7 @@
 				"shapefile_sink_path": "proc/projects/reference_shapefiles/csv/ccg_boundaries/snapshot/",
 				"shapefile_sink_file": "proc_ons_population_api.csv"
 				}
-		],
+		,
 		"project_databricks": {
 				"databricks_orchestrator_notebook":"/databricks/au-azure-databricks-cicd/orchestration/dbrks_reference_shapefile_processing_orchestrator",
 				"databricks":[
