@@ -47,17 +47,16 @@
 		,
 		"project": 
 				{
+				"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_reference_shapefile/dbrks_reference_ons_population_api",
 				"metric": "ons_population_api",
 				"source_path": "proc/sources/ons_geoportal/api/table/icb_population/snapshot/",
 				"source_file": "table_ons_population_api.parquet",
 				"sink_path": "proc/projects/reference_tables/table/icb_population/snapshot/",
-				"sink_file": "table_ons_population_api.parquet",
-				"shapefile_source_path": "proc/sources/ons_geoportal/webscrape/shapefile/ccg_boundaries/snapshot/",
-				"shapefile_source_file": "ons_population_api.csv",
-				"shapefile_sink_path": "proc/projects/reference_shapefiles/csv/ccg_boundaries/snapshot/",
-				"shapefile_sink_file": "proc_ons_population_api.csv"
-				}
-		,
+				"sink_file ": "table_ons_population_api.parquet",
+				"reference_source_path": "proc/projects/reference_tables/ods_codes/ccg_icb_region_mapping/",
+				"reference_source_file": "table_ccg_icb_region_mapping_snapshot.parquet"
+				},
+				
 		"project_databricks": {
 				"databricks_orchestrator_notebook":"/databricks/au-azure-databricks-cicd/orchestration/dbrks_reference_shapefile_processing_orchestrator",
 				"databricks":[
