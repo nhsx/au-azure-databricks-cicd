@@ -77,7 +77,8 @@ table_name = config_JSON['pipeline']['staging'][0]['sink_table']
 
 # COMMAND ----------
 
-
+'''
+ 
  #Numerator data ingestion and processing
 # -------------------------------------------------------------------------------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
@@ -119,12 +120,32 @@ df_join_2 = df_join_1.round(2)
 df_join_2.index.name = "Unique ID"
 df_join_2["Biweekly Date"] = pd.to_datetime(df_join_2["Biweekly Date"])
 df_processed = df_join_2.copy()
-
+df_processed
+'''
 
 
 # COMMAND ----------
 
-df_processed
+df_output = pd.DataFrame(columns = ['ICB_CODE', 'ICB Population)', 'Biweekly Date', 'Virtual Ward Capacity at ICB level', 'VW Capacity (per 100,000 )'])
+
+for date in df2['EXTRACT_DATE'].unique():
+  current_year = pd.to_datetime(date).year
+  start_date = '01-03-' + str(current_year)
+  end_date = '01-03-' + str(current_year + 1)
+  #filter numerator for each financial year
+  numerator = df4.loc[(df4['Biweekly Date'] > start_date) & (df4['Biweekly Date'] <= end_date)]
+  denominator = df2[df2['EXTRACT_DATE'].dt.year == current_year]
+
+  #Joined data processing
+  df_join = df2.merge(df4, how ='outer', on = 'ORG_CODE')
+  df_join_1 = df_join.drop(columns = ['EXTRACT_DATE']).rename(columns = {'Biweekly Date':'Biweekly Date','ORG_CODE': 'ICB_CODE','NUMBER_OF_PATIENTS': 'ICB Population)','Virtual Ward Capacity':'Virtual Ward Capacity at ICB level'})
+  df_join_1['VW Capacity (per 100,000 )'] = df_join_1["Virtual Ward Capacity at ICB level"]/(df_join_1['ICB Population)']/100000)
+  df_join_2 = df_join_1.round(2)
+  df_join_2.index.name = "Unique ID"
+  df_join_2["Biweekly Date"] = pd.to_datetime(df_join_2["Biweekly Date"])
+  df_processed = df_join_2.copy()
+  df_output = pd.concat([df_output, df_processed], axis = 0, ignore_index=True)
+df_processed = df_output
 
 # COMMAND ----------
 
@@ -139,3 +160,7 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestF
 # Write data from databricks to dev SQL database
 # -------------------------------------------------------------------------
 write_to_sql(df_processed, table_name, "overwrite")
+
+# COMMAND ----------
+
+
