@@ -77,7 +77,7 @@ table_name = config_JSON['pipeline']['staging'][0]['sink_table']
 
 # COMMAND ----------
 
-'''
+
  
  #Numerator data ingestion and processing
 # -------------------------------------------------------------------------------------------------
@@ -111,7 +111,7 @@ df_ref_1 = df_ref_1.drop('AGE', axis=1)
 df_ref_1 = df_ref_1.groupby(['EXTRACT_DATE','ORG_CODE'], as_index=False).sum()
 df_ref_1['EXTRACT_DATE'] = pd.to_datetime(df_ref_1['EXTRACT_DATE'], infer_datetime_format=True)
 df2 = df_ref_1[['EXTRACT_DATE','ORG_CODE','NUMBER_OF_PATIENTS']]
-
+'''
 #Joined data processing
 df_join = df2.merge(df4, how ='outer', on = 'ORG_CODE')
 df_join_1 = df_join.drop(columns = ['EXTRACT_DATE']).rename(columns = {'Biweekly Date':'Biweekly Date','ORG_CODE': 'ICB_CODE','NUMBER_OF_PATIENTS': 'ICB Population)','Virtual Ward Capacity':'Virtual Ward Capacity at ICB level'})
@@ -130,14 +130,17 @@ df_output = pd.DataFrame(columns = ['ICB_CODE', 'ICB Population)', 'Biweekly Dat
 
 for date in df2['EXTRACT_DATE'].unique():
   current_year = pd.to_datetime(date).year
-  start_date = '01-03-' + str(current_year)
-  end_date = '01-03-' + str(current_year + 1)
+  start_date = str(current_year) + '-04-01'
+  end_date = str(current_year + 1) + '-04-01'
+  print(date)
+  print(start_date)
+  print(end_date)
   #filter numerator for each financial year
-  numerator = df4.loc[(df4['Biweekly Date'] > start_date) & (df4['Biweekly Date'] <= end_date)]
-  denominator = df2[df2['EXTRACT_DATE'].dt.year == current_year]
+  numerator = df4.loc[(df4['Biweekly Date'] >= start_date) & (df4['Biweekly Date'] < end_date)]
+  denominator = df2.loc[df2['EXTRACT_DATE'] == date]
 
   #Joined data processing
-  df_join = df2.merge(df4, how ='outer', on = 'ORG_CODE')
+  df_join = denominator.merge(numerator, how ='outer', on = 'ORG_CODE')
   df_join_1 = df_join.drop(columns = ['EXTRACT_DATE']).rename(columns = {'Biweekly Date':'Biweekly Date','ORG_CODE': 'ICB_CODE','NUMBER_OF_PATIENTS': 'ICB Population)','Virtual Ward Capacity':'Virtual Ward Capacity at ICB level'})
   df_join_1['VW Capacity (per 100,000 )'] = df_join_1["Virtual Ward Capacity at ICB level"]/(df_join_1['ICB Population)']/100000)
   df_join_2 = df_join_1.round(2)
@@ -146,6 +149,10 @@ for date in df2['EXTRACT_DATE'].unique():
   df_processed = df_join_2.copy()
   df_output = pd.concat([df_output, df_processed], axis = 0, ignore_index=True)
 df_processed = df_output
+
+# COMMAND ----------
+
+display(df_processed)
 
 # COMMAND ----------
 
