@@ -47,7 +47,7 @@
 					    "metric": "epr_total_expenditure_month_count",
 					    "sink_path": "proc/projects/nhsx_slt_analytics/epr_total_expenditure/epr_total_expenditure_month_count/",
 					    "sink_file": "epr_total_expenditure_month_count.csv",
-					    "databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_epr_total_expenditure/dbrks_tepr_total_expenditure_month_count"
+					    "databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_epr_total_expenditure/dbrks_epr_total_expenditure_month_count"
 				    }
 				
 		]
