@@ -34,23 +34,13 @@ import io
 import tempfile
 from datetime import datetime
 import json
-import regex as re
 
 # 3rd party:
 import pandas as pd
 import numpy as np
 from pathlib import Path
 from azure.storage.filedatalake import DataLakeServiceClient
-import requests
-from urllib.request import urlopen
-from urllib import request as urlreq
-from bs4 import BeautifulSoup
-import geojson
-import geopandas as gpd
-from shapely.geometry import Point, Polygon, shape
-from shapely import wkb, wkt
-import shapely.speedups
-shapely.speedups.enable()
+
 # Connect to Azure datalake
 # -------------------------------------------------------------------------
 # !env from databricks secrets
@@ -75,33 +65,61 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 # Read parameters from JSON config
 # -------------------------------------------------------------------------
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
-shapefile_source_path = config_JSON['pipeline']['project'][0]['source_path']
-shapefile_source_file = config_JSON['pipeline']['project'][0]['source_file']
-shapefile_sink_path = config_JSON['pipeline']['project'][0]['sink_path']
-shapefile_sink_file = config_JSON['pipeline']['project'][0]['sink_file']
+source_path = config_JSON['pipeline']['project']['source_path']
+source_file = config_JSON['pipeline']['project']['source_file']
+
+sink_path = config_JSON['pipeline']['project']['sink_path']
+sink_file = config_JSON['pipeline']['project']['sink_file ']
+
+reference_source_path = config_JSON['pipeline']['project']['reference_source_path']
+reference_source_file = config_JSON['pipeline']['project']['reference_source_file']
+
+table_name = config_JSON['pipeline']["staging"][0]['sink_table']
 
 # COMMAND ----------
 
 #Processing
-latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, shapefile_source_path)
-file = datalake_download(CONNECTION_STRING, file_system, shapefile_source_path+latestFolder, shapefile_source_file)
-# df = gpd.read_file(io.BytesIO(file))
-df = pd.read_parquet(file)
-# shapefile_source_path 
-# shapefile_source_file
-# shapefile_sink_path 
-# shapefile_sink_file
+# source data
+latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
+file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 
+# reference data
+latestFolder_ref = datalake_latestFolder(CONNECTION_STRING, file_system, reference_source_path)
+file_ref = datalake_download(CONNECTION_STRING, file_system, reference_source_path+latestFolder_ref, reference_source_file)
 
-# df_processed = df_2.copy()
+# Read in source data and reference file
+df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
+df_ref = pd.read_parquet(io.BytesIO(file_ref), engine="pyarrow")
 
-# COMMAND ----------
+# Reduce columns in source file and filter for required dimensions
+df = df[['DATE', 'GEOGRAPHY_CODE', 'C2021_AGE_92_NAME', 'C_SEX_NAME', 'OBS_VALUE']]
+df = df.loc[(df['C_SEX_NAME'] == 'All persons') & (df['C2021_AGE_92_NAME'] != 'Total')]
+df = df.groupby(by=['DATE', 'GEOGRAPHY_CODE']).agg({'OBS_VALUE':'sum'}).reset_index()
+df = df.rename(columns={'GEOGRAPHY_CODE':'ICB_ONS_Code'})
 
-latestFolder
+# Reference processing
+df_ref = df_ref[['ICB_ONS_Code', 'ICB_Code']]
+df_ref = df_ref.drop_duplicates().reset_index(drop=True)
+
+# Join
+df2 = pd.merge(
+  df, 
+  df_ref, 
+  how='left', 
+  on=['ICB_ONS_Code']
+)
+
+df_processed = df2.copy()
 
 # COMMAND ----------
 
 #Upload processed data to datalake
 file_contents = io.StringIO()
 df_processed.to_csv(file_contents)
-datalake_upload(file_contents, CONNECTION_STRING, file_system, shapefile_sink_path+latestFolder, shapefile_sink_file)
+datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
+
+# COMMAND ----------
+
+# Write data from databricks to dev SQL database
+# -------------------------------------------------------------------------
+write_to_sql(df_processed, table_name, "overwrite")
