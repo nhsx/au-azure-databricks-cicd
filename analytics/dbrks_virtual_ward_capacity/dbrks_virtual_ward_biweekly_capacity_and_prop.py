@@ -126,15 +126,16 @@ df_processed
 
 # COMMAND ----------
 
+df['Date']
+
+# COMMAND ----------
+
 df_output = pd.DataFrame(columns = ['ICB_CODE', 'ICB Population)', 'Biweekly Date', 'Virtual Ward Capacity at ICB level', 'VW Capacity (per 100,000 )'])
 
 for date in df2['EXTRACT_DATE'].unique():
   current_year = pd.to_datetime(date).year
   start_date = str(current_year) + '-04-01'
   end_date = str(current_year + 1) + '-04-01'
-  print(date)
-  print(start_date)
-  print(end_date)
   #filter numerator for each financial year
   numerator = df4.loc[(df4['Biweekly Date'] >= start_date) & (df4['Biweekly Date'] < end_date)]
   denominator = df2.loc[df2['EXTRACT_DATE'] == date]
@@ -149,6 +150,7 @@ for date in df2['EXTRACT_DATE'].unique():
   df_processed = df_join_2.copy()
   df_output = pd.concat([df_output, df_processed], axis = 0, ignore_index=True)
 df_processed = df_output
+df_processed['Biweekly Date'] = df_processed['Biweekly Date'].dt.strftime('%Y-%m-%d')
 
 # COMMAND ----------
 
