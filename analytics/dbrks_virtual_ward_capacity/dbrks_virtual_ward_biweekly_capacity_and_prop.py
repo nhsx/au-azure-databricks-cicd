@@ -130,7 +130,7 @@ df['Date']
 
 # COMMAND ----------
 
-df_output = pd.DataFrame(columns = ['ICB_CODE', 'ICB Population)', 'Biweekly Date', 'Virtual Ward Capacity at ICB level', 'VW Capacity (per 100,000 )'])
+df_output = pd.DataFrame(columns = ['ICB_CODE', 'STP Population)', 'Run Date', 'Virtual Ward Capacity at stp level', 'VW Capacity (per 100,000 )'])
 
 for date in df2['EXTRACT_DATE'].unique():
   current_year = pd.to_datetime(date).year
@@ -154,15 +154,15 @@ df_processed['Run Date'] = df_processed['Run Date'].dt.strftime('%Y-%m-%d')
 
 # COMMAND ----------
 
-display(df_processed)
-
-# COMMAND ----------
-
 # Upload processed data to datalake
 # -------------------------------------------------------------------------
 file_contents = io.StringIO()
 df_processed.to_csv(file_contents)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
+
+# COMMAND ----------
+
+display(df_processed)
 
 # COMMAND ----------
 
