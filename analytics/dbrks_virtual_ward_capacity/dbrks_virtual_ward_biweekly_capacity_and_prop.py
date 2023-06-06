@@ -142,15 +142,15 @@ for date in df2['EXTRACT_DATE'].unique():
 
   #Joined data processing
   df_join = denominator.merge(numerator, how ='outer', on = 'ORG_CODE')
-  df_join_1 = df_join.drop(columns = ['EXTRACT_DATE']).rename(columns = {'Biweekly Date':'Biweekly Date','ORG_CODE': 'ICB_CODE','NUMBER_OF_PATIENTS': 'ICB Population)','Virtual Ward Capacity':'Virtual Ward Capacity at ICB level'})
-  df_join_1['VW Capacity (per 100,000 )'] = df_join_1["Virtual Ward Capacity at ICB level"]/(df_join_1['ICB Population)']/100000)
+  df_join_1 = df_join.drop(columns = ['EXTRACT_DATE']).rename(columns = {'Biweekly Date':'Run Date','ORG_CODE': 'ICB_CODE','NUMBER_OF_PATIENTS': 'STP Population)','Virtual Ward Capacity':'Virtual Ward Capacity at stp level'})
+  df_join_1['VW Capacity (per 100,000 )'] = df_join_1["Virtual Ward Capacity at stp level"]/(df_join_1['STP Population)']/100000)
   df_join_2 = df_join_1.round(2)
   df_join_2.index.name = "Unique ID"
-  df_join_2["Biweekly Date"] = pd.to_datetime(df_join_2["Biweekly Date"])
+  df_join_2["Run Date"] = pd.to_datetime(df_join_2["Run Date"])
   df_processed = df_join_2.copy()
   df_output = pd.concat([df_output, df_processed], axis = 0, ignore_index=True)
 df_processed = df_output
-df_processed['Biweekly Date'] = df_processed['Biweekly Date'].dt.strftime('%Y-%m-%d')
+df_processed['Run Date'] = df_processed['Run Date'].dt.strftime('%Y-%m-%d')
 
 # COMMAND ----------
 
