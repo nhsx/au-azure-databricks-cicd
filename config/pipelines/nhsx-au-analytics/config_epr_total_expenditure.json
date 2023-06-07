@@ -50,16 +50,21 @@
 					    "databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_epr_total_expenditure/dbrks_epr_total_expenditure_month_count"
 				    }
 				
-		],
+		]
+	    },
     
-	"validation": [
+	    "staging": [
 	    {
-		"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrs_epr_validation/dbrks_epr_total_expenditure_validation",
-		"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
-	}
-	]
-	}
+		"metric": "epr_total_expenditure_month_count",
+		"sink_table": "epr_total_expenditure_month_count"
+	    }
+			],
     
-	
-}
-}
+			"validation": [
+				{
+				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrs_epr_validation/dbrks_epr_total_expenditure_validation",
+				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
+			}
+			]
+	}
+    }
