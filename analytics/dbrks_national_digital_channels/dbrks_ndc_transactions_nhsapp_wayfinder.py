@@ -8,14 +8,14 @@
 # -------------------------------------------------------------------------
 
 """
-FILE:           dbrks_ndc_transactions_nhsapp_records_information_results_month_count.py
+FILE:           dbrks_ndc_transactions_nhsapp_wayfinder.py
 DESCRIPTION:
-                Databricks notebook with processing code for the NHSX Analyticus unit metric M233: Records, Information and Results views via NHS App
+                Databricks notebook with processing code for the NHSX Analyticus unit metric M272: Wayfinder
 USAGE:
                 ...
 CONTRIBUTORS:   Mattia Ficarelli, Kabir Khan, Chris Todd
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        14th June 2022
+CREATED:        7th June 2023
 VERSION:        0.0.3
 """
 
