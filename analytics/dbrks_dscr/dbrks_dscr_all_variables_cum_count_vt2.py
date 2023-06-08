@@ -124,9 +124,13 @@ df_3.groupby(["monthly_date"]).count() # sense check
 df_join = df_3.merge(df_ref_2, how ='outer', on = 'CCG_ONS_Code')
 df_join.index.name = "Unique ID"
 df_join = df_join.round(4)
-df_join["monthly_date"] = pd.to_datetime(df_join["monthly_date"])
+df_join["monthly_date"] = pd.to_datetime(df_join["monthly_date"],format="%d/%m/%Y") # MF230608 . added format otherwise it was interpreting the day as month and vice-versa
 df_join = df_join[df_join["Location_Inspection_Directorate"]=="Adult social care"] # MF230608. keep only Adult Social Care Primary Inspection Directorate
 
+
+# COMMAND ----------
+
+#df_join["monthly_date"][259167].month #df_3["monthly_date"]
 
 # COMMAND ----------
 
@@ -205,6 +209,10 @@ df_tab_cumtrend = df_tab_cumtrend[(df_tab_cumtrend["PIR submission date"]<=df_ta
 
 # COMMAND ----------
 
+df_tab_cumtrend.groupby(["eo_monthly_date","monthly_date"]).count()
+
+# COMMAND ----------
+
 df_tab_cumtrend_sum = df_tab_cumtrend.copy()
 
 # COMMAND ----------
@@ -235,7 +243,8 @@ df_tab_cumtrend_sum["PIR_todate"] = np.select(conditions,PIRstatus)
 
 # COMMAND ----------
 
-df_tab_cumtrend_sum.groupby(["eo_monthly_date","PIR_todate"]).count()
+#df_tab_cumtrend_sum.groupby(["eo_monthly_date","PIR_todate"]).count()
+df_tab_cumtrend_sum.groupby(["eo_monthly_date"]).count()
 
 # COMMAND ----------
 
