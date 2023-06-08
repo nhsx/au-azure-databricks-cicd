@@ -61,7 +61,7 @@
     
 			"validation": [
 				{
-				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/validation/dbrks_virtual_ward_capacity_validation/dbrks_virtual_ward_capacity_validation",
+				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_virtual_ward_capacity_validation/dbrks_virtual_ward_capacity_validation",
 				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
 			}
 			]
