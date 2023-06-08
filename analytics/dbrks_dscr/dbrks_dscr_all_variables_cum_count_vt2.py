@@ -186,65 +186,9 @@ spark_df.createOrReplaceTempView("dscr_table")
 
 # COMMAND ----------
 
-# Tab02 - Create spark data frame and view
-spark_df2 = spark.createDataFrame(df_tab02_patch)
-spark_df2.createOrReplaceTempView("dscr_table2")
-
-# COMMAND ----------
-
-df_tab02_patch
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC -- There are duplication submission in the data for example, location_id 1-10000813008 appeared five time for PIR submission date 2022-06-21, this because data downloaded is appended to the previous months data
-# MAGIC -- Use the query below to see the duplicates
-# MAGIC
-# MAGIC --with dup as (
-# MAGIC --  select *
-# MAGIC --  ,row_number() over (partition by Location_id, `PIR submission date` order by location_id, `PIR submission date`) dup_count
-# MAGIC --  from dscr_table
-# MAGIC --)select * from dup
-# MAGIC
-# MAGIC create or replace temporary view temp_view_t as 
-# MAGIC
-# MAGIC with dscr_all as (
-# MAGIC   select *
-# MAGIC   ,row_number() over (partition by Location_id, `PIR submission date` order by location_id, `PIR submission date`) rn
-# MAGIC   from dscr_table
-# MAGIC ),
-# MAGIC
-# MAGIC dscr as (
-# MAGIC   select * 
-# MAGIC   from dscr_all 
-# MAGIC   where rn = 1        -- removed duplicates before getting unique submission
-# MAGIC   and to_timestamp(`PIR submission date`) < last_day(monthly_date)
-# MAGIC )
-# MAGIC
-# MAGIC select *
-# MAGIC   ,sum(yes) over(partition by Location_Id order by monthly_date) as cum_yes 
-# MAGIC   ,sum(no) over(partition by Location_Id order by monthly_date) as cum_no
-# MAGIC from dscr
-
-# COMMAND ----------
-
-spark_df = spark.sql("select * from temp_view_t")
-dscr_df = spark_df.toPandas()
-
-# COMMAND ----------
-
-# Pandas dataframe containing data
-#dscr_df # 10372 rows
-
-# COMMAND ----------
-
 # MAGIC %md
 # MAGIC # Similar for Table02_patch
 # MAGIC so that we have a) the position for each CQC month database of locations; b) we know the response rate (i.e. those with neither 'yes' nor 'no')
-
-# COMMAND ----------
-
-df_tab02_patch
 
 # COMMAND ----------
 
@@ -254,7 +198,7 @@ from dateutil.relativedelta import relativedelta
 # COMMAND ----------
 
 df_tab_cumtrend = df_tab02_patch.copy()
-df_tab_cumtrend["eo_monthly_date"] = df_tab_cumtrend["monthly_date"] # IMPLEMENT ME
+df_tab_cumtrend["eo_monthly_date"] = df_tab_cumtrend["monthly_date"]+ pd.offsets.MonthEnd(n=0) # IMPLEMENT ME
 df_tab_cumtrend = df_tab_cumtrend[(df_tab_cumtrend["PIR submission date"]<=df_tab_cumtrend["eo_monthly_date"] ) | (df_tab02_patch["PIR submission date"].isna())] # keep only submissions prior to end of month
 #df_tab_cumtrend["PIR submission date"].isna().sum()
 #df_tab02_patch["PIR submission date"].isna().sum()
@@ -262,10 +206,6 @@ df_tab_cumtrend = df_tab_cumtrend[(df_tab_cumtrend["PIR submission date"]<=df_ta
 # COMMAND ----------
 
 df_tab_cumtrend_sum = df_tab_cumtrend.copy()
-
-# COMMAND ----------
-
-#df_tab_cumtrend_sum
 
 # COMMAND ----------
 
@@ -295,20 +235,7 @@ df_tab_cumtrend_sum["PIR_todate"] = np.select(conditions,PIRstatus)
 
 # COMMAND ----------
 
-df_tab_cumtrend_sum[(df_tab_cumtrend_sum["YEStodate"]<1)&(df_tab_cumtrend_sum["NOtodate"]>=1)].head(20)
-df_tab_cumtrend_sum
-
-# COMMAND ----------
-
-checkcut = df_tab_cumtrend_sum[df_tab_cumtrend_sum["eo_monthly_date"]==max(df_tab_cumtrend_sum["eo_monthly_date"])].copy()
-
-# COMMAND ----------
-
-checkcut
-
-# COMMAND ----------
-
-checkcut.groupby("PIR_todate").count()
+df_tab_cumtrend_sum.groupby(["eo_monthly_date","PIR_todate"]).count()
 
 # COMMAND ----------
 
