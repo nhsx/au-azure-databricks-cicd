@@ -68,6 +68,11 @@ pir_file_name_config = "config_digitalrecords_socialcare_dbrks.json"
 pir_config_JSON = datalake_download(CONNECTION_STRING, file_system_config, pir_file_path_config, pir_file_name_config)
 pir_config_JSON = json.loads(io.BytesIO(pir_config_JSON).read())
 
+# Load Home Care Service User config file
+# -------------------------------------------------------------------------
+hcsu_file_name_config = "config_home_care_user_service.json"
+hcsu_config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, hcsu_file_name_config)
+hcsu_config_JSON = json.loads(io.BytesIO(hcsu_config_JSON).read())
 
 # COMMAND ----------
 
@@ -86,6 +91,11 @@ table_name = config_JSON['pipeline']["staging"][2]['sink_table']
 # -------------------------------------------------------------------------
 pir_source_path = pir_config_JSON['pipeline']['project']['source_path']
 pir_source_file = pir_config_JSON['pipeline']['project']['source_file']
+
+#Get parameters from hcsu JSON config
+# -------------------------------------------------------------------------
+hcsu_source_path = hcsu_config_JSON['pipeline']['proc']['sink_path']
+hcsu_source_file = hcsu_config_JSON['pipeline']['proc']['sink_file']
 
 # COMMAND ----------
 
@@ -108,6 +118,16 @@ df_ref = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 df_ref_1 = df_ref[['CCG_ONS_Code','CCG_ODS_Code','CCG_Name','ICB_ONS_Code','ICB_Code','ICB_Name','Region_Code','Region_Name','Last_Refreshed']]
 df_ref_2 = df_ref_1[~df_ref_1.duplicated(['CCG_ONS_Code', 'CCG_ODS_Code','CCG_Name','ICB_ONS_Code','ICB_Code','ICB_Name','Region_Code','Region_Name','Last_Refreshed'])].reset_index(drop = True)
 
+# HCSU Data Processing 
+# -------------------------------------------------------------------------
+latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, hcsu_source_path)
+file = datalake_download(CONNECTION_STRING, file_system, hcsu_source_path+latestFolder, hcsu_source_file)
+df_hcsu= pd.read_parquet(io.BytesIO(file), engine="pyarrow")
+
+# COMMAND ----------
+
+datalake_latestFolder(CONNECTION_STRING, file_system, 'proc/sources/digital_socialcare/manual_upload/home_care_user_service/historical')
+df_hcsu.rename(columns={'CqcId': 'Location_Id'}, inplace=True)
 
 # COMMAND ----------
 
@@ -120,7 +140,7 @@ df_3.groupby(["Location_Id","monthly_date"],  as_index=False).agg({"Provider_ID"
 df_join = df_3.merge(df_ref_2, how ='outer', on = 'CCG_ONS_Code')
 df_join.index.name = "Unique ID"
 df_join = df_join.round(4)
-df_join["monthly_date"] = pd.to_datetime(df_join["monthly_date"])
+df_join["monthly_date"] = pd.to_datetime(df_join["monthly_date"],format="%d/%m/%Y")
 df_join=df_join[df_join["monthly_date"]==max(df_join["monthly_date"])].reset_index() # MF: keep only latest months' CQC?
 df_join = df_join[df_join["Location_Inspection_Directorate"]=="Adult social care"] # keep only Adult Social Care Primary Inspection Directorate
 #df_processed = df_join.copy()
@@ -182,11 +202,26 @@ df_join_keep = df_join[df_join["Last_Refreshed"]==max(df_join["Last_Refreshed"])
 
 # COMMAND ----------
 
-df_join.head()
+df_join_keep.head()
 
 # COMMAND ----------
 
-df_pir_keep[df_pir_keep["PIRm_n"]>1].sort_values("Location_Id")
+# Filtering HCSU data only for January 2023
+january_df_hcsu =  df_hcsu.loc[(df_hcsu['Date'] == '2023-01-31')]
+print("Lenth of DF after filtering only for Janury Data:", len(january_df_hcsu))
+january_df_hcsu = january_df_hcsu.loc[(january_df_hcsu['IsActive'] == 1) & (january_df_hcsu['IsDomcare'] == 1)]
+print("Lenth of DF after filtering only for IsActive - 1 and IsDomcare - 1:", len(january_df_hcsu))
+january_df_hcsu = january_df_hcsu.dropna()
+
+# COMMAND ----------
+
+# Merging data from Home Care Service User File
+df_merged_hcsu_df_join_keep = pd.merge(df_join_keep, january_df_hcsu, on='Location_Id',how="left")
+df_merged_hcsu_df_join_keep = df_merged_hcsu_df_join_keep.drop(['Date', 'IsActive', 'IsDomcare'], axis = 1)
+
+# COMMAND ----------
+
+#df_pir_keep[df_pir_keep["PIRm_n"]>1].sort_values("Location_Id")
 
 # COMMAND ----------
 
@@ -213,8 +248,8 @@ df_pir_keep_unit2 = df_pir_keep_unit.copy()
 
 # Left join PIR to reference info (since it means to collate)
 
-df_tab03_patch = df_join_keep.merge(df_pir_keep_unit2, how ='left', on ="Location_Id")
-
+df_tab03_patch = df_merged_hcsu_df_join_keep.merge(df_pir_keep_unit2, how ='left', on ="Location_Id")
+df_tab03_patch .rename(columns={"ServiceUserCount":"Dom_ServiceUserCount"},inplace=True)
 
 # COMMAND ----------
 
@@ -225,7 +260,7 @@ df_tab03_patch["run_date"] = df_join_keep["monthly_date"]
 
 # COMMAND ----------
 
-df_tab03_patch
+df_tab03_patch.head()
 
 # COMMAND ----------
 
