@@ -78,9 +78,9 @@ source_file = config_JSON['pipeline']['project']['source_file']
 reference_path = config_JSON['pipeline']['project']['reference_source_path']
 reference_file = config_JSON['pipeline']['project']['reference_source_file']
 file_system =  dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
-sink_path = config_JSON['pipeline']['project']['databricks'][0]['sink_path']
-sink_file = config_JSON['pipeline']['project']['databricks'][0]['sink_file']
-table_name = config_JSON['pipeline']["staging"][0]['sink_table']
+sink_path = config_JSON['pipeline']['project']['databricks'][3]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][3]['sink_file']
+table_name = config_JSON['pipeline']["staging"][3]['sink_table']
 
 #Get parameters from PIR JSON config
 # -------------------------------------------------------------------------
@@ -89,10 +89,13 @@ pir_source_file = pir_config_JSON['pipeline']['project']['source_file']
 
 # COMMAND ----------
 
+current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
+
+# COMMAND ----------
+
 # dscr data Processing
 # -------------------------------------------------------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
-print(latestFolder)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 df_1 = df[['Location ID', 'Dormant (Y/N)','Care home?','Location Inspection Directorate','Location Primary Inspection Category','Location Local Authority','Location ONSPD CCG Code','Location ONSPD CCG','Provider ID','Provider Inspection Directorate','Provider Primary Inspection Category','Provider Postal Code', 'run_date']]
@@ -127,10 +130,6 @@ df_join = df_join.round(4)
 df_join["monthly_date"] = pd.to_datetime(df_join["monthly_date"],format="%d/%m/%Y") # MF230608 . added format otherwise it was interpreting the day as month and vice-versa
 df_join = df_join[df_join["Location_Inspection_Directorate"]=="Adult social care"] # MF230608. keep only Adult Social Care Primary Inspection Directorate
 
-
-# COMMAND ----------
-
-#df_join["monthly_date"][259167].month #df_3["monthly_date"]
 
 # COMMAND ----------
 
@@ -183,13 +182,6 @@ df_tab02_patch["no"] = np.where(df_tab02_patch['Use a Digital Social Care Record
 
 # COMMAND ----------
 
-# Create spark data frame and view
-
-spark_df = spark.createDataFrame(df_tab01_sampler)
-spark_df.createOrReplaceTempView("dscr_table")
-
-# COMMAND ----------
-
 # MAGIC %md
 # MAGIC # Similar for Table02_patch
 # MAGIC so that we have a) the position for each CQC month database of locations; b) we know the response rate (i.e. those with neither 'yes' nor 'no')
@@ -204,8 +196,7 @@ from dateutil.relativedelta import relativedelta
 df_tab_cumtrend = df_tab02_patch.copy()
 df_tab_cumtrend["eo_monthly_date"] = df_tab_cumtrend["monthly_date"]+ pd.offsets.MonthEnd(n=0) # IMPLEMENT ME
 df_tab_cumtrend = df_tab_cumtrend[(df_tab_cumtrend["PIR submission date"]<=df_tab_cumtrend["eo_monthly_date"] ) | (df_tab02_patch["PIR submission date"].isna())] # keep only submissions prior to end of month
-#df_tab_cumtrend["PIR submission date"].isna().sum()
-#df_tab02_patch["PIR submission date"].isna().sum()
+
 
 # COMMAND ----------
 
@@ -239,7 +230,6 @@ conditions = [ (df_tab_cumtrend_sum["YEStodate"]>=1),
 PIRstatus = ["Yes","No","None"]
 df_tab_cumtrend_sum["PIR_todate"] = np.select(conditions,PIRstatus)
 
-#df_tab_cumtrend_sum["PIR_todate"]
 
 # COMMAND ----------
 
@@ -261,13 +251,13 @@ max(df_pir["PIR submission date"])  # in dev only data till September 2022 is he
 
 # Upload processed data to datalake
 # -------------------------------------------------------------------------
-#current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
-#file_contents = io.StringIO()
-#df_tab_cumtrend_sum.to_csv(file_contents)
-#datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, sink_file)
+
+file_contents = io.StringIO()
+df_tab_cumtrend_sum.to_csv(file_contents)
+datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, sink_file)
 
 # COMMAND ----------
 
 # Write metrics to database
 # -------------------------------------------------------------------------
-#write_to_sql(df_tab_cumtrend_sum, table_name, "overwrite")
+write_to_sql(df_tab_cumtrend_sum, table_name, "overwrite")
