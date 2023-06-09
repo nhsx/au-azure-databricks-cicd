@@ -76,6 +76,12 @@
 					"sink_path": "proc/projects/nhsx_slt_analytics/digital_socialcare/dscr/dbrks_dscr_all_variables_collated_granular_response_count/",
 					"sink_file": "dbrks_dscr_all_variables_collated_granular_response_count.csv",
 					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dscr/dbrks_dscr_all_variables_collated_granular_response_count"
+				},
+				{
+					"metric": "dbrks_dscr_all_variables_cum_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/digital_socialcare/dscr/dbrks_dscr_all_variables_cum_count/",
+					"sink_file": "dbrks_dscr_all_variables_cum_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dscr/dbrks_dscr_all_variables_cum_count"
 				}
 				
 			]
@@ -92,6 +98,10 @@
 			{
 				"metric": "dscr_all_variables_collated_granular_response_count",
 				"sink_table": "dscr_all_variables_collated_granular_response_count"
+			},
+			{
+				"metric": "dscr_all_variables_cum_count",
+				"sink_table": "dscr_all_variables_cum_count"
 			}
 		],
 		"validation": [
