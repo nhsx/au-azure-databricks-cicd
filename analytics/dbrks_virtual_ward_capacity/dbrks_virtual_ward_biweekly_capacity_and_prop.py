@@ -14,7 +14,7 @@ DESCRIPTION:
                 Databricks notebook with processing code for the NHSX dfpc analytics metric: virtual wards biweek capacity and the capacity (per 100,000) count
 USAGE:
                 ...
-CONTRIBUTORS:   Everistus Oputa
+CONTRIBUTORS:   Everistus Oputa and Faaiz Mahamadu
 CONTACT:        nhsx.data@england.nhs.uk
 CREATED:        31 May 2023
 VERSION:        0.0.1
