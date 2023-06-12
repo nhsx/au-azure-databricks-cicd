@@ -150,15 +150,17 @@ for date in df2['EXTRACT_DATE'].unique():
   df_processed = df_join_2.copy()
   df_output = pd.concat([df_output, df_processed], axis = 0, ignore_index=True)
 df_processed = df_output
-df_processed['Run Date'] = df_processed['Run Date'].dt.strftime('%Y-%m-%d')
+#df_processed['Run Date'] = df_processed['Run Date'].dt.strftime('%Y-%m-%d')
 
 # COMMAND ----------
 
 # Upload processed data to datalake
 # -------------------------------------------------------------------------
 file_contents = io.StringIO()
+current_date = datetime.now().strftime('%Y-%m-%d') + '/'
 df_processed.to_csv(file_contents)
-datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
+datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date, sink_file)
+
 
 # COMMAND ----------
 
