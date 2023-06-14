@@ -89,7 +89,7 @@ file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolde
 df = pd.read_csv(io.BytesIO(file))
 #df1 = df[["ODS", "Organisation", "DateCreated","Report_End _Date"]]
 df1 = df.copy()
-df1 = df1.rename(columns = {"Date": "Date","Revenue_(FD prog) '000": "Revenue '000","Capital_(FD prog) '000": "Capital'000","Cumulative total_(formula) '000": "Cumulative total '000"})
+df1 = df1.rename(columns = {"Month starting (M-D-Y format)": "Date","Cumulative in year_(FD prog) '000": "Cumulative in year '000","Cumulative total_(formula) '000": "Cumulative total '000"})
 df1['Date'] = pd.to_datetime(df1['Date'])
 df1.index.name = "Unique ID"
 df_processed = df1.copy()
