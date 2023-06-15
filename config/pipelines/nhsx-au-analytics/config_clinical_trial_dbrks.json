@@ -7,12 +7,12 @@
 		    "topic": "Clinical Trial",
 		    "metrics": [
 			{
-			    "id": "TBD",
+			    "id": "M384a",
 			    "full_name": "Volume of Trials Supported by NHS DigiTrials",
 			    "short_name": "trial_volume_month_count"
 			},
 			{
-				"id": "TBD",
+				"id": "M384b",
 				"full_name": "Number of Researchers Granted Access to NSDE",
 				"short_name": "number_of_researcher_month_count"
 			}

@@ -7,7 +7,7 @@
 		    "topic": "EPR Total Expenditure",
 		    "metrics": [
 			{
-			    "id": "TBD",
+			    "id": "M390b",
 			    "full_name": "(Electronice Patient Record Total Expenditure",
 			    "short_name": "epr_total_expenditure_month_count"
 			}

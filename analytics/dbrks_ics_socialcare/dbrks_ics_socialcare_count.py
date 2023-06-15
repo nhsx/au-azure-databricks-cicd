@@ -10,7 +10,7 @@
 """
 FILE:           dbrks_ics_socialcare_coun.py
 DESCRIPTION:
-                Databricks notebook with processing code for the ics_socialcare_count (TBD)
+                Databricks notebook with processing code for the ics_socialcare_count
 USAGE:
                 ...
 CONTRIBUTORS:   Everistus Oputa
