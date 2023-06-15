@@ -7,15 +7,10 @@
 				"topic": "Electronic Patient Record (EPR)",
 				"metrics": [
 					{
-						"id": "TBD",
+						"id": "M390a",
 						"full_name": "(Electronice Patient Record Bi Weekly Data)",
 						"short_name": "epr_data_biweekly_count"
-					},
-					{
-						"id": "TBD",
-						"full_name": "TBD)",
-						"short_name": "TBD)"
-					}
+					}			
 					
 				]
 			}
