@@ -8,7 +8,7 @@
 """
 FILE:          dbrks_e_rs_api_month_count.py
 DESCRIPTION:
-                Databricks notebook with processing code for DCT Metrics: ERS Api Month Count (M387)
+                Databricks notebook with processing code for DCT Metrics: ERS Api Month Count (M387a)
 USAGE:
                 ...
 CONTRIBUTORS:   Everistus Oputa
@@ -105,14 +105,6 @@ for i in list_of_ODS:
 
 df_processed['ODS'] = new_ODS_list
 
-# latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
-# file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
-# df = pd.read_csv(io.BytesIO(file),encoding='ISO-8859-1')
-
-
-# latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
-# file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
-# df = pd.read_csv(io.BytesIO(file))
 
 # COMMAND ----------
 

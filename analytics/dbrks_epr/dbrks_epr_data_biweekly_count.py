@@ -8,7 +8,7 @@
 """
 FILE:          dbrks_epr_data_biweekly_count.py
 DESCRIPTION:
-                Databricks notebook with processing code for DCT Metrics: FILE: Epr Data Biweekly Count
+                Databricks notebook with processing code for DCT Metrics: FILE: Epr Data Biweekly Count (M390a)
 (M387)
 USAGE:
                 ...

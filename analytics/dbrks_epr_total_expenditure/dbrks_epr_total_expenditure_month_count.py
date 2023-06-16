@@ -8,7 +8,7 @@
 """
 FILE:          dbrks_epr_total_expenditure_month_count.py
 DESCRIPTION:
-                Databricks notebook with processing code for DCT Metrics: Epr Total Expenditure Month Count()
+                Databricks notebook with processing code for DCT Metrics: Epr Total Expenditure Month Count(M390b)
 USAGE:
                 ...
 CONTRIBUTORS:   Everistus Oputa
