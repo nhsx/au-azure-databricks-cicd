@@ -8,7 +8,7 @@
 """
 FILE:          dbrks_trial_volume_month_count.py
 DESCRIPTION:
-                Databricks notebook with processing code for DCT Metrics: Clinical Trial Volume Month Countt()
+                Databricks notebook with processing code for DCT Metrics: Clinical Trial Volume Month Countt(M384a)
 USAGE:
                 ...
 CONTRIBUTORS:   Everistus Oputa
@@ -69,16 +69,6 @@ source_file = config_JSON['pipeline']['project']['source_file']
 sink_path = config_JSON['pipeline']['project']['databricks'][0]['sink_path']
 sink_file = config_JSON['pipeline']['project']['databricks'][0]['sink_file']
 table_name = config_JSON['pipeline']['staging'][0]['sink_table'] 
-
-# COMMAND ----------
-
-# #Denominator data ingestion and processing
-# # -------------------------------------------------------------------------
-# latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, reference_path)
-# file = datalake_download(CONNECTION_STRING, file_system,reference_path+latestFolder, reference_file)
-# df_ref = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
-# df_ref = df_ref.rename(columns = {'Organisation_Code':'ODS'})
-# df_ref = df_ref[['ODS', 'STP_Code']]
 
 # COMMAND ----------
 

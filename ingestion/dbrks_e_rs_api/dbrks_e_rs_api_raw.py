@@ -11,7 +11,7 @@
 FILE:           dbrks_e_rs_api_raw.py
 DESCRIPTION:
                 Databricks notebook with code to append and check new raw data to historical
-                data for the NHSX Analytics unit metrics within the topic ESR_API
+                data for the NHSX Analytics unit metrics within the topic ESR_API 
 USAGE:
                 ...
 CONTRIBUTORS:   Everistus OPuta

@@ -11,7 +11,7 @@
 FILE:           dbrks_virtual_ward_biweekly_capacity_and_prop.py
               
 DESCRIPTION:
-                Databricks notebook with processing code for the NHSX dfpc analytics metric: virtual wards biweek capacity and the capacity (per 100,000) count
+                Databricks notebook with processing code for the NHSX dfpc analytics metric: virtual wards biweek capacity and the capacity (per 100,000) count (M398)
 USAGE:
                 ...
 CONTRIBUTORS:   Everistus Oputa and Faaiz Mahamadu
@@ -112,16 +112,7 @@ df_ref_1 = df_ref_1.groupby(['EXTRACT_DATE','ORG_CODE'], as_index=False).sum()
 df_ref_1['EXTRACT_DATE'] = pd.to_datetime(df_ref_1['EXTRACT_DATE'], infer_datetime_format=True)
 df2 = df_ref_1[['EXTRACT_DATE','ORG_CODE','NUMBER_OF_PATIENTS']]
 '''
-#Joined data processing
-df_join = df2.merge(df4, how ='outer', on = 'ORG_CODE')
-df_join_1 = df_join.drop(columns = ['EXTRACT_DATE']).rename(columns = {'Biweekly Date':'Biweekly Date','ORG_CODE': 'ICB_CODE','NUMBER_OF_PATIENTS': 'ICB Population)','Virtual Ward Capacity':'Virtual Ward Capacity at ICB level'})
-df_join_1['VW Capacity (per 100,000 )'] = df_join_1["Virtual Ward Capacity at ICB level"]/(df_join_1['ICB Population)']/100000)
-df_join_2 = df_join_1.round(2)
-df_join_2.index.name = "Unique ID"
-df_join_2["Biweekly Date"] = pd.to_datetime(df_join_2["Biweekly Date"])
-df_processed = df_join_2.copy()
-df_processed
-'''
+
 
 
 # COMMAND ----------
