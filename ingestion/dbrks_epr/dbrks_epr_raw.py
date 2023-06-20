@@ -98,11 +98,13 @@ latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, historical_
 historical_dataset = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, historical_source_file)
 historical_dataframe = pd.read_parquet(io.BytesIO(historical_dataset), engine="pyarrow")
 
+
 # COMMAND ----------
 
 # Append new data to historical data
 # -----------------------------------------------------------------------
 date_from_new_dataframe = new_dataframe["BiWeekly_Date"].values.max()
+historical_dataframe['BiWeekly_Date'] = pd.to_datetime(historical_dataframe['BiWeekly_Date'])
 if date_from_new_dataframe != historical_dataframe['BiWeekly_Date'].values.max():
   historical_dataframe = historical_dataframe.append(new_dataframe)
   historical_dataframe = historical_dataframe.sort_values(by=['BiWeekly_Date'])
