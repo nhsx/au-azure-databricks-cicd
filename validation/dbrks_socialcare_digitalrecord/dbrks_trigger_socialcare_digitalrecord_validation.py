@@ -82,7 +82,7 @@ file_name_list = datalake_listContents(CONNECTION_STRING, file_system, new_sourc
 file_name_list = [file for file in file_name_list if '.xlsx' in file]
 for new_source_file in file_name_list:
   new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, new_source_file)
-  new_dataframe = pd.read_excel(io.BytesIO(new_dataset), sheet_name='PIR responses', engine  = 'openpyxl')
+  new_dataframe = pd.read_excel(io.BytesIO(new_dataset), sheet_name='PIR Responses', engine  = 'openpyxl')
 
 # COMMAND ----------
 
