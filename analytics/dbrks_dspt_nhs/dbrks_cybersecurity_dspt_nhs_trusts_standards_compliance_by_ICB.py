@@ -35,6 +35,7 @@ import io
 import tempfile
 from datetime import datetime
 import json
+import calendar
 
 # 3rd party:
 import pandas as pd
@@ -334,12 +335,32 @@ for folder in latest_folders:
 
   #Joined data processing
   df_join_1 = df1.rename(columns = {'STP_Code':'ICB_Code'})
-  # df_join_1["Percent of Trusts with a standards met or exceeded DSPT status"] = df_join_1["Number of Trusts with the standard status"]/df_join_1["Total number of Trusts"]
-  #df_join_1 = df_join_1.round(2)
   df_join_1.index.name = "Unique ID"
   df_join_1['Snapshot Date'] = folder
   df_processed = pd.concat([df_processed, df_join_1], ignore_index=True) 
 
+
+# COMMAND ----------
+
+today = str(datetime.today().strftime('%Y-%m-%d'))
+
+today_year = today[0:4]
+today_month = int(today[5:7])
+report_month = today_month - 1
+report_date_str = today_year + '-' + str(report_month) + '-01'
+
+report_date = datetime.strptime(report_date_str, "%Y-%m-%d")
+report_last_day = report_date.replace(day = calendar.monthrange(report_date.year, report_date.month)[1])
+
+df_processed['filter_date'] = pd.to_datetime(df_processed['Snapshot Date'], format='%Y-%m-%d')
+
+df_processed = df_processed.loc[ df_processed['filter_date'] <= report_last_day ]
+del df_processed['filter_date']
+
+print('Report daate is:')
+print(report_last_day)
+
+display(df_processed)
 
 # COMMAND ----------
 

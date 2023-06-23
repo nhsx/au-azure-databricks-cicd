@@ -35,6 +35,7 @@ import io
 import tempfile
 from datetime import datetime
 import json
+import calendar
 
 # 3rd party:
 import pandas as pd
@@ -87,8 +88,6 @@ dscr_source_file = dscr_config_JSON['pipeline']['raw']['appended_file']
 dscr_reference_path = dscr_config_JSON['pipeline']['project']['reference_source_path']
 dscr_reference_file = dscr_config_JSON['pipeline']['project']['reference_source_file']
 dscr_file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
-#dscr_sink_path = dscr_config_JSON['pipeline']['project']['databricks'][1]['sink_path']
-#dscr_sink_file = dscr_config_JSON['pipeline']['project']['databricks'][1]['sink_file']
 dscr_sink_path = dscr_config_JSON['pipeline']['project']['databricks'][1]['sink_path']
 dscr_sink_file = dscr_config_JSON['pipeline']['project']['databricks'][1]['sink_file']
 reference_path = dscr_config_JSON['pipeline']['project']['reference_source_path']
@@ -191,6 +190,27 @@ df1 = df1.rename(columns = {'size':'Total number of locations'})
 
 df_processed = df1.copy()
 df_processed['Date'] = df_processed['Date'] + '-01'
+
+
+# COMMAND ----------
+
+today = str(datetime.today().strftime('%Y-%m-%d'))
+
+today_year = today[0:4]
+today_month = int(today[5:7])
+report_month = today_month - 1
+report_date_str = today_year + '-' + str(report_month) + '-01'
+
+report_date = datetime.strptime(report_date_str, "%Y-%m-%d")
+report_last_day = report_date.replace(day = calendar.monthrange(report_date.year, report_date.month)[1])
+
+df_processed['filter_date'] = pd.to_datetime(df_processed['Date'], format='%Y-%m-%d')
+
+df_processed = df_processed.loc[ df_processed['filter_date'] <= report_last_day ]
+del df_processed['filter_date']
+
+print('Report daate is:')
+print(report_last_day)
 
 
 # COMMAND ----------
