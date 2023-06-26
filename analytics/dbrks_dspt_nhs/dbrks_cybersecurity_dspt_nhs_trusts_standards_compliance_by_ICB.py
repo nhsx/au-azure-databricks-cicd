@@ -216,28 +216,28 @@ today_month = int(today[5:7])
 report_month = today_month - 1
 report_date_str = today_year + '-' + str(report_month) + '-01'
 
-report_date = datetime.strptime(report_date_str, "%Y-%m-%d")
+report_date = datetime.strptime(report_date_str, '%Y-%m-%d')
 report_last_day = report_date.replace(day = calendar.monthrange(report_date.year, report_date.month)[1])
 
 df_processed['filter_date'] = pd.to_datetime(df_processed['Snapshot Date'], format='%Y-%m-%d')
 
-df_processed = df_processed.loc[ df_processed['filter_date'] <= report_last_day ]
-del df_processed['filter_date']
+df_out = df_processed[(df_processed['filter_date'] <= report_last_day)]
+del df_out['filter_date']
 
-print('Report daate is:')
+print('Report date is:')
 print(report_last_day)
 
-display(df_processed)
+display(df_out)
 
 # COMMAND ----------
 
 #Upload processed data to datalake
 file_contents = io.StringIO()
-df_processed.to_csv(file_contents)
+df_out.to_csv(file_contents)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+latestFolder, sink_file)
 
 # COMMAND ----------
 
 # Write data from databricks to dev SQL database
 # -------------------------------------------------------------------------
-write_to_sql(df_processed, table_name, "overwrite")
+write_to_sql(df_out, table_name, "overwrite")
