@@ -310,22 +310,25 @@ other_df = other_df[['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'O
 # COMMAND ----------
 
 # #cast all date fields to datetime format and set to 1st of the month
-# dt =lambda dt: dt.replace(day=1)
+#dt =lambda dt: dt.replace(day=1)
 
-# pcn_df['For Month'] = pd.to_datetime(pcn_df['For Month']).apply(dt)
-# stp_df['For Month'] = pd.to_datetime(stp_df['For Month']).apply(dt)
-# trust_df['For Month'] = pd.to_datetime(trust_df['For Month']).apply(dt)
+#pcn_df['For Month'] = pd.to_datetime(pcn_df['For Month']).apply(dt)
+#stp_df['For Month'] = pd.to_datetime(stp_df['For Month']).apply(dt)
+#trust_df['For Month'] = pd.to_datetime(trust_df['For Month']).apply(dt)
 
 # COMMAND ----------
 
 #Force data from folder name
-# folder_date = pd.to_datetime(latestFolder) - pd.DateOffset(months=1)
+folder_date = pd.to_datetime(latestFolder) - pd.DateOffset(months=1)
 
-# stp_df['For Month'] = folder_date
-# stp_df['Date completed'] = pd.to_datetime(stp_df['Date completed'],errors='coerce')
+stp_df['For Month'] = folder_date
+#stp_df['Date completed'] = pd.to_datetime(stp_df['Date completed'],errors='coerce')
 
-# pcn_df['For Month'] = folder_date
-# trust_df['For Month'] = folder_date
+pcn_df['For Month'] = folder_date
+trust_df['For Month'] = folder_date
+la_df['For Month'] = folder_date
+community_df['For Month'] = folder_date
+other_df['For Month'] =folder_date
 
 # COMMAND ----------
 
@@ -413,7 +416,6 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, "proc/projects/nh
 
 #Pull historical files
 #------------------------------------
-
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, historical_source_path)
 file_name_list = datalake_listContents(CONNECTION_STRING, file_system, historical_source_path+latestFolder)
 for file in file_name_list:
@@ -430,7 +432,63 @@ for file in file_name_list:
     trust_df_historic = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, file)
     trust_df_historic = pd.read_parquet(io.BytesIO(trust_df_historic), engine="pyarrow")
     trust_df_historic['For Month'] = pd.to_datetime(trust_df_historic['For Month'])
-    
+  if 'la' in file:
+    la_df_historic = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, file)
+    la_df_historic = pd.read_parquet(io.BytesIO(la_df_historic), engine="pyarrow")
+    la_df_historic['For Month'] = pd.to_datetime(la_df_historic['For Month'])
+  if 'community' in file:
+    community_df_historic = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, file)
+    community_df_historic = pd.read_parquet(io.BytesIO(community_df_historic), engine="pyarrow")
+    community_df_historic['For Month'] = pd.to_datetime(community_df_historic['For Month'])
+  if 'other' in file:
+    other_df_historic = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, file)
+    other_df_historic = pd.read_parquet(io.BytesIO(other_df_historic), engine="pyarrow")
+    other_df_historic['For Month'] = pd.to_datetime(other_df_historic['For Month'])
+
+# COMMAND ----------
+
+#CODE TO CREATE INITIAL HISTORICAL FILES
+# # PCN
+# #-----------------
+# file_contents = io.BytesIO()
+# pcn_df.to_parquet(file_contents, engine="pyarrow")
+# datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_pcn_data_month_count.parquet")
+
+# # STP
+# #-----------------
+# file_contents = io.BytesIO()
+# stp_df = stp_df.astype(str)
+# stp_df.to_parquet(file_contents, engine="pyarrow")
+# datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_stp_data_month_count.parquet")
+
+# # NHS Trust
+# #-----------------
+# file_contents = io.BytesIO()
+# trust_df.to_parquet(file_contents, engine="pyarrow")
+# datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_trust_data_month_count.parquet")
+
+# # NHS Trust
+# #-----------------
+# file_contents = io.BytesIO()
+# la_df.to_parquet(file_contents, engine="pyarrow")
+# datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_la_data_month_count.parquet")
+
+# # NHS Trust
+# #-----------------
+# file_contents = io.BytesIO()
+# community_df.to_parquet(file_contents, engine="pyarrow")
+# datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_community_data_month_count.parquet")
+
+# # NHS Trust
+# #-----------------
+# file_contents = io.BytesIO()
+# other_df = other_df.astype(str)
+# other_df.to_parquet(file_contents, engine="pyarrow")
+# datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_other_data_month_count.parquet")
+
+# COMMAND ----------
+
+other_df.dtypes
 
 # COMMAND ----------
 
@@ -498,3 +556,7 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current
 file_contents = io.BytesIO()
 trust_df_historic.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_trust_data_month_count.parquet")
+
+# COMMAND ----------
+
+
