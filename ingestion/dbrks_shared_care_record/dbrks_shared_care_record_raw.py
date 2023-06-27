@@ -488,10 +488,6 @@ for file in file_name_list:
 
 # COMMAND ----------
 
-other_df.dtypes
-
-# COMMAND ----------
-
 # Append new data to historical data
 #-----------------------------------------------------------------------
 
@@ -534,16 +530,50 @@ else:
   trust_df_historic = trust_df_historic.reset_index(drop=True)
   trust_df_historic = trust_df_historic.astype(str)
 
+#LA
+#--------------------------------------------------------------
+dates_in_historic = la_df_historic["For Month"].unique().tolist()
+dates_in_new = la_df["For Month"].unique().tolist()[0]
+
+if dates_in_new in dates_in_historic:
+  print('LA Data already exists in historical STP data')
+else:
+  la_df_historic = la_df_historic.append(la_df)
+  la_df_historic = la_df_historic.sort_values(by=['For Month'])
+  la_df_historic = la_df_historic.reset_index(drop=True)
+  la_df_historic = la_df_historic.astype(str)
+
+#COMMUNITY
+#--------------------------------------------------------------
+dates_in_historic = community_df_historic["For Month"].unique().tolist()
+dates_in_new = community_df["For Month"].unique().tolist()[0]
+
+if dates_in_new in dates_in_historic:
+  print('Trust Data already exists in historical STP data')
+else:
+  community_df_historic = community_df_historic.append(community_df)
+  community_df_historic = community_df_historic.sort_values(by=['For Month'])
+  community_df_historic = community_df_historic.reset_index(drop=True)
+  community_df_historic = community_df_historic.astype(str)
+
+#OTHER
+#--------------------------------------------------------------
+dates_in_historic = other_df_historic["For Month"].unique().tolist()
+dates_in_new = other_df["For Month"].unique().tolist()[0]
+
+if dates_in_new in dates_in_historic:
+  print('Trust Data already exists in historical STP data')
+else:
+  other_df_historic = other_df_historic.append(other_df)
+  other_df_historic = other_df_historic.sort_values(by=['For Month'])
+  other_df_historic = other_df_historic.reset_index(drop=True)
+  other_df_historic = other_df_historic.astype(str)
+
 # COMMAND ----------
 
 # Upload processed data to datalake
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.BytesIO()
-
-# PCN
-#-----------------
-pcn_df_historic.to_parquet(file_contents, engine="pyarrow")
-datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_pcn_data_month_count.parquet")
 
 # STP
 #-----------------
@@ -551,12 +581,31 @@ file_contents = io.BytesIO()
 stp_df_historic.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_stp_data_month_count.parquet")
 
-# NHS Trust
+# PCN
+#-----------------
+pcn_df_historic.to_parquet(file_contents, engine="pyarrow")
+datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_pcn_data_month_count.parquet")
+
+# Trust
 #-----------------
 file_contents = io.BytesIO()
 trust_df_historic.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_trust_data_month_count.parquet")
 
-# COMMAND ----------
+# LA
+#-----------------
+file_contents = io.BytesIO()
+la_df_historic.to_parquet(file_contents, engine="pyarrow")
+datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_la_data_month_count.parquet")
 
+# Community
+#-----------------
+file_contents = io.BytesIO()
+community_df_historic.to_parquet(file_contents, engine="pyarrow")
+datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_community_data_month_count.parquet")
 
+# Other
+#-----------------
+file_contents = io.BytesIO()
+other_df_historic.to_parquet(file_contents, engine="pyarrow")
+datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_other_data_month_count.parquet")
