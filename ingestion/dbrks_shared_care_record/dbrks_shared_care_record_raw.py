@@ -427,7 +427,7 @@ for file in file_name_list:
   if 'pcn' in file:
     pcn_df_historic = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, file)
     pcn_df_historic = pd.read_parquet(io.BytesIO(pcn_df_historic), engine="pyarrow")
-    pcn_df_historic['For Month'] = pd.to_datetime(pcn_df_historic['For Month'])
+    #pcn_df_historic['For Month'] = pd.to_datetime(pcn_df_historic['For Month'])
   if 'trust' in file:
     trust_df_historic = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, file)
     trust_df_historic = pd.read_parquet(io.BytesIO(trust_df_historic), engine="pyarrow")
@@ -450,9 +450,9 @@ for file in file_name_list:
 #CODE TO CREATE INITIAL HISTORICAL FILES
 # # PCN
 # #-----------------
-# file_contents = io.BytesIO()
-# pcn_df.to_parquet(file_contents, engine="pyarrow")
-# datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_pcn_data_month_count.parquet")
+#file_contents = io.BytesIO()
+#pcn_df.to_parquet(file_contents, engine="pyarrow")
+#datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_pcn_data_month_count.parquet")
 
 # # STP
 # #-----------------
@@ -485,6 +485,10 @@ for file in file_name_list:
 # other_df = other_df.astype(str)
 # other_df.to_parquet(file_contents, engine="pyarrow")
 # datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_other_data_month_count.parquet")
+
+# COMMAND ----------
+
+pcn_df
 
 # COMMAND ----------
 
@@ -549,7 +553,7 @@ dates_in_historic = community_df_historic["For Month"].unique().tolist()
 dates_in_new = community_df["For Month"].unique().tolist()[0]
 
 if dates_in_new in dates_in_historic:
-  print('Trust Data already exists in historical STP data')
+  print('Community Data already exists in historical STP data')
 else:
   community_df_historic = community_df_historic.append(community_df)
   community_df_historic = community_df_historic.sort_values(by=['For Month'])
@@ -562,7 +566,7 @@ dates_in_historic = other_df_historic["For Month"].unique().tolist()
 dates_in_new = other_df["For Month"].unique().tolist()[0]
 
 if dates_in_new in dates_in_historic:
-  print('Trust Data already exists in historical STP data')
+  print('Other Data already exists in historical STP data')
 else:
   other_df_historic = other_df_historic.append(other_df)
   other_df_historic = other_df_historic.sort_values(by=['For Month'])
