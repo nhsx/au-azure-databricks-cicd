@@ -112,7 +112,7 @@ directory, paths = datalake_listDirectory(CONNECTION_STRING, file_system, source
 # -------------------------------------------------------------
 
 #initialize dataframes
-stp_df = pd.DataFrame()
+icb_df = pd.DataFrame()
 trust_df = pd.DataFrame()
 pcn_df = pd.DataFrame()
 la_df = pd.DataFrame()
@@ -126,7 +126,7 @@ for filename in directory:
     #Read current file inot an iobytes object, read that object and get list of sheet names
     sheets = get_sheetnames_xlsx(io.BytesIO(file))
 
-    ### STP CALCULATIONS ###
+    ### ICB CALCULATIONS ###
     #list comprehension to get sheets with ICB in the name from list of all sheets - presumably it should only ever be 1
     sheet_name = [sheet for sheet in sheets if sheet.startswith("ICB")]
     
@@ -157,7 +157,7 @@ for filename in directory:
         )
         
         # get excel file metadata
-        ICB_code = xls_file[key]["ICB ODS code"].unique()[0]  # get stp code for all sheets
+        ICB_code = xls_file[key]["ICB ODS code"].unique()[0]  # get ICB code for all sheets
 
         ICB_name = xls_file[key]["ICB Name (if applicable)"].unique()[0]  # get ics name for all sheets
           
@@ -168,7 +168,7 @@ for filename in directory:
 
         # append results to dataframe dataframe
         
-        stp_df = stp_df.append(xls_file[key], ignore_index=True)
+        icb_df = icb_df.append(xls_file[key], ignore_index=True)
 
     ### TRUST CALCULATIONS ###
     sheet_name = [sheet for sheet in sheets if sheet.startswith("Trust")]
@@ -294,7 +294,7 @@ for filename in directory:
 
     
 # #Remove any non-required columns from final output
-stp_df= stp_df[['For Month', 'ICB ODS code', 'ICB Name (if applicable)', 'ShCR Programme Name', 'Name of ShCR System', 'Access to Advanced (EoL) Care Plans', 'Number of users with access to the ShCR', 'Number of ShCR views in the past month', 'Number of unique user ShCR views in the past month', 'Completed by (email)', 'Date completed']]
+icb_df= icb_df[['For Month', 'ICB ODS code', 'ICB Name (if applicable)', 'ShCR Programme Name', 'Name of ShCR System', 'Access to Advanced (EoL) Care Plans', 'Number of users with access to the ShCR', 'Number of ShCR views in the past month', 'Number of unique user ShCR views in the past month', 'Completed by (email)', 'Date completed']]
 
 trust_df = trust_df[['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'ODS Trust Code', 'Trust Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
 
@@ -306,6 +306,16 @@ community_df = community_df[['For Month', 'ICB ODS code', 'ICS Name (if applicab
 
 other_df = other_df[['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'ODS Other Partner Code', 'Other Partner Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
 
+#add dfs to a dictionary for easy access later
+df_dict = {
+  'icb': icb_df,
+  'trust': trust_df,
+  'pcn': pcn_df,
+  'la': la_df,
+  'community': community_df,
+  'other': other_df,
+  }
+
 
 # COMMAND ----------
 
@@ -313,78 +323,106 @@ other_df = other_df[['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'O
 #dt =lambda dt: dt.replace(day=1)
 
 #pcn_df['For Month'] = pd.to_datetime(pcn_df['For Month']).apply(dt)
-#stp_df['For Month'] = pd.to_datetime(stp_df['For Month']).apply(dt)
+#icb_df['For Month'] = pd.to_datetime(icb_df['For Month']).apply(dt)
 #trust_df['For Month'] = pd.to_datetime(trust_df['For Month']).apply(dt)
 
 # COMMAND ----------
 
-#Force data from folder name
+#Set all 'For Month' dates to folder date
+
 folder_date = pd.to_datetime(latestFolder) - pd.DateOffset(months=1)
 
-stp_df['For Month'] = folder_date
-#stp_df['Date completed'] = pd.to_datetime(stp_df['Date completed'],errors='coerce')
+for i in df_dict.keys():
+  df_dict[i]['For Month'] = folder_date
 
-pcn_df['For Month'] = folder_date
-trust_df['For Month'] = folder_date
-la_df['For Month'] = folder_date
-community_df['For Month'] = folder_date
-other_df['For Month'] =folder_date
+# #Force data from folder name
+# folder_date = pd.to_datetime(latestFolder) - pd.DateOffset(months=1)
+
+# icb_df['For Month'] = folder_date
+# #icb_df['Date completed'] = pd.to_datetime(icb_df['Date completed'],errors='coerce')
+# pcn_df['For Month'] = folder_date
+# trust_df['For Month'] = folder_date
+# la_df['For Month'] = folder_date
+# community_df['For Month'] = folder_date
+# other_df['For Month'] =folder_date
 
 # COMMAND ----------
 
-#CHECK FOR DUPLICATES
+#Check for duplicates
+
 import collections
 
-stp_dupes = [item for item, count in collections.Counter(stp_df['ICB ODS code']).items() if count > 1]
-stp_dupes = stp_df[stp_df['ICB ODS code'].isin(stp_dupes)].sort_values(by='ICB ODS code')
-stp_dupes = stp_dupes.iloc[:,[1,2,3,4,5,9]]
+dupes_dict = {}
 
-trust_dupes = [item for item, count in collections.Counter(trust_df['ODS Trust Code']).items() if count > 1]
-trust_dupes = trust_df[trust_df['ODS Trust Code'].isin(trust_dupes)].sort_values(by='ODS Trust Code')
-trust_dupes = trust_dupes.iloc[:,[1,2,4,5]]
+for i in df_dict.keys():
+  dupes = [item for item, count in collections.Counter(df_dict[i].iloc[:,1]).items() if count > 1]
+  dupes = df_dict[i][df_dict[i].iloc[:,1].isin(dupes)]
+  if i == 'icb':
+    dupes = dupes.iloc[:,[1,2,3,4,5,9]]
+  else:
+    dupes = dupes.iloc[:,[1,2,4,5]]
+  dupes_dict[i] = dupes
 
-pcn_dupes = [item for item, count in collections.Counter(pcn_df['ODS PCN Code']).items() if count > 1]
-pcn_dupes = pcn_df[pcn_df['ODS PCN Code'].isin(pcn_dupes)].sort_values(by='ODS PCN Code')
-pcn_dupes = pcn_dupes.iloc[:,[1,2,4,5]]
 
-la_dupes = [item for item, count in collections.Counter(la_df['ODS LA Code']).items() if count > 1]
-la_dupes = la_df[la_df['ODS LA Code'].isin(la_dupes)].sort_values(by='ODS LA Code')
-la_dupes = la_dupes.iloc[:,[1,2,4,5]]
+# icb_dupes = [item for item, count in collections.Counter(icb_df['ICB ODS code']).items() if count > 1]
+# icb_dupes = icb_df[icb_df['ICB ODS code'].isin(icb_dupes)].sort_values(by='ICB ODS code')
+# icb_dupes = icb_dupes.iloc[:,[1,2,3,4,5,9]]
 
-community_dupes = [item for item, count in collections.Counter(community_df['ODS Community Provider Code']).items() if count > 1]
-community_dupes = community_df[community_df['ODS Community Provider Code'].isin(community_dupes)].sort_values(by='ODS Community Provider Code')
-community_dupes = community_dupes.iloc[:,[1,2,4,5]]
+# trust_dupes = [item for item, count in collections.Counter(trust_df['ODS Trust Code']).items() if count > 1]
+# trust_dupes = trust_df[trust_df['ODS Trust Code'].isin(trust_dupes)].sort_values(by='ODS Trust Code')
+# trust_dupes = trust_dupes.iloc[:,[1,2,4,5]]
 
-other_dupes = [item for item, count in collections.Counter(other_df['ODS Other Partner Code']).items() if count > 1]
-other_dupes = other_df[other_df['ODS Other Partner Code'].isin(community_dupes)].sort_values(by='ODS Other Partner Code')
-other_dupes = other_dupes.iloc[:,[1,2,4,5]]
+# pcn_dupes = [item for item, count in collections.Counter(pcn_df['ODS PCN Code']).items() if count > 1]
+# pcn_dupes = pcn_df[pcn_df['ODS PCN Code'].isin(pcn_dupes)].sort_values(by='ODS PCN Code')
+# pcn_dupes = pcn_dupes.iloc[:,[1,2,4,5]]
+
+# la_dupes = [item for item, count in collections.Counter(la_df['ODS LA Code']).items() if count > 1]
+# la_dupes = la_df[la_df['ODS LA Code'].isin(la_dupes)].sort_values(by='ODS LA Code')
+# la_dupes = la_dupes.iloc[:,[1,2,4,5]]
+
+# community_dupes = [item for item, count in collections.Counter(community_df['ODS Community Provider Code']).items() if count > 1]
+# community_dupes = community_df[community_df['ODS Community Provider Code'].isin(community_dupes)].sort_values(by='ODS Community Provider Code')
+# community_dupes = community_dupes.iloc[:,[1,2,4,5]]
+
+# other_dupes = [item for item, count in collections.Counter(other_df['ODS Other Partner Code']).items() if count > 1]
+# other_dupes = other_df[other_df['ODS Other Partner Code'].isin(community_dupes)].sort_values(by='ODS Other Partner Code')
+# other_dupes = other_dupes.iloc[:,[1,2,4,5]]
 
 # COMMAND ----------
 
-##Calculate aggregate numbers for Trusts
-#------------------------------------
-trust_count_df = trust_df.groupby('ICS Name (if applicable)').agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
-trust_count_df['Percent'] = trust_count_df['Connected']/trust_count_df['Total']
+#calculate aggregate numbers for all except ICB
 
-# ##Calculate aggregate numbers for PCNs
-# #------------------------------------
-pcn_count_df = pcn_df.groupby('ICS Name (if applicable)').agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
-pcn_count_df['Percent'] = pcn_count_df['Connected']/pcn_count_df['Total']
+count_dict = {}
 
-# ##Calculate aggregate numbers for LAs
-# #------------------------------------
-la_count_df = la_df.groupby('ICS Name (if applicable)').agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
-la_count_df['Percent'] = la_count_df['Connected']/la_count_df['Total']
+for i in list(df_dict.keys())[1:]:
+  count = df_dict[i].groupby(df_dict[i].iloc[:,2]).agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
+  count['Percent'] = count['Connected']/count['Total']
+  count_dict[i] = count
 
-# ##Calculate aggregate numbers for Community Providers
+# ##Calculate aggregate numbers for Trusts
 # #------------------------------------
-community_count_df = community_df.groupby('ICS Name (if applicable)').agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
-community_count_df['Percent'] = community_count_df['Connected']/community_count_df['Total']
+# trust_count_df = trust_df.groupby('ICS Name (if applicable)').agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
+# trust_count_df['Percent'] = trust_count_df['Connected']/trust_count_df['Total']
 
-# ##Calculate aggregate numbers for Other
-# #------------------------------------
-other_count_df = other_df.groupby('ICS Name (if applicable)').agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
-other_count_df['Percent'] = other_count_df['Connected']/other_count_df['Total']
+# # ##Calculate aggregate numbers for PCNs
+# # #------------------------------------
+# pcn_count_df = pcn_df.groupby('ICS Name (if applicable)').agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
+# pcn_count_df['Percent'] = pcn_count_df['Connected']/pcn_count_df['Total']
+
+# # ##Calculate aggregate numbers for LAs
+# # #------------------------------------
+# la_count_df = la_df.groupby('ICS Name (if applicable)').agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
+# la_count_df['Percent'] = la_count_df['Connected']/la_count_df['Total']
+
+# # ##Calculate aggregate numbers for Community Providers
+# # #------------------------------------
+# community_count_df = community_df.groupby('ICS Name (if applicable)').agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
+# community_count_df['Percent'] = community_count_df['Connected']/community_count_df['Total']
+
+# # ##Calculate aggregate numbers for Other
+# # #------------------------------------
+# other_count_df = other_df.groupby('ICS Name (if applicable)').agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
+# other_count_df['Percent'] = other_count_df['Connected']/other_count_df['Total']
 
 # COMMAND ----------
 
@@ -392,9 +430,9 @@ other_count_df['Percent'] = other_count_df['Connected']/other_count_df['Total']
 #Write pages to Excel file in iobytes
 #--------------------------------------------------
 
-files = [stp_df, stp_dupes, trust_df, trust_count_df, trust_dupes, pcn_df, pcn_count_df, pcn_dupes, la_df, la_count_df, la_dupes, community_df, community_count_df, community_dupes, other_df, other_count_df, other_dupes]
+files = [icb_df, icb_dupes, trust_df, trust_count_df, trust_dupes, pcn_df, pcn_count_df, pcn_dupes, la_df, la_count_df, la_dupes, community_df, community_count_df, community_dupes, other_df, other_count_df, other_dupes]
 
-sheets = ['STP', 'STP dupes', 'Trust', 'Trust Count', 'Trust dupes', 'PCN', 'PCN Count', 'PCN dupes', 'LA', 'LA Count', 'LA dupes', 'Community', 'Community Count', 'Community dupes', 'Other', 'Other Count', 'Other dupes']
+sheets = ['ICB', 'ICB dupes', 'Trust', 'Trust Count', 'Trust dupes', 'PCN', 'PCN Count', 'PCN dupes', 'LA', 'LA Count', 'LA dupes', 'Community', 'Community Count', 'Community dupes', 'Other', 'Other Count', 'Other dupes']
 
 excel_sheet = io.BytesIO()
 
@@ -419,15 +457,15 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, "proc/projects/nh
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, historical_source_path)
 file_name_list = datalake_listContents(CONNECTION_STRING, file_system, historical_source_path+latestFolder)
 for file in file_name_list:
-  if 'stp' in file:
-    stp_df_historic = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, file)
-    stp_df_historic = pd.read_parquet(io.BytesIO(stp_df_historic), engine="pyarrow")
-    stp_df_historic['For Month'] = pd.to_datetime(stp_df_historic['For Month'])
-    stp_df_historic['Date completed'] = pd.to_datetime(stp_df_historic['Date completed'],errors='coerce')
+  if 'icb' in file:
+    icb_df_historic = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, file)
+    icb_df_historic = pd.read_parquet(io.BytesIO(icb_df_historic), engine="pyarrow")
+    icb_df_historic['For Month'] = pd.to_datetime(icb_df_historic['For Month'])
+    icb_df_historic['Date completed'] = pd.to_datetime(icb_df_historic['Date completed'],errors='coerce')
   if 'pcn' in file:
     pcn_df_historic = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, file)
     pcn_df_historic = pd.read_parquet(io.BytesIO(pcn_df_historic), engine="pyarrow")
-    #pcn_df_historic['For Month'] = pd.to_datetime(pcn_df_historic['For Month'])
+    pcn_df_historic['For Month'] = pd.to_datetime(pcn_df_historic['For Month'])
   if 'trust' in file:
     trust_df_historic = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, file)
     trust_df_historic = pd.read_parquet(io.BytesIO(trust_df_historic), engine="pyarrow")
@@ -454,12 +492,12 @@ for file in file_name_list:
 #pcn_df.to_parquet(file_contents, engine="pyarrow")
 #datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_pcn_data_month_count.parquet")
 
-# # STP
+# # ICB
 # #-----------------
 # file_contents = io.BytesIO()
-# stp_df = stp_df.astype(str)
-# stp_df.to_parquet(file_contents, engine="pyarrow")
-# datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_stp_data_month_count.parquet")
+# icb_df = icb_df.astype(str)
+# icb_df.to_parquet(file_contents, engine="pyarrow")
+# datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_icb_data_month_count.parquet")
 
 # # NHS Trust
 # #-----------------
@@ -488,90 +526,135 @@ for file in file_name_list:
 
 # COMMAND ----------
 
-pcn_df
+icb_df
+
+# COMMAND ----------
+
+icb_df.name = "ICB"
+pcn_df.name = "PCN"
+trust_df.name = "Trust"
+la_df.name = "LA"
+community_df.name = "Community"
+other_df.name =  "Other"
+
+icb_df_historic.name = "ICB historic"
+pcn_df_historic.name = "PCN historic"
+trust_df_historic.name = "Trust historic"
+la_df_historic.name = "LA historic"
+community_df_historic.name = "Community historic"
+other_df_historic.name =  "Other historic"
 
 # COMMAND ----------
 
 # Append new data to historical data
 #-----------------------------------------------------------------------
 
-#STP
-#--------------------------------------------------------------
-dates_in_historic = stp_df_historic["For Month"].unique().tolist()
-dates_in_new = stp_df["For Month"].unique().tolist()[0]
+def appender(df_new, df_historic):
 
-if dates_in_new in dates_in_historic:
-  print('STP Data already exists in historical STP data')
-else:
-  stp_df_historic = stp_df_historic.append(stp_df)
-  stp_df_historic = stp_df_historic.sort_values(by=['For Month'])
-  stp_df_historic = stp_df_historic.reset_index(drop=True)
-  stp_df_historic = stp_df_historic.astype(str)
+  dates_in_historic = df_historic["For Month"].unique().tolist()
+  dates_in_new = df_new["For Month"].unique().tolist()[0]
+
+  if dates_in_new in dates_in_historic:
+    print(f'{df_new.name} data already exists in historical {df_historic.name} data')
+  else:
+    df_historic = df_historic.append(df_new)
+    df_historic = df_historic.sort_values(by=['For Month'])
+    df_historic = df_historic.reset_index(drop=True)
+    df_historic = df_historic.astype(str)
+
+df_list = [icb_df, la_df ]
+df_historic_list = [icb_df_historic, la_df_historic]
+
+a = zip(df_list, df_historic_list)
+
+for i in a:
+  appender(*i)
+
+
+
+
+
+#ICB
+#--------------------------------------------------------------
+# dates_in_historic = icb_df_historic["For Month"].unique().tolist()
+# dates_in_new = icb_df_historic["For Month"].unique().tolist()[0]
+
+# if dates_in_new in dates_in_historic:
+#   print('ICB Data already exists in historical ICB data')
+# else:
+#   icb_df_historic = icb_df_historic.append(icb_df)
+#   icb_df_historic = icb_df_historic.sort_values(by=['For Month'])
+#   icb_df_historic = icb_df_historic.reset_index(drop=True)
+#   icb_df_historic = icb_df_historic.astype(str)
   
-# PCN
-#--------------------------------------------------------------
-dates_in_historic = pcn_df_historic["For Month"].unique().tolist()
-dates_in_new = pcn_df["For Month"].unique().tolist()[0]
+# # PCN
+# #--------------------------------------------------------------
+# dates_in_historic = pcn_df_historic["For Month"].unique().tolist()
+# dates_in_new = pcn_df["For Month"].unique().tolist()[0]
 
-if dates_in_new in dates_in_historic:
-  print('PCN Data already exists in historical STP data')
-else:
-  pcn_df_historic = pcn_df_historic.append(pcn_df)
-  pcn_df_historic = pcn_df_historic.sort_values(by=['For Month'])
-  pcn_df_historic = pcn_df_historic.reset_index(drop=True)
-  pcn_df_historic = pcn_df_historic.astype(str)
+# if dates_in_new in dates_in_historic:
+#   print('PCN Data already exists in historical PCN data')
+# else:
+#   pcn_df_historic = pcn_df_historic.append(pcn_df)
+#   pcn_df_historic = pcn_df_historic.sort_values(by=['For Month'])
+#   pcn_df_historic = pcn_df_historic.reset_index(drop=True)
+#   pcn_df_historic = pcn_df_historic.astype(str)
   
-#TRUST
-#--------------------------------------------------------------
-dates_in_historic = trust_df_historic["For Month"].unique().tolist()
-dates_in_new = trust_df["For Month"].unique().tolist()[0]
+# #TRUST
+# #--------------------------------------------------------------
+# dates_in_historic = trust_df_historic["For Month"].unique().tolist()
+# dates_in_new = trust_df["For Month"].unique().tolist()[0]
 
-if dates_in_new in dates_in_historic:
-  print('Trust Data already exists in historical STP data')
-else:
-  trust_df_historic = trust_df_historic.append(trust_df)
-  trust_df_historic = trust_df_historic.sort_values(by=['For Month'])
-  trust_df_historic = trust_df_historic.reset_index(drop=True)
-  trust_df_historic = trust_df_historic.astype(str)
+# if dates_in_new in dates_in_historic:
+#   print('Trust Data already exists in historical Trust data')
+# else:
+#   trust_df_historic = trust_df_historic.append(trust_df)
+#   trust_df_historic = trust_df_historic.sort_values(by=['For Month'])
+#   trust_df_historic = trust_df_historic.reset_index(drop=True)
+#   trust_df_historic = trust_df_historic.astype(str)
 
-#LA
-#--------------------------------------------------------------
-dates_in_historic = la_df_historic["For Month"].unique().tolist()
-dates_in_new = la_df["For Month"].unique().tolist()[0]
+# #LA
+# #--------------------------------------------------------------
+# dates_in_historic = la_df_historic["For Month"].unique().tolist()
+# dates_in_new = la_df["For Month"].unique().tolist()[0]
 
-if dates_in_new in dates_in_historic:
-  print('LA Data already exists in historical STP data')
-else:
-  la_df_historic = la_df_historic.append(la_df)
-  la_df_historic = la_df_historic.sort_values(by=['For Month'])
-  la_df_historic = la_df_historic.reset_index(drop=True)
-  la_df_historic = la_df_historic.astype(str)
+# if dates_in_new in dates_in_historic:
+#   print('LA Data already exists in historical LA data')
+# else:
+#   la_df_historic = la_df_historic.append(la_df)
+#   la_df_historic = la_df_historic.sort_values(by=['For Month'])
+#   la_df_historic = la_df_historic.reset_index(drop=True)
+#   la_df_historic = la_df_historic.astype(str)
 
-#COMMUNITY
-#--------------------------------------------------------------
-dates_in_historic = community_df_historic["For Month"].unique().tolist()
-dates_in_new = community_df["For Month"].unique().tolist()[0]
+# #COMMUNITY
+# #--------------------------------------------------------------
+# dates_in_historic = community_df_historic["For Month"].unique().tolist()
+# dates_in_new = community_df["For Month"].unique().tolist()[0]
 
-if dates_in_new in dates_in_historic:
-  print('Community Data already exists in historical STP data')
-else:
-  community_df_historic = community_df_historic.append(community_df)
-  community_df_historic = community_df_historic.sort_values(by=['For Month'])
-  community_df_historic = community_df_historic.reset_index(drop=True)
-  community_df_historic = community_df_historic.astype(str)
+# if dates_in_new in dates_in_historic:
+#   print('Community Data already exists in historical Community data')
+# else:
+#   community_df_historic = community_df_historic.append(community_df)
+#   community_df_historic = community_df_historic.sort_values(by=['For Month'])
+#   community_df_historic = community_df_historic.reset_index(drop=True)
+#   community_df_historic = community_df_historic.astype(str)
 
-#OTHER
-#--------------------------------------------------------------
-dates_in_historic = other_df_historic["For Month"].unique().tolist()
-dates_in_new = other_df["For Month"].unique().tolist()[0]
+# #OTHER
+# #--------------------------------------------------------------
+# dates_in_historic = other_df_historic["For Month"].unique().tolist()
+# dates_in_new = other_df["For Month"].unique().tolist()[0]
 
-if dates_in_new in dates_in_historic:
-  print('Other Data already exists in historical STP data')
-else:
-  other_df_historic = other_df_historic.append(other_df)
-  other_df_historic = other_df_historic.sort_values(by=['For Month'])
-  other_df_historic = other_df_historic.reset_index(drop=True)
-  other_df_historic = other_df_historic.astype(str)
+# if dates_in_new in dates_in_historic:
+#   print('Other Data already exists in historical Other data')
+# else:
+#   other_df_historic = other_df_historic.append(other_df)
+#   other_df_historic = other_df_historic.sort_values(by=['For Month'])
+#   other_df_historic = other_df_historic.reset_index(drop=True)
+#   other_df_historic = other_df_historic.astype(str)
+
+# COMMAND ----------
+
+dir(icb_df)
 
 # COMMAND ----------
 
@@ -579,11 +662,11 @@ else:
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.BytesIO()
 
-# STP
+# ICB
 #-----------------
 file_contents = io.BytesIO()
-stp_df_historic.to_parquet(file_contents, engine="pyarrow")
-datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_stp_data_month_count.parquet")
+icb_df_historic.to_parquet(file_contents, engine="pyarrow")
+datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_icb_data_month_count.parquet")
 
 # PCN
 #-----------------
