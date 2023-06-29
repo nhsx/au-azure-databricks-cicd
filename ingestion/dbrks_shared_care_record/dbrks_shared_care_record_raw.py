@@ -430,15 +430,31 @@ for i in list(df_dict.keys())[1:]:
 #Write pages to Excel file in iobytes
 #--------------------------------------------------
 
-files = [icb_df, icb_dupes, trust_df, trust_count_df, trust_dupes, pcn_df, pcn_count_df, pcn_dupes, la_df, la_count_df, la_dupes, community_df, community_count_df, community_dupes, other_df, other_count_df, other_dupes]
+files = []
+sheets = []
 
-sheets = ['ICB', 'ICB dupes', 'Trust', 'Trust Count', 'Trust dupes', 'PCN', 'PCN Count', 'PCN dupes', 'LA', 'LA Count', 'LA dupes', 'Community', 'Community Count', 'Community dupes', 'Other', 'Other Count', 'Other dupes']
+for i in df_dict.keys():
+  files.append(df_dict[i])
+  if i !='icb':
+    files.append(count_dict[i])
+  files.append(dupes_dict[i])
+
+for i in df_dict.keys():
+  sheets.append(i)
+  if i !='icb':
+    sheets.append(f'{i} Count')
+  sheets.append(f'{i} Dupes')
+
+#sheets = ['ICB', 'ICB dupes', 'Trust', 'Trust Count', 'Trust dupes', 'PCN', 'PCN Count', 'PCN dupes', 'LA', 'LA Count', 'LA dupes', 'Community', 'Community Count', 'Community dupes', 'Other', 'Other Count', 'Other dupes']
+
+#files = [icb_df, icb_dupes, trust_df, trust_count_df, trust_dupes, pcn_df, pcn_count_df, pcn_dupes, la_df, la_count_df, la_dupes, community_df, community_count_df, community_dupes, other_df, other_count_df, other_dupes]
+#files = [icb_df, icb_dupes, trust_df, trust_count_df, trust_dupes, pcn_df, pcn_count_df, pcn_dupes, la_df, la_count_df, la_dupes, community_df, community_count_df, community_dupes, other_df, other_count_df, other_dupes]
 
 excel_sheet = io.BytesIO()
 
 writer = pd.ExcelWriter(excel_sheet, engine='openpyxl')
 for count, file in enumerate(files):
-    file.to_excel(writer, sheet_name=sheets[count], index=False)
+   file.to_excel(writer, sheet_name=sheets[count], index=False)
 writer.save()
 
 # COMMAND ----------
@@ -456,41 +472,29 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, "proc/projects/nh
 #------------------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, historical_source_path)
 file_name_list = datalake_listContents(CONNECTION_STRING, file_system, historical_source_path+latestFolder)
+
+historic_df_dict = {}
+
 for file in file_name_list:
-  if 'icb' in file:
-    icb_df_historic = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, file)
-    icb_df_historic = pd.read_parquet(io.BytesIO(icb_df_historic), engine="pyarrow")
-    icb_df_historic['For Month'] = pd.to_datetime(icb_df_historic['For Month'])
-    icb_df_historic['Date completed'] = pd.to_datetime(icb_df_historic['Date completed'],errors='coerce')
-  if 'pcn' in file:
-    pcn_df_historic = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, file)
-    pcn_df_historic = pd.read_parquet(io.BytesIO(pcn_df_historic), engine="pyarrow")
-    pcn_df_historic['For Month'] = pd.to_datetime(pcn_df_historic['For Month'])
-  if 'trust' in file:
-    trust_df_historic = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, file)
-    trust_df_historic = pd.read_parquet(io.BytesIO(trust_df_historic), engine="pyarrow")
-    trust_df_historic['For Month'] = pd.to_datetime(trust_df_historic['For Month'])
-  if 'la' in file:
-    la_df_historic = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, file)
-    la_df_historic = pd.read_parquet(io.BytesIO(la_df_historic), engine="pyarrow")
-    la_df_historic['For Month'] = pd.to_datetime(la_df_historic['For Month'])
-  if 'community' in file:
-    community_df_historic = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, file)
-    community_df_historic = pd.read_parquet(io.BytesIO(community_df_historic), engine="pyarrow")
-    community_df_historic['For Month'] = pd.to_datetime(community_df_historic['For Month'])
-  if 'other' in file:
-    other_df_historic = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, file)
-    other_df_historic = pd.read_parquet(io.BytesIO(other_df_historic), engine="pyarrow")
-    other_df_historic['For Month'] = pd.to_datetime(other_df_historic['For Month'])
+  for i in df_dict.keys():
+    if i in file:
+      historic = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, file)
+      print(file)
+      historic = pd.read_parquet(io.BytesIO(historic), engine="pyarrow")
+      historic['For Month'] = pd.to_datetime(historic['For Month'])
+      if i =='icb':
+        pass
+        historic['Date completed'] = pd.to_datetime(historic['Date completed'],errors='coerce')
+      historic_df_dict[i] = historic
 
 # COMMAND ----------
 
-#CODE TO CREATE INITIAL HISTORICAL FILES
-# # PCN
-# #-----------------
-#file_contents = io.BytesIO()
-#pcn_df.to_parquet(file_contents, engine="pyarrow")
-#datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_pcn_data_month_count.parquet")
+# #CODE TO CREATE INITIAL HISTORICAL FILES
+# # # PCN
+# # #-----------------
+# file_contents = io.BytesIO()
+# pcn_df.to_parquet(file_contents, engine="pyarrow")
+# datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_pcn_data_month_count.parquet")
 
 # # ICB
 # #-----------------
@@ -526,52 +530,19 @@ for file in file_name_list:
 
 # COMMAND ----------
 
-icb_df
-
-# COMMAND ----------
-
-icb_df.name = "ICB"
-pcn_df.name = "PCN"
-trust_df.name = "Trust"
-la_df.name = "LA"
-community_df.name = "Community"
-other_df.name =  "Other"
-
-icb_df_historic.name = "ICB historic"
-pcn_df_historic.name = "PCN historic"
-trust_df_historic.name = "Trust historic"
-la_df_historic.name = "LA historic"
-community_df_historic.name = "Community historic"
-other_df_historic.name =  "Other historic"
-
-# COMMAND ----------
-
 # Append new data to historical data
 #-----------------------------------------------------------------------
 
-def appender(df_new, df_historic):
-
-  dates_in_historic = df_historic["For Month"].unique().tolist()
-  dates_in_new = df_new["For Month"].unique().tolist()[0]
-
+for i in df_dict.keys():
+  dates_in_historic = historic_df_dict[i]["For Month"].unique().tolist()
+  dates_in_new = df_dict[i]["For Month"].unique().tolist()
   if dates_in_new in dates_in_historic:
-    print(f'{df_new.name} data already exists in historical {df_historic.name} data')
+    print(f'{i} Data already exists in historical data')
   else:
-    df_historic = df_historic.append(df_new)
-    df_historic = df_historic.sort_values(by=['For Month'])
-    df_historic = df_historic.reset_index(drop=True)
-    df_historic = df_historic.astype(str)
-
-df_list = [icb_df, la_df ]
-df_historic_list = [icb_df_historic, la_df_historic]
-
-a = zip(df_list, df_historic_list)
-
-for i in a:
-  appender(*i)
-
-
-
+    historic_df_dict[i] = historic_df_dict[i].append(df_dict[i])
+    historic_df_dict[i] = historic_df_dict[i].sort_values(by=['For Month'])
+    historic_df_dict[i] = historic_df_dict[i].reset_index(drop=True)
+    historic_df_dict[i] = historic_df_dict[i].astype(str)
 
 
 #ICB
@@ -654,45 +625,49 @@ for i in a:
 
 # COMMAND ----------
 
-dir(icb_df)
-
-# COMMAND ----------
-
 # Upload processed data to datalake
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.BytesIO()
 
-# ICB
-#-----------------
-file_contents = io.BytesIO()
-icb_df_historic.to_parquet(file_contents, engine="pyarrow")
-datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_icb_data_month_count.parquet")
+for i in df_dict.keys():
+  file_contents = io.BytesIO()
+  historic_df_dict[i].to_parquet(file_contents, engine="pyarrow")
+  filename = f'shcr_partners_{i}_data_month_count.parquet'
+  datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, filename)
+  
 
-# PCN
-#-----------------
-pcn_df_historic.to_parquet(file_contents, engine="pyarrow")
-datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_pcn_data_month_count.parquet")
 
-# Trust
-#-----------------
-file_contents = io.BytesIO()
-trust_df_historic.to_parquet(file_contents, engine="pyarrow")
-datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_trust_data_month_count.parquet")
+# # ICB
+# #-----------------
+# file_contents = io.BytesIO()
+# icb_df_historic.to_parquet(file_contents, engine="pyarrow")
+# datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_icb_data_month_count.parquet")
 
-# LA
-#-----------------
-file_contents = io.BytesIO()
-la_df_historic.to_parquet(file_contents, engine="pyarrow")
-datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_la_data_month_count.parquet")
+# # PCN
+# #-----------------
+# pcn_df_historic.to_parquet(file_contents, engine="pyarrow")
+# datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_pcn_data_month_count.parquet")
 
-# Community
-#-----------------
-file_contents = io.BytesIO()
-community_df_historic.to_parquet(file_contents, engine="pyarrow")
-datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_community_data_month_count.parquet")
+# # Trust
+# #-----------------
+# file_contents = io.BytesIO()
+# trust_df_historic.to_parquet(file_contents, engine="pyarrow")
+# datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_trust_data_month_count.parquet")
 
-# Other
-#-----------------
-file_contents = io.BytesIO()
-other_df_historic.to_parquet(file_contents, engine="pyarrow")
-datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_other_data_month_count.parquet")
+# # LA
+# #-----------------
+# file_contents = io.BytesIO()
+# la_df_historic.to_parquet(file_contents, engine="pyarrow")
+# datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_la_data_month_count.parquet")
+
+# # Community
+# #-----------------
+# file_contents = io.BytesIO()
+# community_df_historic.to_parquet(file_contents, engine="pyarrow")
+# datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_community_data_month_count.parquet")
+
+# # Other
+# #-----------------
+# file_contents = io.BytesIO()
+# other_df_historic.to_parquet(file_contents, engine="pyarrow")
+# datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_other_data_month_count.parquet")
