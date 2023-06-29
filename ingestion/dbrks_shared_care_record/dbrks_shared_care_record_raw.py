@@ -46,6 +46,7 @@ import openpyxl
 from pathlib import Path
 from azure.storage.filedatalake import DataLakeServiceClient
 from openpyxl import load_workbook
+import collections
 
 # Connect to Azure datalake
 # -------------------------------------------------------------------------
@@ -169,6 +170,8 @@ for filename in directory:
         # append results to dataframe dataframe
         
         icb_df = icb_df.append(xls_file[key], ignore_index=True)
+
+    organisations = ['trust', 'pcn', 'la', 'community', 'other']
 
     ### TRUST CALCULATIONS ###
     sheet_name = [sheet for sheet in sheets if sheet.startswith("Trust")]
@@ -329,6 +332,7 @@ df_dict = {
 # COMMAND ----------
 
 #Set all 'For Month' dates to folder date
+#--------------------------------------------------
 
 folder_date = pd.to_datetime(latestFolder) - pd.DateOffset(months=1)
 
@@ -339,8 +343,7 @@ for i in df_dict.keys():
 # COMMAND ----------
 
 #Check for duplicates
-
-import collections
+#--------------------------------------------------
 
 dupes_dict = {}
 
@@ -352,11 +355,12 @@ for i in df_dict.keys():
   else:
     dupes = dupes.iloc[:,[1,2,4,5]]
   dupes_dict[i] = dupes
-  
+
 
 # COMMAND ----------
 
 #calculate aggregate numbers for all except ICB
+#--------------------------------------------------
 
 count_dict = {}
 
@@ -371,6 +375,7 @@ for i in list(df_dict.keys())[1:]:
 #SNAPSHOT SUMMARY
 #Write pages to Excel file in iobytes
 #--------------------------------------------------
+
 files = []
 sheets = []
 
@@ -400,6 +405,7 @@ writer.save()
 #SNAPSHOT SUMMARY
 #Send Excel snapshot File to test Output in datalake
 #--------------------------------------------------
+
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = excel_sheet
 datalake_upload(file_contents, CONNECTION_STRING, file_system, "proc/projects/nhsx_slt_analytics/shcr/excel_summary/"+current_date_path, "shared_care_summary_output.xlsx")
@@ -408,6 +414,7 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, "proc/projects/nh
 
 #Pull historical files
 #------------------------------------
+
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, historical_source_path)
 file_name_list = datalake_listContents(CONNECTION_STRING, file_system, historical_source_path+latestFolder)
 
@@ -486,6 +493,7 @@ for i in df_dict.keys():
 
 # Upload processed data to datalake
 #-----------------------------------------------------------------------
+
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.BytesIO()
 
