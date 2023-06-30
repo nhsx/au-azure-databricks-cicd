@@ -113,12 +113,9 @@ directory, paths = datalake_listDirectory(CONNECTION_STRING, file_system, source
 # -------------------------------------------------------------
 
 #initialize dataframes
-icb_df = pd.DataFrame()
-trust_df = pd.DataFrame()
-pcn_df = pd.DataFrame()
-la_df = pd.DataFrame()
-other_df = pd.DataFrame()
-community_df = pd.DataFrame()
+org_dict = {'icb': 'ICB', 'trust': 'Trust', 'pcn':'PCN', 'la':'LA', 'community':'Other Community', 'other':'Other partners'}
+df_dict = {i:pd.DataFrame() for i in org_dict}
+
 
 #loop through each submitted file in the landing area. FOr each file its goes through the various sheets and adds them to an output 
 for filename in directory:
@@ -167,24 +164,25 @@ for filename in directory:
         xls_file[key]["Number of ShCR views in the past month"] = pd.to_numeric(xls_file[key]["Number of ShCR views in the past month"], errors='coerce').fillna(0).astype(int)
         xls_file[key]["Number of unique user ShCR views in the past month"] = pd.to_numeric(xls_file[key]["Number of unique user ShCR views in the past month"], errors='coerce').fillna(0).astype(int)
 
-        # append results to dataframe dataframe
-        
-        icb_df = icb_df.append(xls_file[key], ignore_index=True)
+        # append results to dataframe in dictionary
+        df_dict['icb'] = df_dict['icb'].append(xls_file[key], ignore_index=True)
 
-    organisations = ['trust', 'pcn', 'la', 'community', 'other']
 
-    ### TRUST CALCULATIONS ###
-    sheet_name = [sheet for sheet in sheets if sheet.startswith("Trust")]
-    xls_file = pd.read_excel(io.BytesIO(file), sheet_name=sheet_name, engine="openpyxl")
-    for key in xls_file:
+    ### OTHER ORG CALCULATIONS ###
+
+    for i in list(df_dict.keys())[1:]:
+
+      sheet_name = [sheet for sheet in sheets if sheet.startswith(org_dict[i])]
+      xls_file = pd.read_excel(io.BytesIO(file), sheet_name=sheet_name, engine="openpyxl")
+      for key in xls_file:
         xls_file[key].drop(list(xls_file[key].filter(regex="Unnamed:")), axis=1, inplace=True)
 
         xls_file[key] = xls_file[key].loc[~xls_file[key]["For Month"].isnull()]
         xls_file[key].rename(
             columns={
                 list(xls_file[key])[0]: "For Month",
-                list(xls_file[key])[1]: "ODS Trust Code",
-                list(xls_file[key])[2]: "Trust Name",
+                list(xls_file[key])[1]: f"ODS {i} Code",
+                list(xls_file[key])[2]: f"{i} Name",
                 list(xls_file[key])[3]: "Partner Organisation connected to ShCR?",
                 #extra column
                 list(xls_file[key])[5]: "Partner Organisation plans to be connected by March 2023?",
@@ -194,131 +192,30 @@ for filename in directory:
         xls_file[key].insert(1, "ICB ODS code", ICB_code, False)
         xls_file[key].insert(3, "ICS Name (if applicable)", ICB_name, False)
         xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"Connected": 1, "Not Connected": 0, "Please select": 0}).fillna(0).astype(int)     
-        xls_file[key]["Partner Organisation plans to be connected by March 2023?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0).astype(int)        
-        trust_df = trust_df.append(xls_file[key].iloc[:, 0:9], ignore_index=True)
+        xls_file[key]["Partner Organisation plans to be connected by March 2023?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0).astype(int)
+          
 
-
-    ### PCN CALCULATIONS ###
-    sheet_name = [sheet for sheet in sheets if sheet.startswith("PCN")]
-    xls_file = pd.read_excel(io.BytesIO(file), sheet_name=sheet_name, engine="openpyxl")
-    for key in xls_file:
-        xls_file[key].drop(list(xls_file[key].filter(regex="Unnamed:")), axis=1, inplace=True)
-
-        xls_file[key] = xls_file[key].loc[~xls_file[key]["For Month"].isnull()]
-        xls_file[key].rename(
-            columns={
-                list(xls_file[key])[0]: "For Month",
-                list(xls_file[key])[1]: "ODS PCN Code",
-                list(xls_file[key])[2]: "PCN Name",
-                list(xls_file[key])[3]: "Partner Organisation connected to ShCR?",
-                #extra column
-                list(xls_file[key])[5]: "Partner Organisation plans to be connected by March 2023?",
-            },
-            inplace=True,
-        )
-        xls_file[key].insert(1, "ICB ODS code", ICB_code, False)
-        xls_file[key].insert(3, "ICS Name (if applicable)", ICB_name, False)
-        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"Connected": 1, "Not Connected": 0, "Please select": 0}).fillna(0) 
-        xls_file[key]["Partner Organisation plans to be connected by March 2023?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)        
-        pcn_df = pcn_df.append(xls_file[key].iloc[:, 0:9], ignore_index=True)
-        
-    ### LA CALCULATIONS ###
-    sheet_name = [sheet for sheet in sheets if sheet.startswith("LA")]
-    xls_file = pd.read_excel(io.BytesIO(file), sheet_name=sheet_name, engine="openpyxl")
-    for key in xls_file:
-        xls_file[key].drop(list(xls_file[key].filter(regex="Unnamed:")), axis=1, inplace=True)
-
-        xls_file[key] = xls_file[key].loc[~xls_file[key]["For Month"].isnull()]
-        xls_file[key].rename(
-            columns={
-                list(xls_file[key])[0]: "For Month",
-                list(xls_file[key])[1]: "ODS LA Code",
-                list(xls_file[key])[2]: "LA Name",
-                list(xls_file[key])[3]: "Partner Organisation connected to ShCR?",
-                #extra column
-                list(xls_file[key])[5]: "Partner Organisation plans to be connected by March 2023?",
-            },
-            inplace=True,
-        )
-        xls_file[key].insert(1, "ICB ODS code", ICB_code, False)
-        xls_file[key].insert(3, "ICS Name (if applicable)", ICB_name, False)
-        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"Connected": 1, "Not Connected": 0, "Please select": 0}).fillna(0)  
-        xls_file[key]["Partner Organisation plans to be connected by March 2023?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)        
-        la_df = la_df.append(xls_file[key].iloc[:, 0:9], ignore_index=True)
-
-    ### Community Provider CALCULATIONS ###
-    sheet_name = [sheet for sheet in sheets if sheet.startswith("Other Community")]
-    xls_file = pd.read_excel(io.BytesIO(file), sheet_name=sheet_name, engine="openpyxl")
-    for key in xls_file:
-        xls_file[key].drop(list(xls_file[key].filter(regex="Unnamed:")), axis=1, inplace=True)
-
-        xls_file[key] = xls_file[key].loc[~xls_file[key]["For Month"].isnull()]
-        xls_file[key].rename(
-            columns={
-                list(xls_file[key])[0]: "For Month",
-                list(xls_file[key])[1]: "ODS Community Provider Code",
-                list(xls_file[key])[2]: "Community Provider Name",
-                list(xls_file[key])[3]: "Partner Organisation connected to ShCR?",
-                #extra column
-                list(xls_file[key])[5]: "Partner Organisation plans to be connected by March 2023?",
-            },
-            inplace=True,
-        )
-        xls_file[key].insert(1, "ICB ODS code", ICB_code, False)
-        xls_file[key].insert(3, "ICS Name (if applicable)", ICB_name, False)
-        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"Connected": 1, "Not Connected": 0, "Please select": 0}).fillna(0)   
-        xls_file[key]["Partner Organisation plans to be connected by March 2023?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)        
-        community_df = community_df.append(xls_file[key].iloc[:, 0:9], ignore_index=True) 
-
-    ### Other Partner CALCULATIONS ###
-    sheet_name = [sheet for sheet in sheets if sheet.startswith("Other partners")]
-    xls_file = pd.read_excel(io.BytesIO(file), sheet_name=sheet_name, engine="openpyxl")
-    for key in xls_file:
-        xls_file[key].drop(list(xls_file[key].filter(regex="Unnamed:")), axis=1, inplace=True)
-
-        xls_file[key] = xls_file[key].loc[~xls_file[key]["For Month"].isnull()]
-        xls_file[key].rename(
-            columns={
-                list(xls_file[key])[0]: "For Month",
-                list(xls_file[key])[1]: "ODS Other Partner Code",
-                list(xls_file[key])[2]: "Other Partner Name",
-                list(xls_file[key])[3]: "Partner Organisation connected to ShCR?",
-                #extra column
-                list(xls_file[key])[5]: "Partner Organisation plans to be connected by March 2023?",
-            },
-            inplace=True,
-        )
-        xls_file[key].insert(1, "ICB ODS code", ICB_code, False)
-        xls_file[key].insert(3, "ICS Name (if applicable)", ICB_name, False)
-        xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"Connected": 1, "Not Connected": 0, "Please select": 0}).fillna(0)
-        xls_file[key]["Partner Organisation plans to be connected by March 2023?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0)        
-        other_df = other_df.append(xls_file[key].iloc[:, 0:9], ignore_index=True)            
-        
+        df_dict[i] = df_dict[i].append(xls_file[key].iloc[:, 0:9], ignore_index=True)
 
     
-# #Remove any non-required columns from final output
-icb_df= icb_df[['For Month', 'ICB ODS code', 'ICB Name (if applicable)', 'ShCR Programme Name', 'Name of ShCR System', 'Access to Advanced (EoL) Care Plans', 'Number of users with access to the ShCR', 'Number of ShCR views in the past month', 'Number of unique user ShCR views in the past month', 'Completed by (email)', 'Date completed']]
+# # #Remove any non-required columns from ICN dataframe
+df_dict['icb'] = df_dict['icb'][['For Month', 'ICB ODS code', 'ICB Name (if applicable)', 'ShCR Programme Name', 'Name of ShCR System', 'Access to Advanced (EoL) Care Plans', 'Number of users with access to the ShCR', 'Number of ShCR views in the past month', 'Number of unique user ShCR views in the past month', 'Completed by (email)', 'Date completed']]
 
-trust_df = trust_df[['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'ODS Trust Code', 'Trust Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
+#select org columns, skipping ICB
+for i in list(df_dict.keys())[1:]:
+  df_dict[i] = df_dict[i][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', f'ODS {i} Code', f'{i} Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
 
-pcn_df = pcn_df[['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'ODS PCN Code', 'PCN Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
 
-la_df = la_df[['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'ODS LA Code', 'LA Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
+# df_dict['trust'] = df_dict['trust'][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'ODS trust Code', 'trust Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
+# df_dict['pcn'] = df_dict['pcn'][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'ODS pcn Code', 'pcn Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
+# df_dict['la'] = df_dict['la'][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'ODS la Code', 'la Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
+# df_dict['community'] = df_dict['community'][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'ODS community Code', 'community Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
+# df_dict['other'] = df_dict['other'][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'ODS other Code', 'other Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
 
-community_df = community_df[['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'ODS Community Provider Code', 'Community Provider Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
 
-other_df = other_df[['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'ODS Other Partner Code', 'Other Partner Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
+# COMMAND ----------
 
-#add dfs to a dictionary for easy access later
-df_dict = {
-  'icb': icb_df,
-  'trust': trust_df,
-  'pcn': pcn_df,
-  'la': la_df,
-  'community': community_df,
-  'other': other_df,
-  }
-
+df_dict['icb']
 
 # COMMAND ----------
 
@@ -365,9 +262,9 @@ for i in df_dict.keys():
 count_dict = {}
 
 for i in list(df_dict.keys())[1:]:
-  count = df_dict[i].groupby(df_dict[i].iloc[:,2]).agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
-  count['Percent'] = count['Connected']/count['Total']
-  count_dict[i] = count
+  count_df = df_dict[i].groupby(df_dict[i].iloc[:,2]).agg(Total = ('Partner Organisation connected to ShCR?', 'size'), Connected = ('Partner Organisation connected to ShCR?', 'sum')).reset_index()
+  count_df['Percent'] = count_df['Connected']/count_df['Total']
+  count_dict[i] = count_df
 
 
 # COMMAND ----------
@@ -395,6 +292,7 @@ for i in df_dict.keys():
 
 excel_sheet = io.BytesIO()
 
+#write files to excel file, using sheets to name excel sheets
 writer = pd.ExcelWriter(excel_sheet, engine='openpyxl')
 for count, file in enumerate(files):
    file.to_excel(writer, sheet_name=sheets[count], index=False)
