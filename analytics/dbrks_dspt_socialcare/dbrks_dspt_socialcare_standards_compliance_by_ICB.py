@@ -211,7 +211,7 @@ df_processed['filter_date'] = pd.to_datetime(df_processed['Date'], format='%Y-%m
 df_processed['last_date_month'] = pd.to_datetime(df_processed['filter_date'], format="%Y%m") + MonthEnd(0)
 
 df_out = df_processed[(df_processed['last_date_month'] <= report_last_day)]
-df_out['last_date_month'] = pd.to_datetime(df_out['last_date_month']).dt.date
+df_out['last_date_month'] = pd.to_datetime(df_out['last_date_month']).dt.date.astype(str)
 
 del df_out['filter_date']
 del df_out['Date']
