@@ -111,13 +111,9 @@ df_ref_1 = df_ref_1.drop('AGE', axis=1)
 df_ref_1 = df_ref_1.groupby(['EXTRACT_DATE','ORG_CODE'], as_index=False).sum()
 df_ref_1['EXTRACT_DATE'] = pd.to_datetime(df_ref_1['EXTRACT_DATE'], infer_datetime_format=True)
 df2 = df_ref_1[['EXTRACT_DATE','ORG_CODE','NUMBER_OF_PATIENTS']]
-'''
 
 
 
-# COMMAND ----------
-
-df['Date']
 
 # COMMAND ----------
 
