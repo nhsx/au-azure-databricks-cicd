@@ -36,6 +36,7 @@ import tempfile
 from datetime import datetime
 import json
 import calendar
+from pandas.tseries.offsets import MonthEnd
 
 # 3rd party:
 import pandas as pd
@@ -187,14 +188,15 @@ df1 = df1.rename(columns = {'size':'Number of locations with standard status'})
 df1 = df1.merge(df2, on = ['ICB_Code', 'Date'], how = 'left')
 df1 = df1.rename(columns = {'size':'Total number of locations'})
 
-
 df_processed = df1.copy()
 df_processed['Date'] = df_processed['Date'] + '-01'
+
 
 
 # COMMAND ----------
 
 today = str(datetime.today().strftime('%Y-%m-%d'))
+#today = '2023-06-29'
 
 today_year = today[0:4]
 today_month = int(today[5:7])
@@ -206,12 +208,17 @@ report_last_day = report_date.replace(day = calendar.monthrange(report_date.year
 
 df_processed['filter_date'] = pd.to_datetime(df_processed['Date'], format='%Y-%m-%d')
 
-df_out = df_processed[(df_processed['filter_date'] <= report_last_day)]
+df_processed['last_date_month'] = pd.to_datetime(df_processed['filter_date'], format="%Y%m") + MonthEnd(0)
+
+df_out = df_processed[(df_processed['last_date_month'] <= report_last_day)]
+df_out['last_date_month'] = pd.to_datetime(df_out['last_date_month']).dt.date
+
 del df_out['filter_date']
+del df_out['Date']
+df_out.rename(columns={'last_date_month': 'Date'}, inplace=True)
 
 print('Report daate is:')
 print(report_last_day)
-
 display(df_out)
 
 # COMMAND ----------
