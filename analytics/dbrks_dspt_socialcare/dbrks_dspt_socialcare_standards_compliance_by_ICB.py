@@ -176,7 +176,7 @@ df1 = df[df["CQC registered location - latest DSPT status"].isin(["21/22 Approac
                                                                    "21/22 Standards Not Met.",
                                                                    "22/23 Approaching Standards.",
                                                                    "22/23 Standards Exceeded.",
-                                                                   "22/23 Standards Me.",
+                                                                   "22/23 Standards Met.",
                                                                    "Not Individually Registered.",                                                     
                                                                    "Not Published." ])].reset_index(drop=True)     
                                    
