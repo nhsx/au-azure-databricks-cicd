@@ -112,23 +112,23 @@ directory, paths = datalake_listDirectory(CONNECTION_STRING, file_system, source
 # Ingestion and processing of data from individual excel sheets.
 # -------------------------------------------------------------
 
-#initialize dataframes
+#initialize dictionaries
 org_dict = {'icb': 'ICB', 'trust': 'Trust', 'pcn':'PCN', 'la':'LA', 'community':'Other Community', 'other':'Other partners'}
 df_dict = {i:pd.DataFrame() for i in org_dict}
 
 
-#loop through each submitted file in the landing area. FOr each file its goes through the various sheets and adds them to an output 
+#loop through each submitted file in the landing area. FOr each file go through the sheets and adds them to an output 
 for filename in directory:
     file = datalake_download(CONNECTION_STRING, file_system, source_path + latestFolder, filename)
     print(filename)
-    #Read current file inot an iobytes object, read that object and get list of sheet names
+    #Read current file into an iobytes object, read that object and get list of sheet names
     sheets = get_sheetnames_xlsx(io.BytesIO(file))
 
     ### ICB CALCULATIONS ###
-    #list comprehension to get sheets with ICB in the name from list of all sheets - presumably it should only ever be 1
+    #list comprehension to get sheets with ICB in the name from list of all sheets - should only ever be 1 sheet
     sheet_name = [sheet for sheet in sheets if sheet.startswith("ICB")]
     
-    #Read current sheet. The output is a dictionary. Top level is ICB Sheets should be just 1, next level is each column on the sheet
+    #Read ICB sheet. The output is a dictionary. Top level is ICB Sheet, next level is each column on the sheet
     xls_file = pd.read_excel(io.BytesIO(file), sheet_name=sheet_name, engine="openpyxl")
     for key in xls_file:
         #drop unnamed columns
@@ -144,6 +144,7 @@ for filename in directory:
                 list(xls_file[key])[3]: "ShCR Programme Name",
                 list(xls_file[key])[4]: "Name of ShCR System",
                 ###Extra columns
+                list(xls_file[key])[8]: "Care Providers",
                 list(xls_file[key])[9]: "Access to Advanced (EoL) Care Plans",
                 list(xls_file[key])[10]: "Number of users with access to the ShCR",
                 list(xls_file[key])[11]: "Number of ShCR views in the past month",
@@ -155,21 +156,22 @@ for filename in directory:
         )
         
         # get excel file metadata
-        ICB_code = xls_file[key]["ICB ODS code"].unique()[0]  # get ICB code for all sheets
+        ICB_code = xls_file[key]["ICB ODS code"].unique()[0]  # grab ICB code to add in to the other sheets
 
-        ICB_name = xls_file[key]["ICB Name (if applicable)"].unique()[0]  # get ics name for all sheets
+        ICB_name = xls_file[key]["ICB Name (if applicable)"].unique()[0]  # grab ICB name for all sheets
           
         #For numeric fields, fill in blanks with zeros. Replace any non numeric entries with zero.
         xls_file[key]["Number of users with access to the ShCR"] = pd.to_numeric(xls_file[key]["Number of users with access to the ShCR"], errors='coerce').fillna(0).astype(int)
         xls_file[key]["Number of ShCR views in the past month"] = pd.to_numeric(xls_file[key]["Number of ShCR views in the past month"], errors='coerce').fillna(0).astype(int)
         xls_file[key]["Number of unique user ShCR views in the past month"] = pd.to_numeric(xls_file[key]["Number of unique user ShCR views in the past month"], errors='coerce').fillna(0).astype(int)
+        xls_file[key]["Care Providers"] = pd.to_numeric(xls_file[key]["Care Providers"], errors='coerce').fillna(0).astype(int)
 
         # append results to dataframe in dictionary
         df_dict['icb'] = df_dict['icb'].append(xls_file[key], ignore_index=True)
 
 
     ### OTHER ORG CALCULATIONS ###
-
+    #get names of other orgs (ignore ICB)
     for i in list(df_dict.keys())[1:]:
 
       sheet_name = [sheet for sheet in sheets if sheet.startswith(org_dict[i])]
@@ -199,7 +201,7 @@ for filename in directory:
 
     
 # # #Remove any non-required columns from ICN dataframe
-df_dict['icb'] = df_dict['icb'][['For Month', 'ICB ODS code', 'ICB Name (if applicable)', 'ShCR Programme Name', 'Name of ShCR System', 'Access to Advanced (EoL) Care Plans', 'Number of users with access to the ShCR', 'Number of ShCR views in the past month', 'Number of unique user ShCR views in the past month', 'Completed by (email)', 'Date completed']]
+df_dict['icb'] = df_dict['icb'][['For Month', 'ICB ODS code', 'ICB Name (if applicable)', 'ShCR Programme Name', 'Name of ShCR System', "Care Providers", 'Access to Advanced (EoL) Care Plans', 'Number of users with access to the ShCR', 'Number of ShCR views in the past month', 'Number of unique user ShCR views in the past month', 'Completed by (email)', 'Date completed']]
 
 #select org columns, skipping ICB
 for i in list(df_dict.keys())[1:]:
@@ -212,10 +214,6 @@ for i in list(df_dict.keys())[1:]:
 # df_dict['community'] = df_dict['community'][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'ODS community Code', 'community Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
 # df_dict['other'] = df_dict['other'][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'ODS other Code', 'other Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
 
-
-# COMMAND ----------
-
-df_dict['icb']
 
 # COMMAND ----------
 
@@ -327,48 +325,56 @@ for file in file_name_list:
       historic_df = pd.read_parquet(io.BytesIO(historic_parquet), engine="pyarrow")
       historic_df['For Month'] = pd.to_datetime(historic_df['For Month'])
       if i =='icb':
+        pass
         historic_df['Date completed'] = pd.to_datetime(historic_df['Date completed'],errors='coerce')
       historic_df_dict[i] = historic_df
 
 # COMMAND ----------
 
 # #CODE TO CREATE INITIAL HISTORICAL FILES (DONT USE UNLESS STARTING DATA)
+
+# current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 # # # PCN
-# # #-----------------
+# # # #-----------------
 # file_contents = io.BytesIO()
-# pcn_df.to_parquet(file_contents, engine="pyarrow")
+# df_dict['pcn'] = df_dict['other'].astype(str)
+# df_dict['pcn'].to_parquet(file_contents, engine="pyarrow")
 # datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_pcn_data_month_count.parquet")
 
 # # ICB
 # #-----------------
 # file_contents = io.BytesIO()
-# icb_df = icb_df.astype(str)
-# icb_df.to_parquet(file_contents, engine="pyarrow")
+# df_dict['icb'] = df_dict['icb'].astype(str)
+# df_dict['icb'] = df_dict['icb'].astype(str)
+# df_dict['icb'].to_parquet(file_contents, engine="pyarrow")
 # datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_icb_data_month_count.parquet")
 
 # # NHS Trust
 # #-----------------
 # file_contents = io.BytesIO()
-# trust_df.to_parquet(file_contents, engine="pyarrow")
+# df_dict['trust'] = df_dict['other'].astype(str)
+# df_dict['trust'].to_parquet(file_contents, engine="pyarrow")
 # datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_trust_data_month_count.parquet")
 
-# # NHS Trust
+# # NHS LA
 # #-----------------
 # file_contents = io.BytesIO()
-# la_df.to_parquet(file_contents, engine="pyarrow")
+# df_dict['la'] = df_dict['other'].astype(str)
+# df_dict['la'].to_parquet(file_contents, engine="pyarrow")
 # datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_la_data_month_count.parquet")
 
-# # NHS Trust
-# #-----------------
+# # # NHS Community
+# # #-----------------
 # file_contents = io.BytesIO()
-# community_df.to_parquet(file_contents, engine="pyarrow")
+# df_dict['community'] = df_dict['other'].astype(str)
+# df_dict['community'].to_parquet(file_contents, engine="pyarrow")
 # datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_community_data_month_count.parquet")
 
-# # NHS Trust
-# #-----------------
+# # # # NHS Other
+# # # #-----------------
 # file_contents = io.BytesIO()
-# other_df = other_df.astype(str)
-# other_df.to_parquet(file_contents, engine="pyarrow")
+# df_dict['other'] = df_dict['other'].astype(str)
+# df_dict['other'].to_parquet(file_contents, engine="pyarrow")
 # datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_other_data_month_count.parquet")
 
 # COMMAND ----------
@@ -376,6 +382,7 @@ for file in file_name_list:
 # Append new data to historical data
 #-----------------------------------------------------------------------
 for i in df_dict.keys():
+  print(i)
   dates_in_historic = historic_df_dict[i]["For Month"].unique().tolist()
   #not sure why [0] index is needed below
   dates_in_new = df_dict[i]["For Month"].unique().tolist()[0]
@@ -393,9 +400,12 @@ for i in df_dict.keys():
 #-----------------------------------------------------------------------
 
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
-file_contents = io.BytesIO()
 
-for i in df_dict.keys():
+
+for i in historic_df_dict.keys():
+  print(i)
+  file_contents = io.BytesIO()
+  historic_df_dict[i] = historic_df_dict[i].astype(str)
   historic_df_dict[i].to_parquet(file_contents, engine="pyarrow")
   filename = f'shcr_partners_{i}_data_month_count.parquet'
   datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, filename)
