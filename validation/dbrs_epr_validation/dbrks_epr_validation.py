@@ -81,6 +81,34 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 # COMMAND ----------
 
+column_names = ['(Do Not Modify) EPR 2023',
+ '(Do Not Modify) Row Checksum',
+ '(Do Not Modify) Modified On',
+ 'Organisation Code',
+ 'Organisation',
+ 'Trust Type',
+ 'Additional Care Settings',
+ 'Region',
+ 'ICS',
+ 'NHP Scheme',
+ 'Stage of Journey',
+ 'EPR Group',
+ 'Current EPR Status',
+ 'Dates Last Changed',
+ 'Supplier (Primary EPR)',
+ 'Contract Expiry (Primary EPR)',
+ 'OBC approvals by EPRIB / JISC',
+ 'Formal Procurement Start',
+ 'FBC approvals by EPRIB / JISC',
+ 'Implementation Start',
+ 'Current Forecast Go-Live',
+ 'New Supplier Name',
+ 'Supplier Contract signed',
+ 'BiWeekly_Date',
+ 'Date']
+
+# COMMAND ----------
+
 # validate data
 # Greate expectations https://www.architecture-performance.fr/ap_blog/built-in-expectations-in-great-expectations/
 # ----------------------------------
@@ -100,6 +128,12 @@ info = "Checking that the Date column do not contain any null values\n"
 expect = df1.expect_column_values_to_not_be_null(column='Date')
 test_result(expect, info)
 assert expect.success
+
+# COMMAND ----------
+
+info = 'Checking that the column names are correct'
+expect = df1.expect_table_columns_to_match_set(column_set = column_names, exact_match=True)
+test_result(expect, info)
 
 # COMMAND ----------
 
