@@ -147,7 +147,7 @@ test_result(expect, info)
 
 # Count rows in file and write to log table
 #___________________________________________
-full_path = source_path + latestFolder + source_file
+full_path = source_path + latestFolder + new_source_file
 row_count = len(df)
 today = pd.to_datetime('now').strftime("%Y-%m-%d %H:%M:%S")
 date = datetime.strptime(today, '%Y-%m-%d %H:%M:%S')
