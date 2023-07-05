@@ -68,16 +68,47 @@ log_table = "dbo.pre_load_log"
 # Read parameters from JSON config
 # -------------------------------------------------------------------------
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
-source_path = config_JSON['pipeline']['project']['source_path']
-source_file = config_JSON['pipeline']['project']['source_file']
+source_path = config_JSON['pipeline']['raw']['snapshot_source_path']
 
 # COMMAND ----------
 
 # Pull dataframe
 # -------------------------------------------------------------------------
+
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
-file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
-df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
+file_name_list = datalake_listContents(CONNECTION_STRING, file_system, source_path+latestFolder)
+file_name_list = [file for file in file_name_list if '.xlsx' in file]
+for new_source_file in file_name_list:
+  new_dataset = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, new_source_file)
+  df = pd.read_excel(io.BytesIO(new_dataset),  engine  = 'openpyxl') 
+  #new_dataframe['Date'] = pd.to_datetime(new_dataframe['BiWeekly_Date']).dt.strftime('%Y-%m-%d')
+
+# COMMAND ----------
+
+column_names = ['(Do Not Modify) EPR 2023',
+ '(Do Not Modify) Row Checksum',
+ '(Do Not Modify) Modified On',
+ 'Organisation Code',
+ 'Organisation',
+ 'Trust Type',
+ 'Additional Care Settings',
+ 'Region',
+ 'ICS',
+ 'NHP Scheme',
+ 'Stage of Journey',
+ 'EPR Group',
+ 'Current EPR Status',
+ 'Dates Last Changed',
+ 'Supplier (Primary EPR)',
+ 'Contract Expiry (Primary EPR)',
+ 'OBC approvals by EPRIB / JISC',
+ 'Formal Procurement Start',
+ 'FBC approvals by EPRIB / JISC',
+ 'Implementation Start',
+ 'Current Forecast Go-Live',
+ 'New Supplier Name',
+ 'Supplier Contract signed',
+ 'BiWeekly_Date']
 
 # COMMAND ----------
 
@@ -97,9 +128,15 @@ df1 = ge.from_pandas(val_df) # Create great expectations dataframe from pandas d
 #Test that the Date column do not contain any null values
 
 info = "Checking that the Date column do not contain any null values\n"
-expect = df1.expect_column_values_to_not_be_null(column='Date')
+expect = df1.expect_column_values_to_not_be_null(column='BiWeekly_Date')
 test_result(expect, info)
 assert expect.success
+
+# COMMAND ----------
+
+info = 'Checking that the column names are correct'
+expect = df1.expect_table_columns_to_match_set(column_set = column_names, exact_match=True)
+test_result(expect, info)
 
 # COMMAND ----------
 
