@@ -81,10 +81,6 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 # COMMAND ----------
 
-df
-
-# COMMAND ----------
-
 #Processing
 # ---------------------------------------------------------------------------------------------------
 
@@ -92,17 +88,13 @@ df
 # ---------------------------------------------------------------------------------------------------
 
 #remove Internal and not mapped sender
-df = df[~df['Sender'].isin(['NHS App/Internal', 'Not Mapped'])]
+df = df[~df['Supplier'].isin(['NHS App/Internal', 'Not Mapped'])]
 #removed sendsers with 0 reads (assumed to be notification only)
 df = df[df['Read By']>0]
 #set unknown to notarget found 
 df.loc[df['Push Notification']=="Unknown",'Push Notification'] = 'NoTargetFound'
 #remove unessecary columns
-df = df[['Date', 'Count', 'Push Notification', 'Read By']]
-
-# COMMAND ----------
-
-df
+df = df[['Date', 'Supplier', 'Count', 'Push Notification', 'Read By']]
 
 # COMMAND ----------
 
@@ -120,11 +112,6 @@ df.columns = ['Messages Sent Notification', 'Messages Sent No Notification', 'Me
 df = df.reset_index()
 df.index.name = "Unique ID"
 df_processed = df.copy()
-
-# COMMAND ----------
-
-df_processed
-
 
 # COMMAND ----------
 
