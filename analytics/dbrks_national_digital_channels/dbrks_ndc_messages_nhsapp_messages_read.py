@@ -81,6 +81,10 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 # COMMAND ----------
 
+df
+
+# COMMAND ----------
+
 #Processing
 # ---------------------------------------------------------------------------------------------------
 
@@ -88,7 +92,7 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 # ---------------------------------------------------------------------------------------------------
 
 #remove Internal and not mapped sender
-df[~df['Sender'].isin(['NHS App/Internal', 'Not Mapped'])]
+df = df[~df['Sender'].isin(['NHS App/Internal', 'Not Mapped'])]
 #removed sendsers with 0 reads (assumed to be notification only)
 df = df[df['Read By']>0]
 #set unknown to notarget found 
@@ -98,11 +102,15 @@ df = df[['Date', 'Count', 'Push Notification', 'Read By']]
 
 # COMMAND ----------
 
+df
+
+# COMMAND ----------
+
 #Reshaping
 # ---------------------------------------------------------------------------------------------------
 
 #pivot data into required columns
-df = pd.pivot_table(df, values=['Count', 'Read By'], columns = "Push Notification", index=['Date'])
+df = pd.pivot_table(df, values=['Count', 'Read By'], columns = "Push Notification", index=['Date'], aggfunc='sum')
 #flatten multiindex columns.
 df.columns =df.columns.to_flat_index()
 #select specific columns and rename them. Any new categories added to 'push notification' will be dropped at this step
@@ -112,6 +120,11 @@ df.columns = ['Messages Sent Notification', 'Messages Sent No Notification', 'Me
 df = df.reset_index()
 df.index.name = "Unique ID"
 df_processed = df.copy()
+
+# COMMAND ----------
+
+df_processed
+
 
 # COMMAND ----------
 
