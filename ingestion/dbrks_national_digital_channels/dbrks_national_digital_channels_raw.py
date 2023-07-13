@@ -76,6 +76,7 @@ appended_path = config_JSON['pipeline']['raw']['appended_path']
 appended_daily_file = config_JSON['pipeline']['raw']['appended_file_daily']
 appended_monthly_file = config_JSON['pipeline']['raw']['appended_file_monthly']
 appended_ods_file = config_JSON['pipeline']['raw']['appended_file_daily_ods']
+appended_messages_file = config_JSON['pipeline']['raw']['appended_file_m&n']
 
 # COMMAND ----------
 
@@ -141,3 +142,18 @@ current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.BytesIO()
 new_data_ods_df.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, appended_path+current_date_path, appended_ods_file)
+
+# COMMAND ----------
+
+#Pull messages dataset
+# ----------------------------------------
+new_data_messages = pd.read_excel(io.BytesIO(new_dataset), sheet_name = 'Messaging & Notifications', engine='openpyxl')
+new_data_messages['Date'] = pd.to_datetime(new_data_messages['Date'])
+new_data_messages_df = new_data_messages.copy()
+
+# Upload merged data to datalake
+# -------------------------------------------
+current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
+file_contents = io.BytesIO()
+new_data_ods_df.to_parquet(file_contents, engine="pyarrow")
+datalake_upload(file_contents, CONNECTION_STRING, file_system, appended_path+current_date_path, appended_messages_file)
