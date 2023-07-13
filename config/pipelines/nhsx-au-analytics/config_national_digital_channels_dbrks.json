@@ -235,6 +235,16 @@
 						"id": "M272",
 						"full_name": "Wayfinder",
 						"short_name": "ndc_transactions_nhsapp_wayfinder"
+					},
+					{
+						"id": "M273",
+						"full_name": "Messages Read",
+						"short_name": "ndc_messages_nhsapp_messages_read"
+					},
+					{
+						"id": "M274",
+						"full_name": "Notifications Only",
+						"short_name": "ndc_messages_nhsapp_notifications_only"
 					}
 				]
 			}
@@ -253,7 +263,8 @@
 			"appended_path": "raw/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
 			"appended_file_daily": "national_digital_channels_historical_daily.parquet",
 			"appended_file_monthly": "national_digital_channels_historical_monthly.parquet",
-			"appended_file_daily_ods": "national_digital_channels_historical_daily_ods.parquet"
+			"appended_file_daily_ods": "national_digital_channels_historical_daily_ods.parquet",
+			"appended_file_m&n": "national_digital_channels_historical_m&n.parquet"
 		},
 		"proc": [
 			{
@@ -273,6 +284,12 @@
 				"source_file": "national_digital_channels_historical_daily_ods.parquet",
 				"sink_path": "proc/sources/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
 				"sink_file": "national_digital_channels_historical_daily_ods.parquet"
+			},
+			{
+				"source_path": "raw/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
+				"source_file": "national_digital_channels_historical_m&n.parquet",
+				"sink_path": "proc/sources/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
+				"sink_file": "national_digital_channels_historical_m&n.parquet"
 			}
 		],
 		"project": {
@@ -561,6 +578,18 @@
 					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_transactions_nhsapp_wayfinder/",
 					"sink_file": "ndc_transactions_nhsapp_wayfinder.csv",
 					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_nhsapp_wayfinder"
+				},
+				{
+					"metric": "ndc_messages_nhsapp_messages_read",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_messages_nhsapp_messages_read/",
+					"sink_file": "ndc_messages_nhsapp_messages_read.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_messages_nhsapp_messages_read"
+				},
+				{
+					"metric": "ndc_messages_nhsapp_notifications_only",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_messages_nhsapp_notifications_only/",
+					"sink_file": "ndc_messages_nhsapp_notifications_only.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_messages_nhsapp_notifications_only"
 				}
 				
 			]
@@ -745,6 +774,14 @@
 			{
 				"metric": "ndc_dashboard_user_base_loggingin_3month_prop",
 				"sink_table": "ndc_dashboard_user_base_loggingin_3month_prop"
+			},
+			{
+				"metric": "ndc_transactions_nhsapp_wayfinder",
+				"sink_table": "ndc_transactions_nhsapp_wayfinder"
+			},
+			{
+				"metric": "ndc_messages_nhsapp_messages_read",
+				"sink_table": "ndc_messages_nhsapp_messages_read"
 			},
 			{
 				"metric": "ndc_transactions_nhsapp_wayfinder",
