@@ -155,5 +155,5 @@ new_data_messages_df = new_data_messages.copy()
 # -------------------------------------------
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.BytesIO()
-new_data_ods_df.to_parquet(file_contents, engine="pyarrow")
+new_data_messages_df.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, appended_path+current_date_path, appended_messages_file)
