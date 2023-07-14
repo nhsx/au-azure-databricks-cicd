@@ -26,10 +26,15 @@
 						"full_name": "Location DSCRQ completeness (PIR collated - Tab02 in Databricks)",
 						"short_name": "Location DSCRQ completeness (PIR collated - Tab02 in Databricks)"
 					},
-                    {
+          {
 						"id": "M334",
 						"full_name": "Number of care home beds (approximation of individuals receiving care in Care homes) covered by each DSCR status [Yes/No/NA] ",
 						"short_name": "Number of care home beds approximating individuals receiving care in Care homes"
+					},
+					{
+						"id": "M334B",
+						"full_name": "Number of care home beds (approximation of individuals receiving care in Care homes) covered by each DSCR status [Yes/No/NA] consolidated by merging all previous files",
+						"short_name": "Number of care home beds approximating individuals receiving care in Care homes consolidated by merging all previous files"
 					}
 				]
 			}
@@ -82,6 +87,12 @@
 					"sink_path": "proc/projects/nhsx_slt_analytics/digital_socialcare/dscr/dbrks_dscr_all_variables_cum_count/",
 					"sink_file": "dbrks_dscr_all_variables_cum_count.csv",
 					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dscr/dbrks_dscr_all_variables_cum_count"
+				},
+				{
+					"metric": "dbrks_dscr_all_variables_care_home_beds_consolidated",
+					"sink_path": "proc/projects/nhsx_slt_analytics/digital_socialcare/dscr/dbrks_dscr_all_variables_care_home_beds_consolidated/",
+					"sink_file": "dbrks_dscr_all_variables_care_home_beds_consolidated.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_dscr/dbrks_dscr_all_variables_care_home_beds_consolidated"
 				}
 				
 			]
@@ -91,7 +102,7 @@
 				"metric": "dscr_all_variables_month_count",
 				"sink_table": "dscr_all_variables_month_count"
 			},
-            {
+      {
 				"metric": "dscr_all_variables_care_home_beds",
 				"sink_table": "dscr_all_variables_care_home_beds"
 			},
@@ -102,6 +113,10 @@
 			{
 				"metric": "dscr_all_variables_cum_count",
 				"sink_table": "dscr_all_variables_cum_count"
+			},
+			            {
+				"metric": "dscr_all_variables_care_home_beds_consolidated",
+				"sink_table": "dscr_all_variables_care_home_beds_consolidated"
 			}
 		],
 		"validation": [
