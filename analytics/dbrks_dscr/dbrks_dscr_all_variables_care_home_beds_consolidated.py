@@ -68,10 +68,12 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 proc_project_path = config_JSON['pipeline']["project"]["databricks"][1]['sink_path']
 proc_project_file = config_JSON['pipeline']["project"]["databricks"][1]['sink_file']
 
-# Get name of output for this notebook from config
-# sink_file = config_JSON['pipeline']['project']['databricks'][4]['sink_file']
 
-#table_name = config_JSON['pipeline']["staging"][4]['sink_table']
+# Get name of output for this notebook from config
+sink_file = config_JSON['pipeline']['project']['databricks'][4]['sink_file']
+sink_path = config_JSON['pipeline']['project']['databricks'][4]['sink_path']
+
+table_name = config_JSON['pipeline']["staging"][4]['sink_table']
 
 print(proc_project_path)
 print(proc_project_file )
