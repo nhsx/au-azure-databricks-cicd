@@ -76,7 +76,7 @@ appended_path = config_JSON['pipeline']['raw']['appended_path']
 appended_daily_file = config_JSON['pipeline']['raw']['appended_file_daily']
 appended_monthly_file = config_JSON['pipeline']['raw']['appended_file_monthly']
 appended_ods_file = config_JSON['pipeline']['raw']['appended_file_daily_ods']
-appended_messages_file = config_JSON['pipeline']['raw']['appended_file_m&n']
+appended_messages_file = config_JSON['pipeline']['raw']['appended_file_messages']
 
 # COMMAND ----------
 
