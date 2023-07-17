@@ -133,12 +133,16 @@ df_join = df_join[df_join["Location_Inspection_Directorate"]=="Adult social care
 
 # COMMAND ----------
 
+df_join.groupby(["monthly_date"]).count() # sense check
+
+# COMMAND ----------
+
 # Get PIR data
 # -------------------------------------------------------------------------
 pir_latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, pir_source_path)
 file = datalake_download(CONNECTION_STRING, file_system, pir_source_path+pir_latestFolder, pir_source_file)
 df_pir = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
-df_pir # 10746 rows
+df_pir # 
 
 # COMMAND ----------
 
@@ -168,6 +172,18 @@ df_tab02_patch = df_join_keep.merge(df_pir_keep, how = 'left', on='Location_Id')
 
 # COMMAND ----------
 
+#df_join_keep.groupby(["monthly_date"]).count() 
+
+# COMMAND ----------
+
+#df_tab02_patch.groupby(["monthly_date"]).count() 
+
+# COMMAND ----------
+
+#df_tab02_patch.groupby(["monthly_date"]).nunique() 
+
+# COMMAND ----------
+
 # Create 1, 0 flag for yes and no to be use for calculation
 
 df_tab01_sampler["yes"] = np.where(df_tab01_sampler['Use a Digital Social Care Record system?'] == "Yes", 1, 0)
@@ -193,17 +209,36 @@ from dateutil.relativedelta import relativedelta
 
 # COMMAND ----------
 
+#auxx = df_tab02_patch[df_tab02_patch["monthly_date"]=="2023-05-01"].copy()
+#auxx[auxx['Use a Digital Social Care Record system?']=="Yes"]
+
+# COMMAND ----------
+
 df_tab_cumtrend = df_tab02_patch.copy()
-df_tab_cumtrend["eo_monthly_date"] = df_tab_cumtrend["monthly_date"]+ pd.offsets.MonthEnd(n=0) # IMPLEMENT ME
-df_tab_cumtrend = df_tab_cumtrend[(df_tab_cumtrend["PIR submission date"]<=df_tab_cumtrend["eo_monthly_date"] ) | (df_tab02_patch["PIR submission date"].isna())] # keep only submissions prior to end of month
-
-
-# COMMAND ----------
-
-df_tab_cumtrend.groupby(["eo_monthly_date","monthly_date"]).count()
+df_tab_cumtrend["PIR submission date"] = df_tab_cumtrend["PIR submission date"].fillna(value="2030-12-31") # pad with a date far in the future
+df_tab_cumtrend["eo_monthly_date"] = df_tab_cumtrend["monthly_date"]+ pd.offsets.MonthEnd(n=0) # 
+df_tab_cumtrend["yes"] = np.where(((df_tab_cumtrend['Use a Digital Social Care Record system?'] == "Yes") & (df_tab_cumtrend["PIR submission date"]<=df_tab_cumtrend["eo_monthly_date"])), 1, 0)
+df_tab_cumtrend["no"] = np.where(((df_tab_cumtrend['Use a Digital Social Care Record system?'] == "No") & (df_tab_cumtrend["PIR submission date"]<=df_tab_cumtrend["eo_monthly_date"])), 1, 0)
+                                                                                           
 
 # COMMAND ----------
 
+#df_tab_cumtrend.groupby(["eo_monthly_date","monthly_date"]).count()
+#df_tab_cumtrend[df_tab_cumtrend["eo_monthly_date"]=="2023-05-31"][["no","yes"]].sum()
+
+# COMMAND ----------
+
+#aux = df_tab_cumtrend[df_tab_cumtrend["eo_monthly_date"]=="2023-05-31"].copy()
+#aux[aux['Use a Digital Social Care Record system?']=="No"]
+#aux[aux['Use a Digital Social Care Record system?']=="Yes"]
+
+# COMMAND ----------
+
+#df_tab_cumtrend.groupby(["eo_monthly_date","monthly_date"]).nunique()
+
+# COMMAND ----------
+
+df_tab_cumtrend[["Location_Id","Location_Primary_Inspection_Category","Location_Local_Authority","CCG_ONS_Code","Location_ONSPD_CCG_Name","ICB_ONS_Code","ICB_Name","Region_Code","Region_Name"]] = df_tab_cumtrend[["Location_Id","Location_Primary_Inspection_Category","Location_Local_Authority","CCG_ONS_Code","Location_ONSPD_CCG_Name","ICB_ONS_Code","ICB_Name","Region_Code","Region_Name"]].fillna('Unknown')
 df_tab_cumtrend_sum = df_tab_cumtrend.copy()
 
 # COMMAND ----------
@@ -221,6 +256,28 @@ df_tab_cumtrend_sum = df_tab_cumtrend_sum.reset_index()
 
 # COMMAND ----------
 
+#df_tab_cumtrend_sum[df_tab_cumtrend_sum["eo_monthly_date"]=="2023-05-31"]["YEStodate"].sum()
+
+# COMMAND ----------
+
+df_tab_cumtrend[["Location_Id",
+                        "Location_Primary_Inspection_Category",
+                        "Location_Local_Authority",
+                        "CCG_ONS_Code","Location_ONSPD_CCG_Name",
+                        "ICB_ONS_Code","ICB_Name",
+                        "Region_Code","Region_Name",
+                        "Provider_ID", "eo_monthly_date"]].isna().sum()
+
+# COMMAND ----------
+
+#df_tab_cumtrend_sum.groupby(["eo_monthly_date"]).count()
+
+# COMMAND ----------
+
+#df_tab_cumtrend_sum.groupby(["eo_monthly_date"]).nunique()
+
+# COMMAND ----------
+
 # Create necessary Tableau variable - to compute both % implementation and response rate
 # https://numpy.org/doc/stable/reference/generated/numpy.select.html
 conditions = [ (df_tab_cumtrend_sum["YEStodate"]>=1),
@@ -234,11 +291,27 @@ df_tab_cumtrend_sum["PIR_todate"] = np.select(conditions,PIRstatus)
 # COMMAND ----------
 
 #df_tab_cumtrend_sum.groupby(["eo_monthly_date","PIR_todate"]).count()
-df_tab_cumtrend_sum.groupby(["eo_monthly_date"]).count()
+#df_tab_cumtrend_sum.groupby(["eo_monthly_date"]).count()
 
 # COMMAND ----------
 
-max(df_pir["PIR submission date"])  # in dev only data till September 2022 is held
+df_tab_cumtrend_sum['PIR_todate'].isna().sum()  # check for NAs
+
+# COMMAND ----------
+
+# check aggregates
+df_tab_cumtrend_sum.groupby(["eo_monthly_date","PIR_todate"])['Location_Id'].count()
+
+
+# COMMAND ----------
+
+# check aggregates
+df_tab_cumtrend_sum.groupby(["eo_monthly_date"])['Location_Id'].count()
+
+# COMMAND ----------
+
+max(df_pir["PIR submission date"])  # in dev  data till May 2023 is held
+min(df_pir["PIR submission date"])  # in dev  data from Dec 2021 is held
 
 # COMMAND ----------
 
