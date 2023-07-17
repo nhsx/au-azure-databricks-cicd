@@ -90,7 +90,7 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 df = df[~df['Supplier'].isin(['NHS App/Internal', 'Not Mapped'])]
 #removed sendsers with 0 reads (assumed to be notification only)
 df = df[df['Read By']==0]
-df = df[['Date', 'Count']]
+df = df[['Date', 'Notifications from Notification-Only Providers']]
 #
 df = df.groupby('Date').sum().reset_index()
 
