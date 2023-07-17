@@ -785,8 +785,8 @@
 				"sink_table": "ndc_messages_nhsapp_messages_read"
 			},
 			{
-				"metric": "ndc_transactions_nhsapp_wayfinder",
-				"sink_table": "ndc_transactions_nhsapp_wayfinder"
+				"metric": "ndc_messages_nhsapp_notifications_only",
+				"sink_table": "ndc_messages_nhsapp_notifications_only"
 			}
 		]
 	}
