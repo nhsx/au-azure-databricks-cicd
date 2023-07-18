@@ -8,7 +8,7 @@
 # -------------------------------------------------------------------------
 
 """
-FILE:           dbrks_dscr_all_variables_collated_count.py
+FILE:           dbrks_dscr_all_variables_care_home_beds_consolidated.py
 DESCRIPTION:
                  Databricks notebook that consolidate all the final out (files in proc/project) of dbrks_dscr_all_variables_care_home_beds from previous months into one file 
 USAGE:          (M324, M325, M326, M334)
