@@ -145,7 +145,7 @@ df_3.groupby(["Location_Id","monthly_date"],  as_index=False).agg({"Provider_ID"
 df_join = df_3.merge(df_ref_2, how ='outer', on = 'CCG_ONS_Code')
 df_join.index.name = "Unique ID"
 df_join = df_join.round(4)
-df_join["monthly_date"] = pd.to_datetime(df_join["monthly_date"])
+df_join["monthly_date"] = pd.to_datetime(df_join["monthly_date"], format='%d/%m/%Y')
 df_join = df_join[df_join["Location_Inspection_Directorate"]=="Adult social care"] # keep only Adult Social Care Primary Inspection Directorate
 #df_processed = df_join.copy()
 
@@ -165,7 +165,7 @@ df_pir = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 # MAGIC Calculation of metric Table2 - "collated", i.e. focusses on CQC universe and which submitted PIR responses
 # MAGIC - Does track full Universe of current locations, i.e. those in latest CQC file (given by df_join)
 # MAGIC - Does intend to keep individual responses but only so far as an individual CQC location level, i.e.:
-# MAGIC 
+# MAGIC
 # MAGIC  a) A step is done to only keep the most recent PIR submission per location and per PIR type (residential / community) - so old submissions or error duplicates are removed
 # MAGIC  
 # MAGIC  b) Since the aim is to simplify on the view of whether a location has a DSCR at all, the PIR DSCR metric is simplified to capture "Does any PIR type from this location report having a DSCR?". If any of the latest PIR type forms indicates "Yes", one of these is retained against the CQC location.
@@ -285,7 +285,3 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current
 # Write metrics to database
 # -------------------------------------------------------------------------
 write_to_sql(df_tab02_patch, table_name, "overwrite")
-
-# COMMAND ----------
-
-
