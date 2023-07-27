@@ -94,8 +94,8 @@ ODS_code_df['Open_Date'] =  pd.to_datetime(ODS_code_df['Open_Date'], infer_datet
 
 # Set datefilter for org open and close dates
 # -------------------------------------------------------------------------
-close_date = datetime.strptime('2021-03-30','%Y-%m-%d') #------ change close date filter for CCGs and CSUs through time. Please see SOP
-open_date = datetime.strptime('2021-03-30','%Y-%m-%d') #------- change open date filter for CCGs and CSUs through time. Please see SOP
+close_date = datetime.strptime('2022-03-31','%Y-%m-%d') #------ change close date filter for CCGs and CSUs through time. Please see SOP
+open_date = datetime.strptime('2022-03-31','%Y-%m-%d') #------- change open date filter for CCGs and CSUs through time. Please see SOP
 
 # Join DSPT data with ODS table on ODS code
 # -------------------------------------------------------------------------
@@ -115,10 +115,10 @@ DSPT_ODS_selection_3 = DSPT_ODS_selection_2[DSPT_ODS_selection_2.Sector.isin(["N
 # --------------------------------------------------------------------------------------------------------
 DSPT_ODS_selection_3 = DSPT_ODS_selection_3.rename(columns = {"Status":"Latest Status"})
 
-DSPT_ODS_selection_4 = DSPT_ODS_selection_3[DSPT_ODS_selection_3["Latest Status"].isin(["20/21 Standards Met", 
-                                                                                         "20/21 Standards Exceeded", 
-                                                                                         "21/22 Standards Met", 
-                                                                                         "21/22 Standards Exceeded"])].reset_index(drop=True) #------ change financial year for DSPT standard through time. Please see SOP
+DSPT_ODS_selection_4 = DSPT_ODS_selection_3[DSPT_ODS_selection_3["Latest Status"].isin(["21/22 Standards Met", 
+                                                                                         "21/22 Standards Exceeded", 
+                                                                                         "22/23 Standards Met", 
+                                                                                         "22/23 Standards Exceeded"])].reset_index(drop=True) #------ change financial year for DSPT standard through time. Please see SOP
 
 
 # COMMAND ----------
@@ -126,7 +126,7 @@ DSPT_ODS_selection_4 = DSPT_ODS_selection_3[DSPT_ODS_selection_3["Latest Status"
 # Processing - Generating final dataframe for staging to SQL database
 # -------------------------------------------------------------------------
 date_string = str(datetime.now().strftime("%Y-%m"))
-dspt_edition = "2020/2021"  #------ change DSPT edition through time. Please see SOP
+dspt_edition = "2021/2022"  #------ change DSPT edition through time. Please see SOP
 met_exceed_trusts = DSPT_ODS_selection_4["Code"].count()
 total_no_trusts = DSPT_ODS_selection_3["Code"].count()
 data = [[date_string, dspt_edition, met_exceed_trusts, total_no_trusts]]
