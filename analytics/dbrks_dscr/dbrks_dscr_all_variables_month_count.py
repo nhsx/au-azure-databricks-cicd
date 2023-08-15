@@ -138,12 +138,12 @@ df_pir = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC ### Tab01-granular
 # MAGIC Calculation of metric Table1 - "monthly sampler", i.e. focusses on PIR responses (Tab01)
 # MAGIC - Does not track full Universe of locations* (given by df_join), but does bring in some useful fields from df_join (e.g. ICB, provider ID, if need be)
 # MAGIC - Does intend to keep individual responses (e.g. sometimes same location has two PIR submissions in a same month given different PIR type or re-submission)
-# MAGIC 
+# MAGIC
 # MAGIC * this is intended for Table2 - "patch" . i.e. it should have at least a row per CQC ASC provider and then where available add in PIR info. This can help track completion
 
 # COMMAND ----------
@@ -165,7 +165,7 @@ df_join_keep = df_join[df_join["Last_Refreshed"]==max(df_join["Last_Refreshed"])
                         "CCG_ONS_Code","Location_ONSPD_CCG_Name",
                         "ICB_ONS_Code","ICB_Name",
                         "Region_Code","Region_Name",
-                        "Provider_ID", "monthly_date"]].copy()   
+                        "Provider_ID", "monthly_date", "Is_Domant"]].copy()   
 
 # Left join reference info to PIR (as it's a sampler)
 
@@ -208,7 +208,7 @@ df_tab01_sampler_agg = df_tab01_sampler.groupby(["month_year",
                                                  "Location_Primary_Inspection_Category",
                                                  "Location_Local_Authority",
                                                  "CCG_ONS_Code","Location_ONSPD_CCG_Name",
-                                                 "ICB_ONS_Code","ICB_Name",
+                                                 "ICB_ONS_Code","ICB_Name","Is_Domant",
                                                  "Region_Code","Region_Name"]).agg(PIR_YES=("Use a Digital Social Care Record system?", lambda x: (x=="Yes").sum()),
                                                                                    PIR_NO=("Use a Digital Social Care Record system?", lambda x: (x=="No").sum()),
                                                                                    PIR_COUNT=("Use a Digital Social Care Record system?", "count")) # done dif from yes and no but should add up. Change to Yes+No if better
@@ -228,9 +228,9 @@ df_tab01_sampler_agg["date_ran"] = datetime.now().strftime('%d-%m-%Y')
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC ### Tab02 - "patch" - TBA
-# MAGIC 
+# MAGIC
 # MAGIC Of the sort : df_join.merge(df_pir,how="left",on="location_id")
 
 # COMMAND ----------

@@ -166,7 +166,7 @@ df_pir = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 # MAGIC Calculation of metric Table2 - "collated", i.e. focusses on CQC universe and which submitted PIR responses
 # MAGIC - Does track full Universe of current locations, i.e. those in latest CQC file (given by df_join)
 # MAGIC - Does intend to keep individual responses but only so far as an individual CQC location level, i.e.:
-# MAGIC 
+# MAGIC
 # MAGIC  a) A step is done to only keep the most recent PIR submission per location and per PIR type (residential / community) - so old submissions or error duplicates are removed
 # MAGIC  
 # MAGIC  b) Since the aim is to simplify on the view of whether a location has a DSCR at all, the PIR DSCR metric is simplified to capture "Does any PIR type from this location report having a DSCR?". If any of the latest PIR type forms indicates "Yes", one of these is retained against the CQC location.
@@ -199,7 +199,7 @@ df_join_keep = df_join[df_join["Last_Refreshed"]==max(df_join["Last_Refreshed"])
                         "CCG_ONS_Code","Location_ONSPD_CCG_Name",
                         "ICB_ONS_Code","ICB_Name",
                         "Region_Code","Region_Name",
-                        "Provider_ID", "monthly_date", 'Is_Care_Home', 'Care_Home_Beds']].copy()   
+                        "Provider_ID", "monthly_date", 'Is_Care_Home', 'Care_Home_Beds', 'Is_Domant']].copy()   
 
 
 # COMMAND ----------
