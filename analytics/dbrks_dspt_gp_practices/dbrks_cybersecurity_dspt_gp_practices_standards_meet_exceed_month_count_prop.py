@@ -23,7 +23,7 @@ VERSION:        0.0.1
 
 # Install libs
 # -------------------------------------------------------------------------
-%pip install geojson==2.5.* tabulate requests pandas pathlib azure-storage-file-datalake beautifulsoup4 numpy urllib3 lxml regex pyarrow==5.0.*
+%pip install geojson==2.5.* tabulate requests pandas pathlib azure-storage-file-datalake beautifulsoup4 numpy urllib3 lxml regex pyarrow==8.0.*
 
 # COMMAND ----------
 
@@ -102,7 +102,7 @@ df_join = df_ref_2.merge(df_1,'left',left_on='PRACTICE_CODE', right_on='Code')
 # Processing for joined tables
 # -------------------------------------------------------------------------
 df_join['Latest Status'] = df_join['Latest Status'].fillna('Not Published')
-criteria = ['20/21 Standards Exceeded', '21/22 Standards Exceeded', '20/21 Standards Met', '21/22 Standards Met'] #-------- change this upon closure of the fiancial year. Please see the SOP.
+criteria = ['21/22 Standards Exceeded', '22/23 Standards Exceeded', '21/22 Standards Met', '22/23 Standards Met'] #-------- change this upon closure of the fiancial year. Please see the SOP.
 def exceed_dspt(c):
     if c['Latest Status'] in criteria:
       return 1
