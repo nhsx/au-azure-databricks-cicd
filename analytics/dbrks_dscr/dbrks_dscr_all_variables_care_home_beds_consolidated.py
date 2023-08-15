@@ -198,7 +198,7 @@ df_join_keep = df_join[df_join["Last_Refreshed"]==max(df_join["Last_Refreshed"])
                         "CCG_ONS_Code","Location_ONSPD_CCG_Name",
                         "ICB_ONS_Code","ICB_Name",
                         "Region_Code","Region_Name",
-                        "Provider_ID", "monthly_date", 'Is_Care_Home', 'Care_Home_Beds']].copy()   
+                        "Provider_ID", "monthly_date", 'Is_Care_Home', 'Care_Home_Beds', 'Is_Domant']].copy()   
 
 
 # COMMAND ----------
