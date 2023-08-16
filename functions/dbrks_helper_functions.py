@@ -176,7 +176,7 @@ def rename_dspt_gp_cols(df):
 
 def process_dspt_dataframe(df, filename, year):
   df = rename_dspt_gp_cols(df) #call the rename_cols function on the dataframe to syncronise all the column names
-  df_gp = df[df["Primary Sector"] == "GP"] #filter the primary sector column for GP's only 
+  df_gp = df[df["Primary Sector"].str.contains("GP")] #filter the primary sector column for GP's only 
   num_rows = df_gp.shape[0] #retrieve the number of rows after filtering to be create the right size columns(lists) for the dspt_edition and snapshot_date
   dspt_edition = get_dspt_edition(year, num_rows) #call and save the columns(list) for dspt_edition and snapshot_date
   snapshot_date = get_snapshot_date(year, filename, num_rows)
