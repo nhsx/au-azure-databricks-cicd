@@ -104,10 +104,10 @@ hcsu_source_file = hcsu_config_JSON['pipeline']['proc']['sink_file']
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
-df_1 = df[['Location ID','Location Name','Dormant (Y/N)','Care home?','Care homes beds','Location Inspection Directorate','Location Primary Inspection Category','Location Local Authority','Location ONSPD CCG Code','Location ONSPD CCG','Provider ID','Provider Name','Provider Local Authority','Provider NHS Region','Provider Inspection Directorate','Provider Primary Inspection Category','Provider Postal Code','run_date']]
+df_1 = df[['Location ID','Location Name','Dormant (Y/N)','Care home?','Care homes beds','Location Inspection Directorate','Location Primary Inspection Category','Location Local Authority','Location ONSPD CCG Code','Location ONSPD CCG','Provider ID','Provider Name','Provider Local Authority','Provider NHS Region','Provider Inspection Directorate','Provider Primary Inspection Category','Provider Postal Code', 'Location Postal Code','run_date']]
 
 df_2 = df_1.drop_duplicates()
-df_3 = df_2.rename(columns = {'Location ID':'Location_Id','Location Name':'Location_Name','Dormant (Y/N)':'Is_Domant','Care home?':'Is_Care_Home','Care homes beds':'Care_Home_Beds', 'Location Inspection Directorate':'Location_Inspection_Directorate','Location Primary Inspection Category':'Location_Primary_Inspection_Category','Location Local Authority':'Location_Local_Authority','Location ONSPD CCG Code':'CCG_ONS_Code','Location ONSPD CCG':'Location_ONSPD_CCG_Name','Provider ID':'Provider_ID','Provider Name':'Provider_Name','Provider Local Authority':'Provider_Local_Authority','Provider NHS Region':'Provider_NHS_Region','Provider Inspection Directorate':'Provider_Inspection_Directorate','Provider Primary Inspection Category':'Provider_Primary_Inspection_Category','Provider Postal Code':'Provider_Postal_Code','run_date':'monthly_date'})
+df_3 = df_2.rename(columns = {'Location ID':'Location_Id','Location Name':'Location_Name','Dormant (Y/N)':'Is_Domant','Care home?':'Is_Care_Home','Care homes beds':'Care_Home_Beds', 'Location Inspection Directorate':'Location_Inspection_Directorate','Location Primary Inspection Category':'Location_Primary_Inspection_Category','Location Local Authority':'Location_Local_Authority','Location ONSPD CCG Code':'CCG_ONS_Code','Location ONSPD CCG':'Location_ONSPD_CCG_Name','Provider ID':'Provider_ID','Provider Name':'Provider_Name','Provider Local Authority':'Provider_Local_Authority','Provider NHS Region':'Provider_NHS_Region','Provider Inspection Directorate':'Provider_Inspection_Directorate','Provider Primary Inspection Category':'Provider_Primary_Inspection_Category','Provider Postal Code':'Provider_Postal_Code', 'Location Postal Code':'Location_Postal_Code','run_date':'monthly_date'})
 
 
 # ref data Processing
@@ -196,9 +196,11 @@ df_join_keep = df_join[df_join["Last_Refreshed"]==max(df_join["Last_Refreshed"])
                         "Provider_ID",
                         "Provider_Name",
                         "Provider_Local_Authority",
-                        "Provider_NHS_Region","Is_Care_Home","Care_Home_Beds","Provider_Postal_Code","Is_Domant",
+                        "Provider_NHS_Region","Is_Care_Home","Care_Home_Beds","Provider_Postal_Code","Location_Postal_Code","Is_Domant",
                          "monthly_date"]].copy()   
 
+
+display(df_join_keep)
 
 # COMMAND ----------
 
