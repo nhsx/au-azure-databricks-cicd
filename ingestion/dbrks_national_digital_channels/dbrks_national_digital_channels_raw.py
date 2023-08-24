@@ -111,7 +111,7 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, appended_path+cur
 
 # Pull monthly dataset
 # ----------------------------------------
-new_data_month = pd.read_excel(io.BytesIO(new_dataset), sheet_name = ['jumpoffs', 'NHS App Dash', 'NHS UK', 'Appts in Primary Care', 'NHS Login report', 'NHS.UK report'], engine='openpyxl')
+new_data_month = pd.read_excel(io.BytesIO(new_dataset), sheet_name = ['jumpoffs', 'NHS App Dash', 'NHS UK', 'Appts in Primary Care', 'NHS Login report', 'NHS.UK report', 'Forecasts'], engine='openpyxl')
 new_data_df_month = pd.DataFrame()
 for sheet_name, df in new_data_month.items():
   if new_data_df_month.empty:
