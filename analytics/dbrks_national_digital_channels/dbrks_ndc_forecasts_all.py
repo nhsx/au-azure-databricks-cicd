@@ -8,15 +8,15 @@
 # -------------------------------------------------------------------------
 
 """
-FILE:           dbrks_ndc_transactions_detail_coded_record_views_month_prop.py
+FILE:           dbrks_ndc_forecasts_all.py
 DESCRIPTION:
-                Databricks notebook with processing code for the NHSX Analyticus unit metric M257: Detail Coded Record Views as a % of all Record Views
+                Databricks notebook with processing code for the NHSX Analyticus unit metric M275: All Forecasts
 USAGE:
                 ...
-CONTRIBUTORS:   Everistus Oputa, Kabir Khan
+CONTRIBUTORS:   Chris Todd
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        25th Aug 2022
-VERSION:        0.0.2
+CREATED:        24th Aug 2023
+VERSION:        0.0.1
 """
 
 # COMMAND ----------
@@ -65,10 +65,10 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 #Get parameters from JSON config
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 source_path = config_JSON['pipeline']['project']['source_path']
-source_file = config_JSON['pipeline']['project']["source_file_daily"]
-sink_path = config_JSON['pipeline']['project']['databricks'][13]['sink_path']
-sink_file = config_JSON['pipeline']['project']['databricks'][13]['sink_file']  
-table_name = config_JSON['pipeline']["staging"][13]['sink_table']
+source_file = config_JSON['pipeline']['project']["source_file_monthly"]
+sink_path = config_JSON['pipeline']['project']['databricks'][48]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][48]['sink_file']  
+table_name = config_JSON['pipeline']["staging"][48]['sink_table']
 
 # COMMAND ----------
 
@@ -82,21 +82,13 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 #Processing
 # ---------------------------------------------------------------------------------------------------
-
-#Numerator
-                         
+#Numerator                      
 # ---------------------------------------------------------------------------------------------------
-df_1 = df[["Daily", "RecordViewsDCR", "RecordViews"]]
-df_1.iloc[:, 0] = df_1.iloc[:,0].dt.strftime('%Y-%m')
-df_2 = df_1.groupby(df_1.iloc[:,0]).sum().reset_index()
-df_2.rename(columns  = {'Daily': 'Date', "RecordViewsDCR": 'Number of Detail Coded Record Views', 
-                        'RecordViews': 'Number of all Record Views'}, inplace = True)
-df_2['Proportion of Detail Coded Record Views'] = df_2['Number of Detail Coded Record Views'] / df_2['Number of all Record Views']
-df_2['Proportion of Detail Coded Record Views'] = df_2['Proportion of Detail Coded Record Views'].fillna(0)
-df_3 = df_2.round(4)
-df_3.index.name = "Unique ID"
-df_3['Date'] = pd.to_datetime(df_3['Date'])
-df_processed = df_3.copy()
+cols = [x for x in df.columns if 'forecast_' in x]
+df = df[['Monthly', *cols]]
+df.rename(columns  = {'Monthly': 'Date'}, inplace = True)
+df.index.name = "Unique ID"
+df_processed = df.copy()
 
 # COMMAND ----------
 
