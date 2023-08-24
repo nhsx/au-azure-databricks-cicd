@@ -245,6 +245,11 @@
 						"id": "M274",
 						"full_name": "Notifications Only",
 						"short_name": "ndc_messages_nhsapp_notifications_only"
+					},
+					{
+						"id": "M275",
+						"full_name": "All Forecasts",
+						"short_name": "ndc_forecasts_all"
 					}
 				]
 			}
@@ -591,6 +596,12 @@
 					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_messages_nhsapp_notifications_only/",
 					"sink_file": "ndc_messages_nhsapp_notifications_only.csv",
 					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_messages_nhsapp_notifications_only"
+				},
+				{
+					"metric": "ndc_forecasts_all",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_forecasts_all/",
+					"sink_file": "ndc_forecasts_all.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/ndc_forecasts_all"
 				}
 				
 			]
@@ -787,6 +798,10 @@
 			{
 				"metric": "ndc_messages_nhsapp_notifications_only",
 				"sink_table": "ndc_messages_nhsapp_notifications_only"
+			},
+			{
+				"metric": "ndc_forecasts_all",
+				"sink_table": "ndc_forecasts_all"
 			}
 		]
 	}
