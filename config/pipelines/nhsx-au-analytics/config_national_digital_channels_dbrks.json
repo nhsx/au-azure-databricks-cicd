@@ -601,7 +601,7 @@
 					"metric": "ndc_forecasts_all",
 					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_forecasts_all/",
 					"sink_file": "ndc_forecasts_all.csv",
-					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/ndc_forecasts_all"
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_forecasts_all"
 				}
 				
 			]
