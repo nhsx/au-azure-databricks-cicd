@@ -130,7 +130,7 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, appended_path+cur
 
 # COMMAND ----------
 
-# Pull monthly dataset
+# Pull forecasts dataset
 # ----------------------------------------
 new_data_forecasts = pd.read_excel(io.BytesIO(new_dataset), sheet_name = ['Forecasts'], engine='openpyxl')
 new_data_df_forecasts = pd.DataFrame()
@@ -145,7 +145,7 @@ forecasts_raw_df = new_data_df_forecasts.copy()
 # -------------------------------------------
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.BytesIO()
-monthly_raw_df.to_parquet(file_contents, engine="pyarrow")
+forecasts_raw_df.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, appended_path+current_date_path, appended_forecasts_file)
 
 # COMMAND ----------
