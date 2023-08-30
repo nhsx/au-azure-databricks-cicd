@@ -77,6 +77,7 @@ appended_daily_file = config_JSON['pipeline']['raw']['appended_file_daily']
 appended_monthly_file = config_JSON['pipeline']['raw']['appended_file_monthly']
 appended_ods_file = config_JSON['pipeline']['raw']['appended_file_daily_ods']
 appended_messages_file = config_JSON['pipeline']['raw']['appended_file_messages']
+appended_forecasts_file = config_JSON['pipeline']['raw']['appended_file_forecasts']
 
 # COMMAND ----------
 
@@ -111,7 +112,7 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, appended_path+cur
 
 # Pull monthly dataset
 # ----------------------------------------
-new_data_month = pd.read_excel(io.BytesIO(new_dataset), sheet_name = ['jumpoffs', 'NHS App Dash', 'NHS UK', 'Appts in Primary Care', 'NHS Login report', 'NHS.UK report', 'Forecasts'], engine='openpyxl')
+new_data_month = pd.read_excel(io.BytesIO(new_dataset), sheet_name = ['jumpoffs', 'NHS App Dash', 'NHS UK', 'Appts in Primary Care', 'NHS Login report', 'NHS.UK report'], engine='openpyxl')
 new_data_df_month = pd.DataFrame()
 for sheet_name, df in new_data_month.items():
   if new_data_df_month.empty:
@@ -126,6 +127,26 @@ current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.BytesIO()
 monthly_raw_df.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, appended_path+current_date_path, appended_monthly_file)
+
+# COMMAND ----------
+
+# Pull forecasts dataset
+# ----------------------------------------
+new_data_forecasts = pd.read_excel(io.BytesIO(new_dataset), sheet_name = ['Forecasts'], engine='openpyxl')
+new_data_df_forecasts = pd.DataFrame()
+for sheet_name, df in new_data_forecasts.items():
+  if new_data_df_forecasts.empty:
+    new_data_df_forecasts = new_data_df_forecasts.append(df)
+  else:
+    new_data_df_forecasts = new_data_df_forecasts.merge(df, how='outer', on = 'Monthly')
+forecasts_raw_df = new_data_df_forecasts.copy()  
+
+# Upload merged data to datalake
+# -------------------------------------------
+current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
+file_contents = io.BytesIO()
+forecasts_raw_df.to_parquet(file_contents, engine="pyarrow")
+datalake_upload(file_contents, CONNECTION_STRING, file_system, appended_path+current_date_path, appended_forecasts_file)
 
 # COMMAND ----------
 
