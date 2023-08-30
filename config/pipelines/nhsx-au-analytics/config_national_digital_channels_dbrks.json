@@ -296,6 +296,12 @@
 				"source_file": "national_digital_channels_historical_messages.parquet",
 				"sink_path": "proc/sources/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
 				"sink_file": "national_digital_channels_historical_messages.parquet"
+			},
+			{
+				"source_path": "raw/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
+				"source_file": "national_digital_channels_historical_forecasts.parquet",
+				"sink_path": "proc/sources/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
+				"sink_file": "national_digital_channels_historical_forecasts.parquet"
 			}
 		],
 		"project": {
