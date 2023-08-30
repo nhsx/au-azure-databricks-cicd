@@ -304,6 +304,7 @@
 			"source_file_monthly": "national_digital_channels_historical_monthly.parquet",
 			"source_file_ods": "national_digital_channels_historical_daily_ods.parquet",
 			"source_file_messages": "national_digital_channels_historical_messages.parquet",
+			"source_file_forecasts": "national_digital_channels_historical_forecasts.parquet",
 			"reference_source_path": "proc/sources/ncdr_etp/adf_v2/table/ons_population_demography/historical/",
 			"reference_source_file": "table_ons_population_demography_historical.parquet",
 			"reference_source_path_pomi": "proc/sources/factsanddim/adf_v2/table/pomi_table/full/",
