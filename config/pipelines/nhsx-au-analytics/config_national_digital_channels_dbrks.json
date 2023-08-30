@@ -269,7 +269,8 @@
 			"appended_file_daily": "national_digital_channels_historical_daily.parquet",
 			"appended_file_monthly": "national_digital_channels_historical_monthly.parquet",
 			"appended_file_daily_ods": "national_digital_channels_historical_daily_ods.parquet",
-			"appended_file_messages": "national_digital_channels_historical_messages.parquet"
+			"appended_file_messages": "national_digital_channels_historical_messages.parquet",
+			"appended_file_forecasts": "national_digital_channels_historical_forecasts.parquet"
 		},
 		"proc": [
 			{
