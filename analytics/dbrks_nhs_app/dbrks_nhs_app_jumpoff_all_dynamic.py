@@ -104,9 +104,12 @@ df['Service'] = df['Service'].apply(lambda x: re.sub(r"(\w)([A-Z])", r"\1 \2", x
 # -------------------------------------------------------------------------------------------------
 df['Clicks'] = df['Clicks'].astype(int)
 df['Date'] = pd.to_datetime(df['Date'], infer_datetime_format=True)
+#aggregate to monthly values
+df = df.groupby([pd.Grouper(freq='M', key='Date'),'OdsCode', 'Provider', 'Service']).sum().reset_index()
 df = df.rename(columns = {'OdsCode': 'Practice code'})
 df.index.name = "Unique ID"
 df_processed = df.copy()
+
 
 # COMMAND ----------
 
