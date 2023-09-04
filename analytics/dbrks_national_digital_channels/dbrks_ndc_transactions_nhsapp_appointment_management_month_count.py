@@ -10,7 +10,7 @@
 """
 FILE:           dbrks_ndc_transactions_nhsapp_appointment_management_month_count.py
 DESCRIPTION:
-                Databricks notebook with processing code for the NHSX Analyticus unit metric M235: Appointment Management
+                Databricks notebook with processing code for the NHSX Analyticus unit metric M235: Secondary Care Appointment Management less Wayfinder
 USAGE:
                 ...
 CONTRIBUTORS:   Mattia Ficarelli, Kabir Khan
@@ -66,7 +66,6 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']["source_file_monthly"]
-source_file_1 = config_JSON['pipeline']['project']["source_file_daily"]
 sink_path = config_JSON['pipeline']['project']['databricks'][27]['sink_path']
 sink_file = config_JSON['pipeline']['project']['databricks'][27]['sink_file']  
 table_name = config_JSON['pipeline']["staging"][27]['sink_table']
@@ -79,9 +78,6 @@ latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
-file_1 = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file_1)
-df_daily = pd.read_parquet(io.BytesIO(file_1), engine="pyarrow")
-
 # COMMAND ----------
 
 #Processing
@@ -89,26 +85,13 @@ df_daily = pd.read_parquet(io.BytesIO(file_1), engine="pyarrow")
 
 #Numerator (Montly)
 # ---------------------------------------------------------------------------------------------------
-df_1 = df[["Monthly", "PKB_appointments", "manageYourReferral", "NBS - appointmentBookings"]]
-df_1.iloc[:, 0] = df_1.iloc[:,0].dt.strftime('%Y-%m')
-df_2 = df_1.groupby(df_1.iloc[:,0]).sum().reset_index()
-
-#Numerator (daily appointments)
-# ---------------------------------------------------------------------------------------------------
-df_daily_1 = df_daily[["Daily", "UsersAppointmentsBooked"]]
-df_daily_1.iloc[:, 0] = df_daily_1.iloc[:,0].dt.strftime('%Y-%m')
-df_daily_2 = df_daily_1.groupby(df_daily_1.iloc[:,0]).sum().reset_index()
-
-# Join Monthly and Daily Datasets
-# ---------------------------------------------------------------------------------------------------
-df_join = df_daily_2.merge(df_2, how = 'left', left_on = 'Daily', right_on  = 'Monthly').drop(columns = 'Monthly')
-col_list = ["PKB_appointments", "manageYourReferral", "UsersAppointmentsBooked", "NBS - appointmentBookings"]
-df_join['Number of appointments managed on the NHS App'] = df_join[col_list].sum(axis=1)
-df_join_1 = df_join.drop(columns = col_list)
-df_join_1.rename(columns  = {'Daily': 'Date'}, inplace = True)
-df_join_1.index.name = "Unique ID"
-df_join_1['Date'] = pd.to_datetime(df_join_1['Date'])
-df_processed = df_join_1.copy()
+df = df[['Monthly', 'PKB_appointments', 'manageYourReferral']]
+col_list = ['PKB_appointments', 'manageYourReferral']
+df['Number of appointments managed on the NHS App'] = df[col_list].sum(axis=1)
+df = df.drop(columns = col_list)
+df.rename(columns  = {'Daily': 'Date'}, inplace = True)
+df.index.name = "Unique ID"
+df_processed = df.copy()
 
 # COMMAND ----------
 
