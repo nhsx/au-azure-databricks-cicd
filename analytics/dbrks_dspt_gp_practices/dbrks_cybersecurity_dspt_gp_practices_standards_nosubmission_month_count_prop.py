@@ -101,7 +101,7 @@ df_join = df_ref_2.merge(df_1,'left',left_on='PRACTICE_CODE', right_on='Code')
 
 # Processing for joined tables
 # -------------------------------------------------------------------------
-criteria = ['21/22 Standards Exceeded', '22/23 Standards Exceeded', '21/22 Standards Met', '22/23 Standards Met']  #-------- change this upon closure of the fiancial year. Please see the SOP.
+criteria = ['22/23 Standards Exceeded', '23/24 Standards Exceeded', '22/23 Standards Met', '23/24 Standards Met']  #-------- change this upon closure of the fiancial year. Please see the SOP.
 def exceed_dspt(c):
     if c['Latest Status'] == 'Not Published':
       return 1
