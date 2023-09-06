@@ -112,19 +112,20 @@ directory, paths = datalake_listDirectory(CONNECTION_STRING, file_system, source
 # Ingestion and processing of data from individual excel sheets.
 # -------------------------------------------------------------
 
-#initialize dictionaries
+#initialize dictionaries org dictionary needed to map coded name to name on spreadsheet
 org_dict = {'icb': 'ICB', 'trust': 'Trust', 'pcn':'PCN', 'la':'LA', 'community':'Other Community', 'other':'Other partners'}
+#create a dictionary where keys are the  names of the organsiations and the values are blank dataframes that will be popualted later
 df_dict = {i:pd.DataFrame() for i in org_dict}
 
 
-#loop through each submitted file in the landing area. FOr each file go through the sheets and adds them to an output 
+#loop through each submitted file in the landing area. For each file go through the sheets and add append the relevant data to dataframes in df_dict
 for filename in directory:
     file = datalake_download(CONNECTION_STRING, file_system, source_path + latestFolder, filename)
     print(filename)
     #Read current file into an iobytes object, read that object and get list of sheet names
     sheets = get_sheetnames_xlsx(io.BytesIO(file))
 
-    ### ICB CALCULATIONS ###
+    ### ICB CALCULATIONS ### ICB sheets are different from the other organisations, and so are processed separately
     #list comprehension to get sheets with ICB in the name from list of all sheets - should only ever be 1 sheet
     sheet_name = [sheet for sheet in sheets if sheet.startswith("ICB")]
     
@@ -166,11 +167,11 @@ for filename in directory:
         xls_file[key]["Number of unique user ShCR views in the past month"] = pd.to_numeric(xls_file[key]["Number of unique user ShCR views in the past month"], errors='coerce').fillna(0).astype(int)
         xls_file[key]["Care Providers"] = pd.to_numeric(xls_file[key]["Care Providers"], errors='coerce').fillna(0).astype(int)
 
-        # append results to dataframe in dictionary
+        # append results to ICB dataframe in df_dict
         df_dict['icb'] = df_dict['icb'].append(xls_file[key], ignore_index=True)
 
 
-    ### OTHER ORG CALCULATIONS ###
+    ### OTHER ORG CALCULATIONS ### Orgs other than ICB are all the same so can be processed by looping through the dictionary
     #get names of other orgs (ignore ICB)
     for i in list(df_dict.keys())[1:]:
 
@@ -196,11 +197,11 @@ for filename in directory:
         xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"Connected": 1, "Not Connected": 0, "Please select": 0}).fillna(0).astype(int)     
         xls_file[key]["Partner Organisation plans to be connected by March 2023?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0).astype(int)
           
-
+        # append results to relevant dataframe in df_dict
         df_dict[i] = df_dict[i].append(xls_file[key].iloc[:, 0:9], ignore_index=True)
 
     
-# # #Remove any non-required columns from ICN dataframe
+# # #Remove any non-required columns from ICB dataframe
 df_dict['icb'] = df_dict['icb'][['For Month', 'ICB ODS code', 'ICB Name (if applicable)', 'ShCR Programme Name', 'Name of ShCR System', "Care Providers", 'Access to Advanced (EoL) Care Plans', 'Number of users with access to the ShCR', 'Number of ShCR views in the past month', 'Number of unique user ShCR views in the past month', 'Completed by (email)', 'Date completed']]
 
 #select org columns, skipping ICB
