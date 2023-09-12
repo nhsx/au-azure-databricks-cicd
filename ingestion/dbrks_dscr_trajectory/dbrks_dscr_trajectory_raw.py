@@ -89,32 +89,13 @@ for new_source_file in file_name_list:
   new_dataframe = pd.read_excel(io.BytesIO(new_dataset),  engine  = 'openpyxl') 
   new_dataframe['Date'] = pd.to_datetime(new_dataframe['Month']).dt.strftime('%Y-%m')
 
+new_dataframe = new_dataframe.loc[:, ~new_dataframe.columns.str.contains('^Unnamed')]
 
-# COMMAND ----------
-
-# Pull historical dataset
-# -----------------------------------------------------------------------
-latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, historical_source_path)
-print(historical_source_path)
-historical_dataset = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, historical_source_file)
-historical_dataframe = pd.read_parquet(io.BytesIO(historical_dataset), engine="pyarrow")
-historical_dataframe['Date'] = pd.to_datetime(historical_dataframe['Month']).dt.strftime('%Y-%m')
-
-# Append new data to historical data
-# -----------------------------------------------------------------------
-dates_in_historical = historical_dataframe["Date"].unique().tolist()
-dates_in_new = new_dataframe["Date"].unique().tolist()[-1]
-if dates_in_new in dates_in_historical:
-  print('Data already exists in historical data')
-else:
-  historical_dataframe = new_dataframe
-  historical_dataframe = historical_dataframe.sort_values(by=['Date'])
-  historical_dataframe = historical_dataframe.reset_index(drop=True)
 
 # COMMAND ----------
 
 # Upload hsitorical appended data to datalake
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.BytesIO()
-historical_dataframe.to_parquet(file_contents, engine="pyarrow")
+new_dataframe.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, sink_file)
