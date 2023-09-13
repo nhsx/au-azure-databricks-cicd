@@ -136,19 +136,19 @@
 				"sink_table":"shcr_partners_pcn_data_month_count"
 				},     
     			{
-				"metric":"shcr_partners_pcn_data_month_count",
+				"metric":"shcr_partners_la_data_month_count",
 				"source_path":"proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
 				"source_file":"shcr_partners_la_data_month_count.parquet",
-				"sink_table":"shcr_partners_pcn_data_month_count"
+				"sink_table":"shcr_partners_la_data_month_count"
 				},     
     			{
-				"metric":"shcr_partners_pcn_data_month_count",
+				"metric":"shcr_partners_community_data_month_count",
 				"source_path":"proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
 				"source_file":"shcr_partners_community_data_month_count.parquet",
 				"sink_table":"shcr_partners_community_data_month_count"
 				},     
     			{
-				"metric":"shcr_partners_pcn_data_month_count",
+				"metric":"shcr_partners_other_data_month_count",
 				"source_path":"proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
 				"source_file":"shcr_partners_other_data_month_count.parquet",
 				"sink_table":"shcr_partners_other_data_month_count"
