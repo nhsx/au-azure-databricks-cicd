@@ -13,17 +13,17 @@
 				},
 				{
 				"id": "M035",
-				"full_name": "Number of ICS/STPs with 50% of its PCN partners connected to a Shared Care Record System",
+				"full_name": "Number of ICS/icbs with 50% of its PCN partners connected to a Shared Care Record System",
 				"short_name":"partners_connected_half_month_count_prop"
 				},
 				{
 				"id": "M044",
-				"full_name": "Number of ICS/STPs with all of its PCN partners connected to a Shared Care Record System",
+				"full_name": "Number of ICS/icbs with all of its PCN partners connected to a Shared Care Record System",
 				"short_name":"partners_connected_all_month_count_prop"
 				},
 				{
 				"id": "M045",
-				"full_name": "Number of ICS/STPs with 50% or more of its PCN partners connected to a Shared Care Record System, expressed as % population covered by those ICSs",
+				"full_name": "Number of ICS/icbs with 50% or more of its PCN partners connected to a Shared Care Record System, expressed as % population covered by those ICSs",
 				"short_name":"partners_connected_half_month_population_prop"
 				}
 			]
@@ -43,9 +43,9 @@
 		"proc": [
 				{
 				"source_path": "raw/sharepoint/timestamp/parquet/shcr/snapshot/",
-				"source_file":"shcr_partners_stp_data_month_count.parquet",
+				"source_file":"shcr_partners_icb_data_month_count.parquet",
 				"sink_path": "proc/sources/shcr/sharepoint/parquet/all_tables/snapshot/",
-				"sink_file":"shcr_partners_stp_data_month_count.parquet"
+				"sink_file":"shcr_partners_icb_data_month_count.parquet"
 				},
 				{
 				"source_path": "raw/sharepoint/timestamp/parquet/shcr/snapshot/",
@@ -58,14 +58,32 @@
 				"source_file":"shcr_partners_pcn_data_month_count.parquet",
 				"sink_path": "proc/sources/shcr/sharepoint/parquet/all_tables/snapshot/",
 				"sink_file":"shcr_partners_pcn_data_month_count.parquet"
+				},
+				{
+				"source_path": "raw/sharepoint/timestamp/parquet/shcr/snapshot/",
+				"source_file":"shcr_partners_la_data_month_count.parquet",
+				"sink_path": "proc/sources/shcr/sharepoint/parquet/all_tables/snapshot/",
+				"sink_file":"shcr_partners_la_data_month_count.parquet"
+				},
+				{
+				"source_path": "raw/sharepoint/timestamp/parquet/shcr/snapshot/",
+				"source_file":"shcr_partners_community_data_month_count.parquet",
+				"sink_path": "proc/sources/shcr/sharepoint/parquet/all_tables/snapshot/",
+				"sink_file":"shcr_partners_community_data_month_count.parquet"
+				},
+				{
+				"source_path": "raw/sharepoint/timestamp/parquet/shcr/snapshot/",
+				"source_file":"shcr_partners_other_data_month_count.parquet",
+				"sink_path": "proc/sources/shcr/sharepoint/parquet/all_tables/snapshot/",
+				"sink_file":"shcr_partners_other_data_month_count.parquet"
 				}
 			],
 		"project": [
 				{
 				"source_path": "proc/sources/shcr/sharepoint/parquet/all_tables/snapshot/",
-				"source_file":"shcr_partners_stp_data_month_count.parquet",
+				"source_file":"shcr_partners_icb_data_month_count.parquet",
 				"sink_path": "proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
-				"sink_file":"shcr_partners_stp_data_month_count.parquet"
+				"sink_file":"shcr_partners_icb_data_month_count.parquet"
 				},
 				{
 				"source_path": "proc/sources/shcr/sharepoint/parquet/all_tables/snapshot/",
@@ -78,30 +96,63 @@
 				"source_file":"shcr_partners_pcn_data_month_count.parquet",
 				"sink_path": "proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
 				"sink_file":"shcr_partners_pcn_data_month_count.parquet"
+				},
+				{
+				"source_path": "proc/sources/shcr/sharepoint/parquet/all_tables/snapshot/",
+				"source_file":"shcr_partners_la_data_month_count.parquet",
+				"sink_path": "proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
+				"sink_file":"shcr_partners_la_data_month_count.parquet"
+				},
+				{
+				"source_path": "proc/sources/shcr/sharepoint/parquet/all_tables/snapshot/",
+				"source_file":"shcr_partners_community_data_month_count.parquet",
+				"sink_path": "proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
+				"sink_file":"shcr_partners_community_data_month_count.parquet"
+				},
+				{
+				"source_path": "proc/sources/shcr/sharepoint/parquet/all_tables/snapshot/",
+				"source_file":"shcr_partners_other_data_month_count.parquet",
+				"sink_path": "proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
+				"sink_file":"shcr_partners_other_data_month_count.parquet"
 				}
 			],
 		"staging":[
     			{
-				"metric":"shcr_partners_stp_data_month_count",
-				"stored_procedure":"[dbo].[stored_proc_shcr_partners_stp_data_month_count]",
+				"metric":"shcr_partners_icb_data_month_count",
 				"source_path":"proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
-				"source_file":"shcr_partners_stp_data_month_count.parquet",
-				"sink_table":"shcr_partners_stp_data_month_count"
+				"source_file":"shcr_partners_icb_data_month_count.parquet",
+				"sink_table":"shcr_partners_icb_data_month_count"
 				},    
     			{
 				"metric":"shcr_partners_trust_data_month_count",
-				"stored_procedure":"[dbo].[stored_proc_shcr_partners_trust_data_month_count]",
 				"source_path":"proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
 				"source_file":"shcr_partners_trust_data_month_count.parquet",
 				"sink_table":"shcr_partners_trust_data_month_count"
 				},     
     			{
 				"metric":"shcr_partners_pcn_data_month_count",
-				"stored_procedure":"[dbo].[stored_proc_shcr_partners_pcn_data_month_count]",
 				"source_path":"proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
 				"source_file":"shcr_partners_pcn_data_month_count.parquet",
 				"sink_table":"shcr_partners_pcn_data_month_count"
-				}      
+				},     
+    			{
+				"metric":"shcr_partners_pcn_data_month_count",
+				"source_path":"proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
+				"source_file":"shcr_partners_la_data_month_count.parquet",
+				"sink_table":"shcr_partners_pcn_data_month_count"
+				},     
+    			{
+				"metric":"shcr_partners_pcn_data_month_count",
+				"source_path":"proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
+				"source_file":"shcr_partners_community_data_month_count.parquet",
+				"sink_table":"shcr_partners_community_data_month_count"
+				},     
+    			{
+				"metric":"shcr_partners_pcn_data_month_count",
+				"source_path":"proc/projects/nhsx_slt_analytics/shcr/partners_connected/data_month_count/",
+				"source_file":"shcr_partners_other_data_month_count.parquet",
+				"sink_table":"shcr_partners_other_data_month_count"
+				}                        
 			]
 	}
 }
