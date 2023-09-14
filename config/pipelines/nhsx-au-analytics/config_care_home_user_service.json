@@ -1,0 +1,55 @@
+{
+    "metadata": {
+        "products": [
+            {
+                "product_name": "Digital social care Dashboard",
+                "Granularity": "National",
+                "topic": "Care Home Service Users",
+                "metrics": [
+                    {
+                        "id": "add later",
+                        "full_name": "Care Home Service Users",
+                        "short_name": "care_home_user_service"
+                    }
+                ]
+            }
+        ]
+    },
+    "pipeline": {
+        "name": "trigger_care_home_user_service",
+        "folder": "nhsx-au-analytics/nhsx/socialcare_digitalrecord/",
+        "ingestion": {
+            "databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_care_home_user_service/dbrks_care_home_user_service_raw"
+        },
+        "raw": {
+            "snapshot_source_path": "land/digital_socialcare/manual_upload/timestamp/excel/care_home_user_service/",
+            "appended_path": "raw/digital_socialcare/manual_upload/parquet/care_home_user_service/historical/",
+            "appended_file": "care_home_user_service_historical.parquet"
+        },
+        "proc": {
+            "source_path": "raw/digital_socialcare/manual_upload/parquet/care_home_user_service/historical/",
+            "source_file": "care_home_user_service_historical.parquet",
+            "sink_path": "proc/sources/digital_socialcare/manual_upload/care_home_user_service/historical/",
+            "sink_file": "care_home_user_service_historical.parquet"
+        },
+        "project": {
+            "source_path": "proc/sources/digital_socialcare/manual_upload/care_home_user_service/historical/",
+            "source_file": "care_home_user_service_historical.parquet",
+            "sink_path": "proc/projects/nhsx_slt_analytics/digital_socialcare/dscr/care_home_user_service/",
+            "sink_file": "care_home_user_service_historical.parquet",
+            "databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_care_home_user_service/dbrks_care_home_user_service"
+        },
+        "staging": [
+            {
+                "metric": "care_home_user_service_user",
+                "sink_table": "care_home_user_service_user"
+            }
+        ],
+        "validation": [
+            {
+                "initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_care_home_user_service/dbrks_care_home_user_service_validation",
+                "final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
+            }
+        ]
+    }
+}
