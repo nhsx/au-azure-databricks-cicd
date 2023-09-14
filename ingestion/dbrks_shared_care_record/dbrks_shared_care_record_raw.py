@@ -69,12 +69,35 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
 # COMMAND ----------
 
-# Read parameters from JSON config
+# Read general parameters from JSON config
 # -------------------------------------------------------------------------
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 source_path = config_JSON['pipeline']['raw']['source_path']
 sink_path = config_JSON['pipeline']['raw']['sink_path']
 historical_source_path = config_JSON['pipeline']['raw']['sink_path']
+
+# COMMAND ----------
+
+# Read org parameters from JSON config, store in dictionaries
+# -------------------------------------------------------------------------
+
+table_name_dict = {
+'icb': config_JSON['pipeline']['staging'][0]['sink_table'],
+'trust': config_JSON['pipeline']['staging'][1]['sink_table'],
+'pcn': config_JSON['pipeline']['staging'][2]['sink_table'],
+'la': config_JSON['pipeline']['staging'][3]['sink_table'],
+'community': config_JSON['pipeline']['staging'][4]['sink_table'],
+'other': config_JSON['pipeline']['staging'][5]['sink_table']
+}
+
+file_name_dict = {
+'icb': config_JSON['pipeline']['proc'][0]['sink_file'],
+'trust': config_JSON['pipeline']['proc'][1]['sink_file'],
+'pcn': config_JSON['pipeline']['proc'][2]['sink_file'],
+'la': config_JSON['pipeline']['proc'][3]['sink_file'],
+'community': config_JSON['pipeline']['proc'][4]['sink_file'],
+'other': config_JSON['pipeline']['proc'][5]['sink_file'],
+}
 
 # COMMAND ----------
 
@@ -112,25 +135,34 @@ directory, paths = datalake_listDirectory(CONNECTION_STRING, file_system, source
 # Ingestion and processing of data from individual excel sheets.
 # -------------------------------------------------------------
 
-#initialize dictionaries org dictionary needed to map coded name to name on spreadsheet
-org_dict = {'icb': 'ICB', 'trust': 'Trust', 'pcn':'PCN', 'la':'LA', 'community':'Other Community', 'other':'Other partners'}
+#initialize org dictionary needed to map variable names to spreadsheet tab name
+org_dict = {
+'icb': 'ICB',
+'trust': 'Trust',
+'pcn':'PCN',
+'la':'LA',
+'community':'Other Community',
+'other':'Other partners'
+}
+
 #create a dictionary where keys are the  names of the organsiations and the values are blank dataframes that will be popualted later
 df_dict = {i:pd.DataFrame() for i in org_dict}
-
 
 #loop through each submitted file in the landing area. For each file go through the sheets and add append the relevant data to dataframes in df_dict
 for filename in directory:
     file = datalake_download(CONNECTION_STRING, file_system, source_path + latestFolder, filename)
     print(filename)
+
     #Read current file into an iobytes object, read that object and get list of sheet names
     sheets = get_sheetnames_xlsx(io.BytesIO(file))
 
-    ### ICB CALCULATIONS ### ICB sheets are different from the other organisations, and so are processed separately
+    ##### ICB CALCULATIONS ICB sheets are different from the other organisations, and so are processed separately ##### 
+
     #list comprehension to get sheets with ICB in the name from list of all sheets - should only ever be 1 sheet
-    sheet_name = [sheet for sheet in sheets if sheet.startswith("ICB")]
-    
+    sheet_name = [sheet for sheet in sheets if sheet.startswith("ICB")] 
     #Read ICB sheet. The output is a dictionary. Top level is ICB Sheet, next level is each column on the sheet
     xls_file = pd.read_excel(io.BytesIO(file), sheet_name=sheet_name, engine="openpyxl")
+
     for key in xls_file:
         #drop unnamed columns
         xls_file[key].drop(list(xls_file[key].filter(regex="Unnamed:")), axis=1, inplace=True)
@@ -144,7 +176,7 @@ for filename in directory:
                 list(xls_file[key])[2]: "ICB Name (if applicable)",
                 list(xls_file[key])[3]: "ShCR Programme Name",
                 list(xls_file[key])[4]: "Name of ShCR System",
-                ###Extra columns
+                ###Gap in columns
                 list(xls_file[key])[8]: "Care Providers",
                 list(xls_file[key])[9]: "Access to Advanced (EoL) Care Plans",
                 list(xls_file[key])[10]: "Number of users with access to the ShCR",
@@ -171,8 +203,8 @@ for filename in directory:
         df_dict['icb'] = df_dict['icb'].append(xls_file[key], ignore_index=True)
 
 
-    ### OTHER ORG CALCULATIONS ### Orgs other than ICB are all the same so can be processed by looping through the dictionary
-    #get names of other orgs (ignore ICB)
+    #### OTHER ORG CALCULATIONS Orgs other than ICB are all the same so can be processed by looping through the dictionary ####
+    #get names of other orgs (ignore ICB). Use org dict to map key used here to excel sheet name (e.e. icb to ICB)
     for i in list(df_dict.keys())[1:]:
 
       sheet_name = [sheet for sheet in sheets if sheet.startswith(org_dict[i])]
@@ -201,19 +233,12 @@ for filename in directory:
         df_dict[i] = df_dict[i].append(xls_file[key].iloc[:, 0:9], ignore_index=True)
 
     
-# # #Remove any non-required columns from ICB dataframe
+#Remove any non-required columns from ICB dataframe
 df_dict['icb'] = df_dict['icb'][['For Month', 'ICB ODS code', 'ICB Name (if applicable)', 'ShCR Programme Name', 'Name of ShCR System', "Care Providers", 'Access to Advanced (EoL) Care Plans', 'Number of users with access to the ShCR', 'Number of ShCR views in the past month', 'Number of unique user ShCR views in the past month', 'Completed by (email)', 'Date completed']]
 
-#select org columns, skipping ICB
+#Remove any non-required columns from organisation dataframes, skipping ICB
 for i in list(df_dict.keys())[1:]:
   df_dict[i] = df_dict[i][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', f'ODS {i} Code', f'{i} Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
-
-
-# df_dict['trust'] = df_dict['trust'][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'ODS trust Code', 'trust Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
-# df_dict['pcn'] = df_dict['pcn'][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'ODS pcn Code', 'pcn Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
-# df_dict['la'] = df_dict['la'][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'ODS la Code', 'la Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
-# df_dict['community'] = df_dict['community'][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'ODS community Code', 'community Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
-# df_dict['other'] = df_dict['other'][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', 'ODS other Code', 'other Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
 
 
 # COMMAND ----------
@@ -227,7 +252,7 @@ for i in list(df_dict.keys())[1:]:
 
 # COMMAND ----------
 
-#Set all 'For Month' dates to folder date
+#Set all 'For Month' dates to folder date minus 1 month
 #--------------------------------------------------
 
 folder_date = pd.to_datetime(latestFolder) - pd.DateOffset(months=1)
@@ -238,19 +263,22 @@ for i in df_dict.keys():
 
 # COMMAND ----------
 
-#Check for duplicates
+#Check for duplicates orgs
 #--------------------------------------------------
-
+#create a dictionary of dataframes that contain duplicate entries for each organisation
 dupes_dict = {}
 
 for i in df_dict.keys():
-  dupes = [item for item, count in collections.Counter(df_dict[i].iloc[:,1]).items() if count > 1]
-  dupes = df_dict[i][df_dict[i].iloc[:,1].isin(dupes)]
   if i == 'icb':
-    dupes = dupes.iloc[:,[1,2,3,4,5,9]]
+    dupes = [item for item, count in collections.Counter(df_dict[i].iloc[:,1]).items() if count > 1]
+    dupes_df = df_dict[i][df_dict[i].iloc[:,1].isin(dupes)]
+    dupes_df = dupes_df.iloc[:,[1,2]]
   else:
-    dupes = dupes.iloc[:,[1,2,4,5]]
-  dupes_dict[i] = dupes
+    dupes = [item for item, count in collections.Counter(df_dict[i].iloc[:,3]).items() if count > 1]
+    dupes_df = df_dict[i][df_dict[i].iloc[:,3].isin(dupes)]
+    dupes_df = dupes_df.iloc[:,[1,2,3,4]]
+
+  dupes_dict[i] = dupes_df
 
 
 # COMMAND ----------
@@ -313,12 +341,12 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, "proc/projects/nh
 #------------------------------------
 
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, historical_source_path)
-file_name_list = datalake_listContents(CONNECTION_STRING, file_system, historical_source_path+latestFolder)
+historic_file_list = datalake_listContents(CONNECTION_STRING, file_system, historical_source_path+latestFolder)
 
 historic_df_dict = {}
 
 #read files in latest folder, loop through possible organisation names to determine what to key value to assign to dataframe
-for file in file_name_list:
+for file in historic_file_list:
   for i in df_dict.keys():
     if i in file:
       historic_parquet = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder, file)
@@ -395,6 +423,11 @@ for i in df_dict.keys():
     historic_df_dict[i] = historic_df_dict[i].reset_index(drop=True)
     historic_df_dict[i] = historic_df_dict[i].astype(str)
 
+
+for i in df_dict.keys():
+  historic_df_dict[i].reset_index(drop = True)
+  historic_df_dict[i].index.name = "Unique ID"
+
 # COMMAND ----------
 
 # Upload processed data to datalake
@@ -402,11 +435,16 @@ for i in df_dict.keys():
 
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 
-
 for i in historic_df_dict.keys():
   print(i)
   file_contents = io.BytesIO()
   historic_df_dict[i] = historic_df_dict[i].astype(str)
   historic_df_dict[i].to_parquet(file_contents, engine="pyarrow")
-  filename = f'shcr_partners_{i}_data_month_count.parquet'
+  filename = file_name_dict[i]
   datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, filename)
+
+# COMMAND ----------
+
+for i in historic_df_dict.keys():
+  write_to_sql(historic_df_dict[i], table_name_dict[i], "overwrite")
+  print(table_name_dict[i])
