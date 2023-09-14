@@ -69,7 +69,7 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 
 # COMMAND ----------
 
-# Read gloabl parameters from JSON config
+# Read general parameters from JSON config
 # -------------------------------------------------------------------------
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 source_path = config_JSON['pipeline']['raw']['source_path']
@@ -135,7 +135,7 @@ directory, paths = datalake_listDirectory(CONNECTION_STRING, file_system, source
 # Ingestion and processing of data from individual excel sheets.
 # -------------------------------------------------------------
 
-#initialize dictionaries org dictionary needed to map coded name to name on spreadsheet
+#initialize org dictionary needed to map variable names to spreadsheet tab name
 org_dict = {
 'icb': 'ICB',
 'trust': 'Trust',
@@ -152,15 +152,17 @@ df_dict = {i:pd.DataFrame() for i in org_dict}
 for filename in directory:
     file = datalake_download(CONNECTION_STRING, file_system, source_path + latestFolder, filename)
     print(filename)
+
     #Read current file into an iobytes object, read that object and get list of sheet names
     sheets = get_sheetnames_xlsx(io.BytesIO(file))
 
-    ### ICB CALCULATIONS ### ICB sheets are different from the other organisations, and so are processed separately
+    ##### ICB CALCULATIONS ICB sheets are different from the other organisations, and so are processed separately ##### 
+
     #list comprehension to get sheets with ICB in the name from list of all sheets - should only ever be 1 sheet
-    sheet_name = [sheet for sheet in sheets if sheet.startswith("ICB")]
-    
+    sheet_name = [sheet for sheet in sheets if sheet.startswith("ICB")] 
     #Read ICB sheet. The output is a dictionary. Top level is ICB Sheet, next level is each column on the sheet
     xls_file = pd.read_excel(io.BytesIO(file), sheet_name=sheet_name, engine="openpyxl")
+
     for key in xls_file:
         #drop unnamed columns
         xls_file[key].drop(list(xls_file[key].filter(regex="Unnamed:")), axis=1, inplace=True)
@@ -174,7 +176,7 @@ for filename in directory:
                 list(xls_file[key])[2]: "ICB Name (if applicable)",
                 list(xls_file[key])[3]: "ShCR Programme Name",
                 list(xls_file[key])[4]: "Name of ShCR System",
-                ###Extra columns
+                ###Gap in columns
                 list(xls_file[key])[8]: "Care Providers",
                 list(xls_file[key])[9]: "Access to Advanced (EoL) Care Plans",
                 list(xls_file[key])[10]: "Number of users with access to the ShCR",
@@ -201,7 +203,7 @@ for filename in directory:
         df_dict['icb'] = df_dict['icb'].append(xls_file[key], ignore_index=True)
 
 
-    ### OTHER ORG CALCULATIONS ### Orgs other than ICB are all the same so can be processed by looping through the dictionary
+    #### OTHER ORG CALCULATIONS Orgs other than ICB are all the same so can be processed by looping through the dictionary ####
     #get names of other orgs (ignore ICB). Use org dict to map key used here to excel sheet name (e.e. icb to ICB)
     for i in list(df_dict.keys())[1:]:
 
@@ -432,7 +434,6 @@ for i in df_dict.keys():
 #-----------------------------------------------------------------------
 
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
-
 
 for i in historic_df_dict.keys():
   print(i)
