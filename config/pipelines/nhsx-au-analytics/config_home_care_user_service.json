@@ -24,19 +24,31 @@
         "raw": {
             "snapshot_source_path": "land/digital_socialcare/manual_upload/timestamp/excel/home_care_user_service/",
             "appended_path": "raw/digital_socialcare/manual_upload/parquet/home_care_user_service/historical/",
-            "appended_file": "home_care_user_service_historical.parquet"
+            "appended_file": "home_care_user_service_historical.parquet",
+            "reference_source_path": "land/digital_socialcare/manual_upload/timestamp/excel/care_home_service_users/",
+            "reference_appended_path": "raw/digital_socialcare/manual_upload/parquet/care_home_user_service/historical/",
+            "referece_appended_file": "care_home_user_service_historical.parquet"
         },
         "proc": {
             "source_path": "raw/digital_socialcare/manual_upload/parquet/home_care_user_service/historical/",
             "source_file": "home_care_user_service_historical.parquet",
             "sink_path": "proc/sources/digital_socialcare/manual_upload/home_care_user_service/historical/",
-            "sink_file": "home_care_user_service_historical.parquet"
+            "sink_file": "home_care_user_service_historical.parquet",
+            "reference_source_path": "raw/digital_socialcare/manual_upload/parquet/care_home_user_service/historical/",
+            "reference_source_file": "care_home_user_service_historical.parquet",
+            "reference_sink_path": "proc/sources/digital_socialcare/manual_upload/care_home_user_service/historical",
+            "reference_sink_file": "care_home_user_service_historical.parquet"
+
         },
         "project": {
             "source_path": "proc/sources/digital_socialcare/manual_upload/home_care_user_service/historical/",
             "source_file": "home_care_user_service_historical.parquet",
             "sink_path": "proc/projects/nhsx_slt_analytics/digital_socialcare/dscr/home_care_user_service/",
             "sink_file": "home_care_user_service_historical.parquet",
+            "reference_source_path": "proc/projects/nhsx_slt_analytics/digital_socialcare/dscr/care_home_user_service/",
+            "reference_source_file": "care_home_user_service_historical.parquet",
+            "reference_sink_path": "proc/projects/nhsx_slt_analytics/digital_socialcare/dscr/care_home_user_service/",
+            "reference_sink_file": "care_home_user_service_historical.parquet",
             "databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_home_care_user_service/dbrks_home_care_user_service"
         },
         "staging": [
