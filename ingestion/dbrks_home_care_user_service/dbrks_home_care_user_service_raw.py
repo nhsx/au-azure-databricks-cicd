@@ -24,7 +24,7 @@ VERSION:        0.0.1
 
 # Install libs
 # -------------------------------------------------------------------------
-%pip install geojson==2.5.* tabulate requests pandas pathlib azure-storage-file-datalake beautifulsoup4 numpy urllib3 lxml regex pyarrow==5.0.* xlrd openpyxl python-dateutil fastparquet
+%pip install geojson==2.5.* tabulate requests pandas==1.5 pathlib azure-storage-file-datalake beautifulsoup4 numpy urllib3 lxml regex pyarrow==5.0.* xlrd openpyxl python-dateutil fastparquet
 
 # COMMAND ----------
 
@@ -84,14 +84,53 @@ sink_file = config_JSON['pipeline']['raw']['appended_file']
 # -------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, new_source_path)
 file_name_list = datalake_listContents(CONNECTION_STRING, file_system, new_source_path+ latestFolder)
-file_name_list = [file for file in file_name_list if '.xlsx' in file]
-for new_source_file in file_name_list:
-  new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, new_source_file)
-  new_dataframe = pd.read_excel(io.BytesIO(new_dataset), sheet_name = 'DATA_MonthEnd', header = 0, engine='openpyxl')
+dom_list = [file for file in file_name_list if 'Home Care' in file]
+res_list = [file for file in file_name_list if 'Care Home' in file]
+
+for dom_source_file in dom_list:
+  new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, dom_source_file)
+  df_dom = pd.read_excel(io.BytesIO(new_dataset), engine='openpyxl')
+
+for res_source_file in res_list:
+  care_home_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, res_source_file)
+  df_res = pd.read_excel(io.BytesIO(new_dataset), engine='openpyxl')
 
 # COMMAND ----------
 
-new_dataframe
+#get the max date in the 'CqcSurveyLastUpdatedBst column and make this the new date column 
+df_dom['Date'] = pd.to_datetime(df_dom['CqcSurveyLastUpdatedBst'], dayfirst=True).dt.date.max().strftime('%d-%m-%Y')
+
+# COMMAND ----------
+
+#set IsActive and IsDomcare to 1 for df_dom
+df_dom['IsActive'] = 1
+df_dom['IsDomcare'] = 1
+
+# COMMAND ----------
+
+#only retain the relavant columns
+df_dom = df_dom[['Date', 'CqcId', 'IsActive', 'IsDomcare']]
+
+# COMMAND ----------
+
+#get the max date in the 'CqcSurveyLastUpdatedBst column and make this the new date column for df_res
+df_res['Date'] = pd.to_datetime(df_res['CqcSurveyLastUpdatedBst'], dayfirst=True).dt.date.max().strftime('%d-%m-%Y')
+
+# COMMAND ----------
+
+#set IsActive 1 and IsDomcare to 0 for df_res
+df_res['IsActive'] = 1
+df_res['IsDomcare'] = 0
+
+# COMMAND ----------
+
+#keep relevant columns in df_res
+df_res = df_res[['Date', 'CqcId', 'IsActive', 'IsDomcare']]
+
+# COMMAND ----------
+
+#stack df_dom and df_res together
+df_hcsu = pd.concat([df_dom, df_res])
 
 # COMMAND ----------
 
@@ -101,16 +140,20 @@ latestFolder_historical = datalake_latestFolder(CONNECTION_STRING, file_system, 
 historical_dataset = datalake_download(CONNECTION_STRING, file_system, historical_source_path+latestFolder_historical, historical_source_file)
 historical_dataframe = pd.read_parquet(io.BytesIO(historical_dataset), engine="pyarrow")
 
-# Append new data to historical data
+
+# COMMAND ----------
+
+# Append new data to the historical dataframe
 # -----------------------------------------------------------------------
 dates_in_historical = historical_dataframe["Date"].unique().tolist()
-dates_in_new = new_dataframe["Date"].unique().tolist()  #[-1]
+dates_in_new = df_hcsu["Date"].unique().tolist()  #[-1]
 if dates_in_new == dates_in_historical:
   print('Data already exists in historical data')
 else:
-  historical_dataframe = historical_dataframe.append(new_dataframe)
+  historical_dataframe = historical_dataframe.append(df_hcsu)
   historical_dataframe = historical_dataframe.sort_values(by=['Date'])
   historical_dataframe = historical_dataframe.reset_index(drop=True)
+
 
 # COMMAND ----------
 
