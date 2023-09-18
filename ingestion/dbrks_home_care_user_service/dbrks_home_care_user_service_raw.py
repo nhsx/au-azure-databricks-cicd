@@ -93,12 +93,16 @@ for dom_source_file in dom_list:
 
 for res_source_file in res_list:
   care_home_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, res_source_file)
-  df_res = pd.read_excel(io.BytesIO(new_dataset), engine='openpyxl')
+  df_res = pd.read_excel(io.BytesIO(care_home_dataset), sheet_name='CH residents', engine='openpyxl')
 
 # COMMAND ----------
 
-#get the max date in the 'CqcSurveyLastUpdatedBst column and make this the new date column 
-df_dom['Date'] = pd.to_datetime(df_dom['CqcSurveyLastUpdatedBst'], dayfirst=True).dt.date.max().strftime('%d-%m-%Y')
+#get the latest date in the correct format from the folder name
+date = pd.to_datetime(latestFolder[:-1]).date().strftime('%d-%m-%Y')
+
+# COMMAND ----------
+
+df_dom['Date'] = date
 
 # COMMAND ----------
 
@@ -109,12 +113,12 @@ df_dom['IsDomcare'] = 1
 # COMMAND ----------
 
 #only retain the relavant columns
-df_dom = df_dom[['Date', 'CqcId', 'IsActive', 'IsDomcare']]
+df_dom = df_dom[['Date', 'CqcId', 'IsActive', 'IsDomcare', 'ServiceUserCount']]
 
 # COMMAND ----------
 
 #get the max date in the 'CqcSurveyLastUpdatedBst column and make this the new date column for df_res
-df_res['Date'] = pd.to_datetime(df_res['CqcSurveyLastUpdatedBst'], dayfirst=True).dt.date.max().strftime('%d-%m-%Y')
+df_res['Date'] = date
 
 # COMMAND ----------
 
@@ -124,8 +128,9 @@ df_res['IsDomcare'] = 0
 
 # COMMAND ----------
 
-#keep relevant columns in df_res
-df_res = df_res[['Date', 'CqcId', 'IsActive', 'IsDomcare']]
+#keep relevant columns in df_res and rename resident count column
+df_res = df_res[['Date', 'CqcId', 'IsActive', 'IsDomcare', 'TotalResidentCount']]
+df_res = df_res.rename(columns = {'TotalResidentCount':'ServiceUserCount'})
 
 # COMMAND ----------
 
@@ -163,3 +168,7 @@ current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.BytesIO()
 historical_dataframe.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, sink_file)
+
+# COMMAND ----------
+
+
