@@ -366,7 +366,7 @@ for file in historic_file_list:
 # # # PCN
 # # # #-----------------
 # file_contents = io.BytesIO()
-# df_dict['pcn'] = df_dict['other'].astype(str)
+# df_dict['pcn'] = df_dict['pcn'].astype(str)
 # df_dict['pcn'].to_parquet(file_contents, engine="pyarrow")
 # datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_pcn_data_month_count.parquet")
 
@@ -381,21 +381,21 @@ for file in historic_file_list:
 # # NHS Trust
 # #-----------------
 # file_contents = io.BytesIO()
-# df_dict['trust'] = df_dict['other'].astype(str)
+# df_dict['trust'] = df_dict['trust'].astype(str)
 # df_dict['trust'].to_parquet(file_contents, engine="pyarrow")
 # datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_trust_data_month_count.parquet")
 
 # # NHS LA
 # #-----------------
 # file_contents = io.BytesIO()
-# df_dict['la'] = df_dict['other'].astype(str)
+# df_dict['la'] = df_dict['la'].astype(str)
 # df_dict['la'].to_parquet(file_contents, engine="pyarrow")
 # datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_la_data_month_count.parquet")
 
 # # # NHS Community
 # # #-----------------
 # file_contents = io.BytesIO()
-# df_dict['community'] = df_dict['other'].astype(str)
+# df_dict['community'] = df_dict['community'].astype(str)
 # df_dict['community'].to_parquet(file_contents, engine="pyarrow")
 # datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, "shcr_partners_community_data_month_count.parquet")
 
@@ -419,7 +419,7 @@ for i in df_dict.keys():
     print(f'{i} Data already exists in historical data')
   else:
     historic_df_dict[i] = historic_df_dict[i].append(df_dict[i])
-    historic_df_dict[i] = historic_df_dict[i].sort_values(by=['For Month'])
+    #historic_df_dict[i] = historic_df_dict[i].sort_values(by=['For Month'])
     historic_df_dict[i] = historic_df_dict[i].reset_index(drop=True)
     historic_df_dict[i] = historic_df_dict[i].astype(str)
 
@@ -427,6 +427,13 @@ for i in df_dict.keys():
 for i in df_dict.keys():
   historic_df_dict[i].reset_index(drop = True)
   historic_df_dict[i].index.name = "Unique ID"
+
+# COMMAND ----------
+
+#drop rows where org name is nan (this should catch columns where the ICB hasn't entered anything)
+for i in list(df_dict.keys())[1:]:
+  column = f'{i} Name'
+  historic_df_dict[i] = historic_df_dict[i].drop(historic_df_dict[i][historic_df_dict[i][column]=='nan'].index)
 
 # COMMAND ----------
 
@@ -442,6 +449,17 @@ for i in historic_df_dict.keys():
   historic_df_dict[i].to_parquet(file_contents, engine="pyarrow")
   filename = file_name_dict[i]
   datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, filename)
+
+# COMMAND ----------
+
+#convert ICB columns to numeric
+icb_numeric_columns = ['Care Providers', 'Number of users with access to the ShCR', 'Number of ShCR views in the past month', 'Number of unique user ShCR views in the past month']
+historic_df_dict['icb'][icb_numeric_columns] = historic_df_dict['icb'][icb_numeric_columns].apply(pd.to_numeric)
+
+#convert other org columns to numeric
+part_numeric_columns = ['Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']
+for i in list(df_dict.keys())[1:]:
+  historic_df_dict[i][part_numeric_columns] = historic_df_dict[i][part_numeric_columns].apply(pd.to_numeric)
 
 # COMMAND ----------
 
