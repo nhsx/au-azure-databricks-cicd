@@ -132,10 +132,6 @@ directory, paths = datalake_listDirectory(CONNECTION_STRING, file_system, source
 
 # COMMAND ----------
 
-latestFolder
-
-# COMMAND ----------
-
 # Ingestion and processing of data from individual excel sheets.
 # -------------------------------------------------------------
 
@@ -264,10 +260,6 @@ folder_date = pd.to_datetime(latestFolder) - pd.DateOffset(months=1)
 for i in df_dict.keys():
   df_dict[i]['For Month'] = folder_date
 
-
-# COMMAND ----------
-
-df_dict['trust'][df_dict['trust']['ICB ODS code']=='QU9']
 
 # COMMAND ----------
 
