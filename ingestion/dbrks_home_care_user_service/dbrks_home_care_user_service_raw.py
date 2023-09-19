@@ -118,7 +118,9 @@ df_dom = df_dom[['Date', 'CqcId', 'IsActive', 'IsDomcare', 'ServiceUserCount']]
 # COMMAND ----------
 
 #get the max date in the 'CqcSurveyLastUpdatedBst column and make this the new date column for df_res
-df_res['Date'] = date
+df_res['Date'] = df_res['LastUpdatedBst'] != 'Never'
+df_res['Date'] = df_res['Date'].replace(True, date)
+df_res['Date'] = df_res['Date'].replace(False, '01-01-2050')
 
 # COMMAND ----------
 

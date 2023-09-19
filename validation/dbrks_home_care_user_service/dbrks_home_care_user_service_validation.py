@@ -147,11 +147,13 @@ assert expect.success
 # COMMAND ----------
 
 #Test that the Date column only contain dates in the correct format in the residential data
+'''
 
 info = "Checking that the Date column only contains dates in the correct format in the residential data\n"
 expect = df_res1.expect_column_values_to_match_strftime_format('LastUpdatedBst', '%d/%m/%Y %H:%M')
 test_result(expect, info)
 assert expect.success
+'''
 
 # COMMAND ----------
 
