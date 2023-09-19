@@ -128,10 +128,6 @@ assert expect.success
 
 # COMMAND ----------
 
-df_dom['CqcSurveyLastUpdatedBst'][0].strftime.format('d/'%m/%Y)
-
-# COMMAND ----------
-
 #Test that the Date column only contain dates
 
 info = "Checking that the Date column only contains dates in the correct format in the domiciliary data\n"
@@ -147,10 +143,6 @@ info = "Checking that the CqcId column do not contain any null values in residen
 expect = df_res1.expect_column_values_to_not_be_null(column='CqcId')
 test_result(expect, info)
 assert expect.success
-
-# COMMAND ----------
-
-df_res['LastUpdatedBst']
 
 # COMMAND ----------
 
@@ -186,7 +178,19 @@ assert expect.success
 # Count rows in file and write to log table for domiciliary data
 #___________________________________________
 full_path = new_source_path + latestFolder + new_source_file
-row_count = len(df_dom) + len(df_res)
+row_count = len(df_dom)
+today = pd.to_datetime('now').strftime("%Y-%m-%d %H:%M:%S")
+date = datetime.strptime(today, '%Y-%m-%d %H:%M:%S')
+in_row = {'row_count':[row_count], 'load_date':[date], 'file_to_load':[full_path]}
+df = pd.DataFrame(in_row)  
+write_to_sql(df, log_table, "append")
+
+# COMMAND ----------
+
+# Count rows in file and write to log table for domiciliary data
+#___________________________________________
+full_path = new_source_path + latestFolder + care_home_file
+row_count = len(df_res)
 today = pd.to_datetime('now').strftime("%Y-%m-%d %H:%M:%S")
 date = datetime.strptime(today, '%Y-%m-%d %H:%M:%S')
 in_row = {'row_count':[row_count], 'load_date':[date], 'file_to_load':[full_path]}
