@@ -89,7 +89,7 @@ df = df[['Monthly', 'PKB_appointments', 'manageYourReferral']]
 col_list = ['PKB_appointments', 'manageYourReferral']
 df['Number of appointments managed on the NHS App'] = df[col_list].sum(axis=1)
 df = df.drop(columns = col_list)
-df.rename(columns  = {'Daily': 'Date'}, inplace = True)
+df.rename(columns  = {'Monthly': 'Date'}, inplace = True)
 df.index.name = "Unique ID"
 df_processed = df.copy()
 
