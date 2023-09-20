@@ -117,6 +117,14 @@ df_dom = df_dom[['Date', 'CqcId', 'IsActive', 'IsDomcare', 'ServiceUserCount']]
 
 # COMMAND ----------
 
+#Replace blanks with 0
+nan_rows = df_dom[df_dom['ServiceUserCount'].isnull()]
+if not nan_rows.empty:
+  df_dom['ServiceUserCount'] = df_dom['ServiceUserCount'].replace(np.nan, 0)
+
+
+# COMMAND ----------
+
 #get the max date in the 'CqcSurveyLastUpdatedBst column and make this the new date column for df_res
 df_res['Date'] = df_res['LastUpdatedBst'] != 'Never'
 df_res['Date'] = df_res['Date'].replace(True, date)
@@ -136,8 +144,16 @@ df_res = df_res.rename(columns = {'TotalResidentCount':'ServiceUserCount'})
 
 # COMMAND ----------
 
+#Replace blanks with 0
+nans = df_res[df_res['ServiceUserCount'].isnull()]
+if not nans.empty:
+  df_res['ServiceUserCount'] = df_res['ServiceUserCount'].replace(np.nan, 0)
+
+# COMMAND ----------
+
 #stack df_dom and df_res together
 df_hcsu = pd.concat([df_dom, df_res])
+
 
 # COMMAND ----------
 
@@ -154,7 +170,10 @@ historical_dataframe = pd.read_parquet(io.BytesIO(historical_dataset), engine="p
 # -----------------------------------------------------------------------
 dates_in_historical = historical_dataframe["Date"].unique().tolist()
 dates_in_new = df_hcsu["Date"].unique().tolist()  #[-1]
-if dates_in_new == dates_in_historical:
+
+check = all(item in dates_in_historical for item in dates_in_new)
+
+if check:
   print('Data already exists in historical data')
 else:
   historical_dataframe = historical_dataframe.append(df_hcsu)
