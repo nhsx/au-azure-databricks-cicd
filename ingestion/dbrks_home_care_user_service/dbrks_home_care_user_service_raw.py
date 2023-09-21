@@ -125,6 +125,17 @@ if not nan_rows.empty:
 
 # COMMAND ----------
 
+#filter out all values that are not dates 
+df_res['Date'] = df_res['LastUpdatedBst']
+for i in df_res['LastUpdatedBst']:
+  try:
+    pd.to_datetime(i)
+    df_res['Date'] = df_res['Date'].replace(i, date)
+  except:
+    df_res['Date'] = df_res['Date'].replace(i, '01-01-1900')
+
+# COMMAND ----------
+
 #get the max date in the 'CqcSurveyLastUpdatedBst column and make this the new date column for df_res
 df_res['Date'] = df_res['LastUpdatedBst'] != 'Never'
 df_res['Date'] = df_res['Date'].replace(True, date)
