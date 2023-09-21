@@ -98,7 +98,7 @@ for res_source_file in res_list:
 # COMMAND ----------
 
 #get the latest date in the correct format from the folder name
-date = pd.to_datetime(latestFolder[:-1]).date().strftime('%d-%m-%Y')
+date = pd.to_datetime(latestFolder[:-1])
 
 # COMMAND ----------
 
@@ -132,14 +132,7 @@ for i in df_res['LastUpdatedBst']:
     pd.to_datetime(i)
     df_res['Date'] = df_res['Date'].replace(i, date)
   except:
-    df_res['Date'] = df_res['Date'].replace(i, '01-01-1900')
-
-# COMMAND ----------
-
-#get the max date in the 'CqcSurveyLastUpdatedBst column and make this the new date column for df_res
-df_res['Date'] = df_res['LastUpdatedBst'] != 'Never'
-df_res['Date'] = df_res['Date'].replace(True, date)
-df_res['Date'] = df_res['Date'].replace(False, '01-01-2050')
+    df_res['Date'] = df_res['Date'].replace(i, pd.to_datetime('01-01-1900'))
 
 # COMMAND ----------
 
@@ -164,7 +157,6 @@ if not nans.empty:
 
 #stack df_dom and df_res together
 df_hcsu = pd.concat([df_dom, df_res])
-
 
 # COMMAND ----------
 
