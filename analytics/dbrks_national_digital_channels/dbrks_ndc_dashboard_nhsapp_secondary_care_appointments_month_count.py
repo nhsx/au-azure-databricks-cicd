@@ -85,7 +85,7 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 #Numerator
 # ---------------------------------------------------------------------------------------------------
-df = df[['Monthly', 'PKB_appointments', 'NBS - appointmentBookings']]
+df = df[['Monthly', 'PKB_appointments']
 df['Number of secondary care appointments made via the NHS App'] = df['PKB_appointments']
 df = df[['Monthly', 'Number of secondary care appointments made via the NHS App']]
 df.rename(columns  = {'Monthly': 'Date'}, inplace = True)
