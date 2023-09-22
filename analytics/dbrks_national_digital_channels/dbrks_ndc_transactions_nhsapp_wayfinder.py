@@ -91,7 +91,7 @@ df_daily = pd.read_parquet(io.BytesIO(file_1), engine="pyarrow")
 
 #Numerator (Montly)
 # ---------------------------------------------------------------------------------------------------
-df = df[["Monthly", "drDoctorWayfinder", "ersWayfinder", "healthCallWayfinder",	"healthcarecommsWayfinder", "netcallWayfinder", "PKB - pkbWayfinder", "zestyWayfinder"]]
+df = df[["Monthly", "wayfinder"]]
 df['Number of Wayfinder Clicks'] = df.iloc[:,1:].sum(axis=1)
 df = df[['Monthly','Number of Wayfinder Clicks']]
 
