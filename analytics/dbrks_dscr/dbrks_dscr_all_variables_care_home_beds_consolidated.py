@@ -207,26 +207,23 @@ df_join_keep
 
 # COMMAND ----------
 
-# Filtering data only for January 2023
-january_df_hcsu =  df_hcsu.loc[(df_hcsu['Date'] == '2023-01-31')]
-print("Lenth of DF after filtering only for Janury Data:", len(january_df_hcsu))
-january_df_hcsu = january_df_hcsu.loc[(january_df_hcsu['IsActive'] == 1) & (january_df_hcsu['IsDomcare'] == 1)]
-print("Lenth of DF after filtering only for IsActive - 1 and IsDomcare - 1:", len(january_df_hcsu))
+# Filtering for domcare
+df_hcsu = df_hcsu.loc[(df_hcsu['IsActive'] == 1) & (df_hcsu['IsDomcare'] == 1)]
+print("Lenth of DF after filtering only for IsActive - 1 and IsDomcare - 1:", len(df_hcsu))
 
 # COMMAND ----------
 
-january_df_hcsu = january_df_hcsu.dropna()
-january_df_hcsu
+df_hcsu = df_hcsu.dropna()
 
 # COMMAND ----------
 
 # Merging data from Home Care Service User File
-df_merged_hcsu_df_join_keep = pd.merge(df_join_keep, january_df_hcsu, on='Location_Id',how="left")
+df_merged_hcsu_df_join_keep = pd.merge(df_join_keep, df_hcsu, on='Location_Id',how="left")
 
 # COMMAND ----------
 
 df_merged_hcsu_df_join_keep = df_merged_hcsu_df_join_keep.drop(['Date', 'IsActive', 'IsDomcare'], axis = 1)
-df_merged_hcsu_df_join_keep
+display(df_merged_hcsu_df_join_keep)
 
 # COMMAND ----------
 
