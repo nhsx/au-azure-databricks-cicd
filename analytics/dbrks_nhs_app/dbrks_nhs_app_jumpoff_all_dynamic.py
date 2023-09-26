@@ -83,6 +83,10 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 # COMMAND ----------
 
+
+
+# COMMAND ----------
+
 #integrate legacy jumpoffs with 'Cie' in title
 # -------------------------------------------------------------------------------------------------
 df['JumpOff'] = df['JumpOff'].replace('Cie', '', regex=True)
@@ -104,9 +108,11 @@ df['Service'] = df['Service'].apply(lambda x: re.sub(r"(\w)([A-Z])", r"\1 \2", x
 # -------------------------------------------------------------------------------------------------
 df['Clicks'] = df['Clicks'].astype(int)
 df['Date'] = pd.to_datetime(df['Date'], infer_datetime_format=True)
+max_date = df['Date'].max()
 #aggregate to monthly values
 df = df.groupby([pd.Grouper(freq='M', key='Date'),'OdsCode', 'Provider', 'Service']).sum().reset_index()
 df = df.rename(columns = {'OdsCode': 'Practice code'})
+df.loc[df['Date']==df['Date'].max(),'Date']= max_date
 df.index.name = "Unique ID"
 df_processed = df.copy()
 
