@@ -218,12 +218,15 @@ df_hcsu = df_hcsu.dropna()
 # COMMAND ----------
 
 # Merging data from Home Care Service User File
-df_merged_hcsu_df_join_keep = pd.merge(df_join_keep, df_hcsu, on='Location_Id',how="left")
+df_hcsu['join_date'] = df_hcsu['Date'].dt.strftime('%Y-%m')
+df_join_keep['join_date'] = df_join_keep['monthly_date'].dt.strftime('%Y-%m')
+df_merged_hcsu_df_join_keep = pd.merge(df_join_keep, df_hcsu, on=['Location_Id', 'join_date'] ,how="left")
+
 
 # COMMAND ----------
 
-df_merged_hcsu_df_join_keep = df_merged_hcsu_df_join_keep.drop(['Date', 'IsActive', 'IsDomcare'], axis = 1)
-display(df_merged_hcsu_df_join_keep)
+df_merged_hcsu_df_join_keep = df_merged_hcsu_df_join_keep.drop(['Date', 'IsActive', 'IsDomcare', 'join_date'], axis = 1)
+
 
 # COMMAND ----------
 
