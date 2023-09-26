@@ -68,6 +68,13 @@ pir_file_name_config = "config_digitalrecords_socialcare_dbrks.json"
 pir_config_JSON = datalake_download(CONNECTION_STRING, file_system_config, pir_file_path_config, pir_file_name_config)
 pir_config_JSON = json.loads(io.BytesIO(pir_config_JSON).read())
 
+# Load Home Care Service User config file
+# -------------------------------------------------------------------------
+hcsu_file_name_config = "config_home_care_user_service.json"
+hcsu_config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, hcsu_file_name_config)
+hcsu_config_JSON = json.loads(io.BytesIO(hcsu_config_JSON).read())
+
+
 
 # COMMAND ----------
 
@@ -86,6 +93,11 @@ table_name = config_JSON['pipeline']["staging"][0]['sink_table']
 # -------------------------------------------------------------------------
 pir_source_path = pir_config_JSON['pipeline']['project']['source_path']
 pir_source_file = pir_config_JSON['pipeline']['project']['source_file']
+
+#Get parameters from hcsu JSON config
+# -------------------------------------------------------------------------
+hcsu_source_path = hcsu_config_JSON['pipeline']['proc']['sink_path']
+hcsu_source_file = hcsu_config_JSON['pipeline']['proc']['sink_file']
 
 # COMMAND ----------
 
@@ -108,10 +120,11 @@ df_ref = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 df_ref_1 = df_ref[['CCG_ONS_Code','CCG_ODS_Code','CCG_Name','ICB_ONS_Code','ICB_Code','ICB_Name','Region_Code','Region_Name','Last_Refreshed']]
 df_ref_2 = df_ref_1[~df_ref_1.duplicated(['CCG_ONS_Code', 'CCG_ODS_Code','CCG_Name','ICB_ONS_Code','ICB_Code','ICB_Name','Region_Code','Region_Name','Last_Refreshed'])].reset_index(drop = True)
 
-
-# COMMAND ----------
-
-df_3.groupby(["Location_Id","monthly_date"],  as_index=False).agg({"Provider_ID": "count"})
+# HCSU Data Processing 
+# -------------------------------------------------------------------------
+latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, hcsu_source_path)
+file = datalake_download(CONNECTION_STRING, file_system, hcsu_source_path+latestFolder, hcsu_source_file)
+df_hcsu= pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 
 # COMMAND ----------
@@ -203,7 +216,8 @@ aux.iloc[-20:,];
 
 # COMMAND ----------
 
-df_tab01_sampler_agg = df_tab01_sampler.groupby(["month_year",
+df_tab01_sampler_agg = df_tab01_sampler.groupby(["Location_Id",
+                                                 "month_year",
                                                  "PIR type",
                                                  "Location_Primary_Inspection_Category",
                                                  "Location_Local_Authority",
@@ -229,9 +243,43 @@ df_tab01_sampler_agg["date_ran"] = datetime.now().strftime('%d-%m-%Y')
 
 # MAGIC %md
 # MAGIC
-# MAGIC ### Tab02 - "patch" - TBA
+# MAGIC ### Tab01 -- add capacity tracker data
 # MAGIC
 # MAGIC Of the sort : df_join.merge(df_pir,how="left",on="location_id")
+
+# COMMAND ----------
+
+df_hcsu.columns
+
+# COMMAND ----------
+
+#rename is domcare to community or residential and put in pir_type column
+df_hcsu['PIR type'] = df_hcsu['IsDomcare'].replace(1, 'Community')
+df_hcsu['PIR type'] = df_hcsu['PIR type'].replace(0, 'Residential')
+
+# COMMAND ----------
+
+#reformat date column to month and year
+df_hcsu['month_year'] = df_hcsu['Date'].dt.strftime('%b-%y')
+
+# COMMAND ----------
+
+#reformat the serviceuser count to int
+df_hcsu['ServiceUserCount'] = df_hcsu['ServiceUserCount'].astype(int)
+
+# COMMAND ----------
+
+df_hcsu = df_hcsu[['CqcId', 'ServiceUserCount', 'PIR type', 'month_year']]
+
+# COMMAND ----------
+
+#rename location id column to cqcid to merge with hcsu data
+df_tab01_sampler_agg = df_tab01_sampler_agg.rename(columns = {'Location_Id':'CqcId'})
+
+# COMMAND ----------
+
+df_tab01_capacity_tracker = df_hcsu.merge(df_tab01_sampler_agg, on = ['CqcId', 'month_year', 'PIR type'])
+df_tab01_capacity_tracker
 
 # COMMAND ----------
 
@@ -239,7 +287,7 @@ df_tab01_sampler_agg["date_ran"] = datetime.now().strftime('%d-%m-%Y')
 # -------------------------------------------------------------------------
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.StringIO()
-df_tab01_sampler_agg.to_csv(file_contents)
+df_tab01_capacity_tracker.to_csv(file_contents)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, sink_file)
 
 # COMMAND ----------
@@ -247,3 +295,7 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current
 # Write metrics to database
 # -------------------------------------------------------------------------
 write_to_sql(df_tab01_sampler_agg, table_name, "overwrite")
+
+# COMMAND ----------
+
+
