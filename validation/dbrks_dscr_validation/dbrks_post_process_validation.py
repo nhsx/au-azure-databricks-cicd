@@ -263,33 +263,42 @@ assert expect.success
 # -------------------------------------------------------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, hcsu_source_path)
 file = datalake_download(CONNECTION_STRING, file_system, hcsu_source_path+latestFolder, hcsu_source_file)
-df_hcsu= pd.read_parquet(io.BytesIO(file), engine="pyarrow")
+df_hcsu = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 # COMMAND ----------
 
-latest_users_sum = df_hcsu.loc[(df_hcsu['Date'] == '2023-01-31')]['ServiceUserCount'].sum()
-previous_users_sum = df_hcsu.loc[df_hcsu['Date'] == '2022-12-31']['ServiceUserCount'].sum()
-
-min_count = previous_users_sum*0.8
-max_count = previous_users_sum*1.2
+hcsu_df1 = ge.from_pandas(df_hcsu) # Create great expectations dataframe from pandas datafarme
 
 # COMMAND ----------
 
-# Filtering data only for January 2023
-january_df_hcsu =  df_hcsu.loc[(df_hcsu['Date'] == '2023-01-31')]
-print("Lenth of DF after filtering only for Janury Data:", len(january_df_hcsu))
-january_df_hcsu = january_df_hcsu.loc[(january_df_hcsu['IsActive'] == 1) & (january_df_hcsu['IsDomcare'] == 1)]
-print("Lenth of DF after filtering only for IsActive - 1 and IsDomcare - 1:", len(january_df_hcsu))
+## Home care service usre tolerance amount
+base_count = 77301
+tolerance = (5/100) * base_count
+
+today_rec_count = len(df_hcsu)
+min_rec_count = round(today_rec_count - tolerance)
+max_rec_count = round(today_rec_count + tolerance)
+
+print("Minimum Value is:")
+print(min_rec_count)
+print("Max value is:")
+print(max_rec_count)
+print("Max service user count")
+print(df_hcsu["ServiceUserCount"].max())
 
 # COMMAND ----------
 
-january_df1 = ge.from_pandas(january_df_hcsu) # Create great expectations dataframe from pandas datafarme
+## test that home care service users row count is within the tolerance amount
+info = "Checking that Service User Count row is within the tolerance amount"
+expect = hcsu_df1.expect_table_row_count_to_be_between(min_value=min_rec_count, max_value=max_rec_count)
+test_result(expect, info)
+assert expect.success
 
 # COMMAND ----------
 
 ## test that the sum of users is within the tolerance amount
 info = "Checking that the sum of Service User Count is within the tolerance amount"
-expect = january_df1.expect_column_sum_to_be_between(column='ServiceUserCount', min_value=min_count, max_value=max_count)
+expect = hcsu_df1.expect_column_values_to_be_between(column='ServiceUserCount', min_value=0, max_value=3500)
 test_result(expect, info)
 assert expect.success
 

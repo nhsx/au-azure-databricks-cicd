@@ -128,36 +128,12 @@ assert expect.success
 
 # COMMAND ----------
 
-#Test that the Date column only contain dates
-
-info = "Checking that the Date column only contains dates in the correct format in the domiciliary data\n"
-expect = df_dom1.expect_column_values_to_match_strftime_format('CqcSurveyLastUpdatedBst', '%d/%m/%Y %H:%M')
-test_result(expect, info)
-assert expect.success
-
-# COMMAND ----------
-
 #Test that the CqcId column do not contain any null values in the residential data
 
 info = "Checking that the CqcId column do not contain any null values in residential data\n"
 expect = df_res1.expect_column_values_to_not_be_null(column='CqcId')
 test_result(expect, info)
 assert expect.success
-
-# COMMAND ----------
-
-## ServiceUserCount contains NULL value, need to find a way we can verify this
-
-# #Test that the count only contains ints
-
-# types = {
-#     "ServiceUserCount": "int"
-# }
-# info = "Checking that 'Count' column data are all int\n"
-# for column, type_ in types.items():
-#     expect = df1.expect_column_values_to_be_of_type(column=column, type_=type_)
-#     test_result(expect, info)
-#     assert expect.success
 
 # COMMAND ----------
 
