@@ -216,7 +216,8 @@ print("Lenth of DF after filtering only for IsActive - 1 and IsDomcare - 1:", le
 # COMMAND ----------
 
 # Merging data from Home Care Service User File
-df_hcsu['join_date'] = df_hcsu['Date'].dt.strftime('%Y-%m')
+df_hcsu['join_date'] = df_hcsu['Date'] + np.timedelta64(1, 'M')
+df_hcsu['join_date'] = df_hcsu['join_date'].dt.strftime('%Y-%m')
 df_join_keep['join_date'] = df_join_keep['monthly_date'].dt.strftime('%Y-%m')
 df_merged_hcsu_df_join_keep = pd.merge(df_join_keep, df_hcsu, on=['Location_Id', 'join_date'] ,how="left")
 
@@ -267,7 +268,7 @@ df_tab02_patch["run_date"] = df_join_keep["monthly_date"]
 
 # COMMAND ----------
 
-df_tab02_patch
+display(df_tab02_patch)
 
 # COMMAND ----------
 
