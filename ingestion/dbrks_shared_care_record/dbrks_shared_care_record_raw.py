@@ -254,10 +254,12 @@ for i in list(df_dict.keys())[1:]:
 
 #Set all 'For Month' dates to folder date minus 1 month
 #--------------------------------------------------
-
 folder_date = pd.to_datetime(latestFolder) - pd.DateOffset(months=1)
+df_dict['icb']['For Month'] = folder_date
 
-for i in df_dict.keys():
+
+folder_date = pd.to_datetime(latestFolder)
+for i in list(df_dict.keys())[1:]:
   df_dict[i]['For Month'] = folder_date
 
 
