@@ -88,10 +88,17 @@ shapefile_sink_file = config_JSON['pipeline']['project'][0]['shapefile_sink_file
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, shapefile_source_path)
 file = datalake_download(CONNECTION_STRING, file_system, shapefile_source_path+latestFolder, shapefile_source_file)
 df = gpd.read_file(io.BytesIO(file))
-column_mapping = {df.columns[0]: 'Unique ID', df.columns[1]: 'CCG code', df.columns[2]: 'CCG name'}
+column_mapping = {df.columns[0]: 'Unique ID', df.columns[2]: 'CCG code', df.columns[3]: 'CCG name'}
 df_1 = df.rename(columns=column_mapping)
 df_2 = df_1.set_index('Unique ID')
 df_processed = df_2.copy()
+
+
+# COMMAND ----------
+
+df_processed = df_processed.drop(['objectid'], axis = 1)
+df_processed
+
 
 # COMMAND ----------
 
@@ -99,3 +106,7 @@ df_processed = df_2.copy()
 file_contents = io.StringIO()
 df_processed.to_csv(file_contents)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, shapefile_sink_path+latestFolder, shapefile_sink_file)
+
+# COMMAND ----------
+
+
