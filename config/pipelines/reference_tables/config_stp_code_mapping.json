@@ -3,7 +3,7 @@
 		"products": [
 			{
 			"product_name": "Reference Data",
-			"topic": "stp code mapping",
+			"topic": "stp_code_mapping",
 			"metrics": [
 				{
             			"id": "",

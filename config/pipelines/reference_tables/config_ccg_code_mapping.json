@@ -3,7 +3,7 @@
 		"products": [
 			{
 			"product_name": "Reference Data",
-			"topic": "ccg code mapping",
+			"topic": "ccg_code_mapping",
 			"metrics": [
 				{
             			"id": "",
