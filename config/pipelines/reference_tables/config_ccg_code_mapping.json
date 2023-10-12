@@ -16,7 +16,7 @@
 	},
 	"pipeline": {
 		"name": "trigger_ccg_code_mapping",
-    	"folder": "reference_tables/stp_code_mapping/",
+    	"folder": "reference_tables/ccg_code_mapping/",
 		"ingestion": {
 		},
 		"raw": {
@@ -30,9 +30,9 @@
 				"source_path":"raw/ncdr_etp/adf_v2/table/ccg_code_mapping/snapshot/",
 				"source_file": "table_ccg_code_mapping_snapshot.parquet",
 				"source_schema": [
-					{"name": "[ONS CCG code]", "type": "String"},
-					{"name": "[CCG name]", "type": "String"},					
-					{"name": "[ODS CCG code]", "type": "String"}
+					{"name": "[ONS_CCG_code]", "type": "String"},
+					{"name": "[CCG_name]", "type": "String"},					
+					{"name": "[ODS_CCG_code]", "type": "String"}
 
 				],
 				"sink_path": "proc/sources/ncdr_etp/adf_v2/table/ccg_code_mapping/snapshot/",

@@ -3,7 +3,7 @@
 		"products": [
 			{
 			"product_name": "Reference Data",
-			"topic": "stp_code_mapping",
+			"topic": "stp code mapping",
 			"metrics": [
 				{
             			"id": "",
@@ -30,9 +30,9 @@
 				"source_path":"raw/ncdr_etp/adf_v2/table/stp_code_mapping/snapshot/",
 				"source_file": "table_stp_code_mapping_snapshot.parquet",
 				"source_schema": [
-					{"name": "[ONS STP code]", "type": "String"},
-					{"name": "[STP name]", "type": "String"},					
-					{"name": "[ODS STP code]", "type": "String"}
+					{"name": "[ONS_STP_code]", "type": "String"},
+					{"name": "[STP_name]", "type": "String"},					
+					{"name": "[ODS_STP_code]", "type": "String"}
 
 				],
 				"sink_path": "proc/sources/ncdr_etp/adf_v2/table/stp_code_mapping/snapshot/",
