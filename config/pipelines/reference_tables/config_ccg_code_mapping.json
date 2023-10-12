@@ -1,0 +1,66 @@
+{
+	"metadata":  {
+		"products": [
+			{
+			"product_name": "Reference Data",
+			"topic": "ccg_code_mapping",
+			"metrics": [
+				{
+            			"id": "",
+            			"full_name": "Reference table with ccg code mapping",
+	 			"short_name":"ccg_code_mapping"
+        			}
+				]
+			}
+		]
+	},
+	"pipeline": {
+		"name": "trigger_ccg_code_mapping",
+    	"folder": "reference_tables/stp_code_mapping/",
+		"ingestion": {
+		},
+		"raw": {
+				"source_dbo": "dbo",
+				"source_table": "ccg_code_mapping_snapshot",
+				"source_query": "SELECT * FROM ccg_code_mapping_snapshot;",	
+				"sink_path": "raw/ncdr_etp/adf_v2/table/ccg_code_mapping/snapshot/",
+				"sink_file": "table_ccg_code_mapping_snapshot.parquet"
+			},
+		"proc": {
+				"source_path":"raw/ncdr_etp/adf_v2/table/ccg_code_mapping/snapshot/",
+				"source_file": "table_ccg_code_mapping_snapshot.parquet",
+				"source_schema": [
+					{"name": "[ONS CCG code]", "type": "String"},
+					{"name": "[CCG name]", "type": "String"},					
+					{"name": "[ODS CCG code]", "type": "String"}
+
+				],
+				"sink_path": "proc/sources/ncdr_etp/adf_v2/table/ccg_code_mapping/snapshot/",
+				"sink_file": "table_ccg_code_mapping_snapshot.parquet"
+        },
+		"project": {
+				"source_path": "proc/sources/ncdr_etp/adf_v2/table/ccg_code_mapping/snapshot/",
+				"source_file": "table_ccg_code_mapping_snapshot.parquet",
+				"sink_path": "proc/projects/reference_tables/ods_codes/ccg_code_mapping/",
+				"sink_file": "table_ccg_code_mapping_snapshot.parquet"
+		},
+		"staging":[    
+    			{
+				"metric": "ccg_code_mapping_snapshot",
+				"stored_procedure": "[dbo].[stored_proc_ccg_code_mapping_snapshot]",
+				"source_path": "proc/projects/reference_tables/ods_codes/ccg_code_mapping/",
+				"source_file": "table_ccg_code_mapping_snapshot.parquet",
+				"sink_table": "ccg_code_mapping_snapshot"
+				}
+			]
+		
+
+		
+	}
+}
+
+
+
+
+
+

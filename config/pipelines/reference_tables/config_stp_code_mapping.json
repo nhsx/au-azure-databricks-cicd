@@ -1,0 +1,69 @@
+{
+	"metadata":  {
+		"products": [
+			{
+			"product_name": "Reference Data",
+			"topic": "stp_code_mapping",
+			"metrics": [
+				{
+            			"id": "",
+            			"full_name": "Reference table with stp code mapping",
+	 			"short_name":"stp_code_mapping"
+        			}
+				]
+			}
+		]
+	},
+	"pipeline": {
+		"name": "trigger_stp_code_mapping",
+    	"folder": "reference_tables/stp_code_mapping/",
+		"ingestion": {
+		},
+		"raw": {
+				"source_dbo": "dbo",
+				"source_table": "stp_code_mapping_snapshot",
+				"source_query": "SELECT * FROM stp_code_mapping_snapshot;",	
+				"sink_path": "raw/ncdr_etp/adf_v2/table/stp_code_mapping/snapshot/",
+				"sink_file": "table_stp_code_mapping_snapshot.parquet"
+			},
+		"proc": {
+				"source_path":"raw/ncdr_etp/adf_v2/table/stp_code_mapping/snapshot/",
+				"source_file": "table_stp_code_mapping_snapshot.parquet",
+				"source_schema": [
+					{"name": "[ONS STP code]", "type": "String"},
+					{"name": "[STP name]", "type": "String"},					
+					{"name": "[ODS STP code]", "type": "String"}
+
+				],
+				"sink_path": "proc/sources/ncdr_etp/adf_v2/table/stp_code_mapping/snapshot/",
+				"sink_file": "table_stp_code_mapping_snapshot.parquet"
+        },
+		"project": {
+				"source_path": "proc/sources/ncdr_etp/adf_v2/table/stp_code_mapping/snapshot/",
+				"source_file": "table_stp_code_mapping_snapshot.parquet",
+				"sink_path": "proc/projects/reference_tables/ods_codes/stp_code_mapping/",
+				"sink_file": "table_stp_code_mapping_snapshot.parquet"
+		},
+		"staging":[    
+    			{
+				"metric": "stp_code_mapping_snapshot",
+				"stored_procedure": "[dbo].[stored_proc_stp_code_mapping_snapshot]",
+				"source_path": "proc/projects/reference_tables/ods_codes/stp_code_mapping/",
+				"source_file": "table_stp_code_mapping_snapshot.parquet",
+				"sink_table": "stp_code_mapping_snapshot"
+				}
+			]
+		
+
+		
+	}
+}
+
+
+
+
+
+
+
+      
+   
