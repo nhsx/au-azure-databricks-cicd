@@ -108,8 +108,8 @@ df_3 = df_2.rename(columns = {'Location ID':'Location_Id','Dormant (Y/N)':'Is_Do
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, reference_path)
 file = datalake_download(CONNECTION_STRING, file_system,reference_path+latestFolder, reference_file)
 df_ref = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
-df_ref_1 = df_ref[['CCG_ONS_Code','CCG_ODS_Code','CCG_Name','ICB_ONS_Code','ICB_Code','ICB_Name','Region_Code','Region_Name','Last_Refreshed']]
-df_ref_2 = df_ref_1[~df_ref_1.duplicated(['CCG_ONS_Code', 'CCG_ODS_Code','CCG_Name','ICB_ONS_Code','ICB_Code','ICB_Name','Region_Code','Region_Name','Last_Refreshed'])].reset_index(drop = True)
+df_ref_1 = df_ref[['CCG_ONS_Code','CCG_ODS_Code','CCG_Name', 'CCG21CD','ICB_ONS_Code','ICB_Code','ICB_Name','Region_Code','Region_Name','Last_Refreshed']]
+df_ref_2 = df_ref_1[~df_ref_1.duplicated(['CCG_ONS_Code', 'CCG_ODS_Code','CCG_Name', 'CCG21CD','ICB_ONS_Code','ICB_Code','ICB_Name','Region_Code','Region_Name','Last_Refreshed'])].reset_index(drop = True)
 
 
 # COMMAND ----------
@@ -124,7 +124,7 @@ df_3.groupby(["monthly_date"]).count() # sense check
 
 # Joint processing
 # -------------------------------------------------------------------------
-df_join = df_3.merge(df_ref_2, how ='outer', on = 'CCG_ONS_Code')
+df_join = df_3.merge(df_ref_2, how ='outer', left_on = 'CCG_ONS_Code', right_on = 'CCG21CD')
 df_join.index.name = "Unique ID"
 df_join = df_join.round(4)
 df_join["monthly_date"] = pd.to_datetime(df_join["monthly_date"],format="%d/%m/%Y") # MF230608 . added format otherwise it was interpreting the day as month and vice-versa
@@ -158,7 +158,7 @@ df_pir_keep.rename(columns={"Location ID":"Location_Id"},inplace=True)
 df_join_keep = df_join[["Location_Id",
                         "Location_Primary_Inspection_Category",
                         "Location_Local_Authority",
-                        "CCG_ONS_Code","Location_ONSPD_CCG_Name",
+                        "CCG_ONS_Code_y","Location_ONSPD_CCG_Name",
                         "ICB_ONS_Code","ICB_Name",
                         "Region_Code","Region_Name",
                         "Provider_ID", "monthly_date"]].copy()   
@@ -169,6 +169,10 @@ df_tab01_sampler = df_pir_keep.merge(df_join_keep, how ='left', on ="Location_Id
 #df_join # 259168 rows . 138232 ASC only
 
 df_tab02_patch = df_join_keep.merge(df_pir_keep, how = 'left', on='Location_Id') # MF230608 . Table02, left join PIR to reference info
+
+# COMMAND ----------
+
+df_tab02_patch = df_tab02_patch.rename(columns = {'CCG_ONS_Code_y':'CCG_ONS_Code'})
 
 # COMMAND ----------
 
@@ -334,3 +338,7 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current
 # Write metrics to database
 # -------------------------------------------------------------------------
 write_to_sql(df_tab_cumtrend_sum, table_name, "overwrite")
+
+# COMMAND ----------
+
+

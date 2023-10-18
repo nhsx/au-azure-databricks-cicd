@@ -117,18 +117,14 @@ df_3 = df_2.rename(columns = {'Location ID':'Location_Id','Dormant (Y/N)':'Is_Do
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, reference_path)
 file = datalake_download(CONNECTION_STRING, file_system,reference_path+latestFolder, reference_file)
 df_ref = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
-df_ref_1 = df_ref[['CCG_ONS_Code','CCG_ODS_Code','CCG_Name', 'CCG21CD', 'CCG21CDH', 'CCG21NM', 'STP21CD', 'STP21CDH','ICB_ONS_Code','ICB_Code','ICB_Name','Region_Code','Region_Name','Last_Refreshed']]
-df_ref_2 = df_ref_1[~df_ref_1.duplicated(['CCG_ONS_Code', 'CCG_ODS_Code','CCG_Name', 'CCG21CD', 'CCG21CDH', 'CCG21NM', 'STP21CD', 'STP21CDH','ICB_ONS_Code','ICB_Code','ICB_Name','Region_Code','Region_Name','Last_Refreshed'])].reset_index(drop = True)
+df_ref_1 = df_ref[['CCG_ONS_Code','CCG_ODS_Code','CCG_Name', 'CCG21CD', 'ICB_ONS_Code','ICB_Code','ICB_Name','Region_Code','Region_Name','Last_Refreshed']]
+df_ref_2 = df_ref_1[~df_ref_1.duplicated(['CCG_ONS_Code', 'CCG_ODS_Code','CCG_Name', 'CCG21CD', 'ICB_ONS_Code','ICB_Code','ICB_Name','Region_Code','Region_Name','Last_Refreshed'])].reset_index(drop = True)
 
 # HCSU Data Processing 
 # -------------------------------------------------------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, hcsu_source_path)
 file = datalake_download(CONNECTION_STRING, file_system, hcsu_source_path+latestFolder, hcsu_source_file)
 df_hcsu= pd.read_parquet(io.BytesIO(file), engine="pyarrow")
-
-# COMMAND ----------
-
-display(df_ref_2)
 
 # COMMAND ----------
 
@@ -144,10 +140,6 @@ df_3.groupby(["Location_Id","monthly_date"],  as_index=False).agg({"Provider_ID"
 
 # COMMAND ----------
 
-df_ref_2.columns
-
-# COMMAND ----------
-
 # Joint processing
 # -------------------------------------------------------------------------
 df_join = df_3.merge(df_ref_2, how ='outer', left_on = 'CCG_ONS_Code', right_on = 'CCG21CD')
@@ -157,14 +149,6 @@ df_join["monthly_date"] = pd.to_datetime(df_join["monthly_date"])
 df_join=df_join[df_join["monthly_date"]==max(df_join["monthly_date"])].reset_index() # MF: keep only latest months' CQC?
 df_join = df_join[df_join["Location_Inspection_Directorate"]=="Adult social care"] # keep only Adult Social Care Primary Inspection Directorate
 #df_processed = df_join.copy()
-
-# COMMAND ----------
-
-df_3
-
-# COMMAND ----------
-
-display(df_join)
 
 # COMMAND ----------
 
@@ -193,9 +177,6 @@ df_pir = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 # COMMAND ----------
 
 df_join['Last_Refreshed'] = pd.to_datetime(df_join['Last_Refreshed'])
-
-# COMMAND ----------
-
 df_join_keep = df_join[df_join["Last_Refreshed"]==max(df_join["Last_Refreshed"])]
 
 df_pir["months"] = pd.to_datetime(df_pir["PIR submission date"]).dt.month
@@ -222,10 +203,6 @@ df_join_keep = df_join[df_join["Last_Refreshed"]==max(df_join["Last_Refreshed"])
                         "Provider_ID", "monthly_date", 'Is_Care_Home', 'Care_Home_Beds', 'Is_Domant']].copy()   
 
 df_join_keep = df_join_keep.rename(columns = {'CCG_ONS_Code_y':'CCG_ONS_Code'})
-
-
-# COMMAND ----------
-
 
 
 # COMMAND ----------
