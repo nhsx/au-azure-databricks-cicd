@@ -250,6 +250,16 @@
 						"id": "M275",
 						"full_name": "All Forecasts",
 						"short_name": "ndc_forecasts_all"
+					},
+					{
+						"id": "M276",
+						"full_name": "NBS",
+						"short_name": "ndc_nbs"
+					},
+					{
+						"id": "M277",
+						"full_name": "GP Registration",
+						"short_name": "ndc_gp_registration"
 					}
 				]
 			}
@@ -610,6 +620,18 @@
 					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_forecasts_all/",
 					"sink_file": "ndc_forecasts_all.csv",
 					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_forecasts_all"
+				},
+				{
+					"metric": "ndc_nbs",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_nbs/",
+					"sink_file": "ndc_nbs.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_nbs"
+				},
+				{
+					"metric": "ndc_gp_registration",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_gp_registration/",
+					"sink_file": "ndc_gp_registration.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_gp_registration"
 				}
 				
 			]
@@ -810,6 +832,14 @@
 			{
 				"metric": "ndc_forecasts_all",
 				"sink_table": "ndc_forecasts_all"
+			},
+			{
+				"metric": "ndc_nbs",
+				"sink_table": "ndc_nbs"
+			},
+			{
+				"metric": "ndc_gp_registration",
+				"sink_table": "ndc_gp_registration"
 			}
 		]
 	}
