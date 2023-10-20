@@ -145,8 +145,11 @@ df_3.groupby(["Location_Id","monthly_date"],  as_index=False).agg({"Provider_ID"
 df_join = df_3.merge(df_ref_2, how ='outer', left_on = 'CCG_ONS_Code', right_on = 'CCG21CD')
 df_join.index.name = "Unique ID"
 df_join = df_join.round(4)
-df_join["monthly_date"] = pd.to_datetime(df_join["monthly_date"])
-df_join=df_join[df_join["monthly_date"]==max(df_join["monthly_date"])].reset_index() # MF: keep only latest months' CQC?
+
+#df_join["monthly_date"] = pd.to_datetime(df_join["monthly_date"])
+#df_join=df_join[df_join["monthly_date"]==max(df_join["monthly_date"])].reset_index() # MF: keep only latest months' CQC?
+
+df_join["monthly_date"] = pd.to_datetime(df_join["monthly_date"], format='%d/%m/%Y')
 df_join = df_join[df_join["Location_Inspection_Directorate"]=="Adult social care"] # keep only Adult Social Care Primary Inspection Directorate
 #df_processed = df_join.copy()
 
@@ -207,7 +210,7 @@ df_join_keep = df_join_keep.rename(columns = {'CCG_ONS_Code_y':'CCG_ONS_Code'})
 
 # COMMAND ----------
 
-df_join_keep
+display(df_join_keep)
 
 # COMMAND ----------
 
