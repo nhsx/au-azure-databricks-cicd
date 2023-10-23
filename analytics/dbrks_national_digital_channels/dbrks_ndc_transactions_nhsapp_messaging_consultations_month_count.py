@@ -87,30 +87,17 @@ df_econsult = pd.read_parquet(io.BytesIO(file_1), engine="pyarrow")
 # COMMAND ----------
 
 #Processing
-# ---------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 
 #Numerator (Montly)
 # ---------------------------------------------------------------------------------------------------
-df_1 = df[["Monthly", "accuRx_messages", "Engage_admin", "Engage_medical", "accuRx_medical", "Engage_messages", "PATCHS - admin", "PATCHS - medical"]]
-df_1.iloc[:, 0] = df_1.iloc[:,0].dt.strftime('%Y-%m')
-df_2 = df_1.groupby(df_1.iloc[:,0]).sum().reset_index()
-
-#Numerator (econuslt)
-# ---------------------------------------------------------------------------------------------------
-df_econsult_1 = df_econsult[["day", "count"]]
-df_econsult_1.iloc[:, 0] = df_econsult_1.iloc[:,0].dt.strftime('%Y-%m')
-df_econsult_2 = df_econsult_1.groupby(df_econsult_1.iloc[:,0]).sum().reset_index()
-
-# Join Monthly and Daily Datasets
-# ---------------------------------------------------------------------------------------------------
-df_join = df_econsult_2.merge(df_2, how = 'left', left_on = 'day', right_on  = 'Monthly').drop(columns = 'Monthly')
-col_list = ["accuRx_messages", "Engage_admin", "Engage_medical", "accuRx_medical", "Engage_messages", "PATCHS - admin", "PATCHS - medical", "count"]
-df_join['OLCs on the NHS App'] = df_join[col_list].sum(axis=1)
-df_join_1 = df_join.drop(columns = col_list)
-df_join_1.rename(columns  = {'day': 'Date'}, inplace = True)
-df_join_1.index.name = "Unique ID"
-df_join_1['Date'] = pd.to_datetime(df_join_1['Date'])
-df_processed = df_join_1.copy()
+df = df[["Monthly", "accuRx_messages", "Engage_admin", "Engage_medical", "accuRx_medical", "Engage_messages", "PATCHS - admin", "PATCHS - medical", "eConsult Consultation"]]
+df['OLCs on the NHS App'] = df.iloc[:,1:].sum(axis=1)
+df = df[['Monthly','OLCs on the NHS App']]
+df.rename(columns  = {'Monthly': 'Date'}, inplace = True)
+df.index.name = "Unique ID"
+df['Date'] = pd.to_datetime(df['Date'])
+df_processed = df.copy()
 
 # COMMAND ----------
 
