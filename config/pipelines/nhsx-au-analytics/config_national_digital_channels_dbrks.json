@@ -853,8 +853,8 @@
 				"sink_table": "ndc_gp_registration"
 			},
 			{
-				"metric": "dbrks_ndc_gp_registration",
-				"sink_table": "dbrks_ndc_gp_registration"
+				"metric": "ndc_transactions_nhsuk_site_sections",
+				"sink_table": "ndc_transactions_nhsuk_site_sections"
 			}
 		]
 	}
