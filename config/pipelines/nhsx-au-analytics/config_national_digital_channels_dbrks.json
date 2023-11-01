@@ -260,6 +260,11 @@
 						"id": "M277",
 						"full_name": "GP Registration",
 						"short_name": "ndc_gp_registration"
+					},
+					{
+						"id": "M278",
+						"full_name": "Site Sections Splits",
+						"short_name": "ndc_transactions_nhsuk_site_sections"
 					}
 				]
 			}
@@ -632,8 +637,14 @@
 					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_gp_registration/",
 					"sink_file": "ndc_gp_registration.csv",
 					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_gp_registration"
+				},
+				{
+					"metric": "ndc_transactions_nhsuk_site_sections",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_transactions_nhsuk_site_sections/",
+					"sink_file": "ndc_gp_registration.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_nhsuk_site_sections"
 				}
-				
+					
 			]
 		},
 		"staging": [
@@ -840,6 +851,10 @@
 			{
 				"metric": "ndc_gp_registration",
 				"sink_table": "ndc_gp_registration"
+			},
+			{
+				"metric": "dbrks_ndc_gp_registration",
+				"sink_table": "dbrks_ndc_gp_registration"
 			}
 		]
 	}
