@@ -66,9 +66,9 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']["source_file_daily"]
-sink_path = config_JSON['pipeline']['project']['databricks'][19]['sink_path']
-sink_file = config_JSON['pipeline']['project']['databricks'][19]['sink_file'] 
-table_name = config_JSON['pipeline']["staging"][19]['sink_table']
+sink_path = config_JSON['pipeline']['project']['databricks'][52]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][52]['sink_file'] 
+table_name = config_JSON['pipeline']["staging"][52]['sink_table']
 
 # COMMAND ----------
 
@@ -82,14 +82,11 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 #Processing
 # ---------------------------------------------------------------------------------------------------
-# df
-df1 = df[['Daily', 'dose_3']]
-df1.iloc[:, 0] = df1.iloc[:,0].dt.strftime('%Y-%m')
-df2 = df1.groupby(df1.iloc[:,0]).sum().reset_index()
-df2.rename(columns = {'Daily':'Date', 'dose_3':'Number of NHS.UK vaccination bookings 3rd dose'}, inplace=True)
-df2.index.name = "Unique ID"
-df2['Date'] = pd.to_datetime(df2['Date'])
-df_processed = df2.copy()
+df = df[['Daily', 'covid_winter']]
+df = df.resample('M', on='Daily').sum().reset_index()
+df = df.rename(columns = {'Daily':'Date', 'dose_3':'NHS.UK Vaccination Bookings Covid Autumn Winter'})
+df.index.name = "Unique ID"
+df_processed = df.copy()
 
 # COMMAND ----------
 
