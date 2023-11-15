@@ -265,6 +265,16 @@
 						"id": "M278",
 						"full_name": "Site Sections Splits",
 						"short_name": "ndc_transactions_nhsuk_site_sections"
+					},
+					{
+						"id": "M264",
+						"full_name": "NHS.UK Vaccination Bookings Covid Autumn Winter",
+						"short_name": "ndc_vaccine_nhsuk_covid_vaccination_booking_autumn_winter_month_count"
+					},
+					{
+						"id": "M264",
+						"full_name": "NHS.UK Vaccination Bookings Flu Autumn Winter",
+						"short_name": "ndc_vaccine_nhsuk_flu_vaccination_booking_autumn_winter_month_count"
 					}
 				]
 			}
@@ -641,8 +651,20 @@
 				{
 					"metric": "ndc_transactions_nhsuk_site_sections",
 					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_transactions_nhsuk_site_sections/",
-					"sink_file": "ndc_gp_registration.csv",
+					"sink_file": "ndc_transactions_nhsuk_site_sections.csv",
 					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_transactions_nhsuk_site_sections"
+				},
+				{
+					"metric": "ndc_vaccine_nhsuk_covid_vaccination_booking_autumn_winter_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_vaccine_nhsuk_covid_vaccination_booking_autumn_winter_month_count/",
+					"sink_file": "ndc_vaccine_nhsuk_covid_vaccination_booking_autumn_winter_month_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_vaccine_nhsuk_covid_vaccination_booking_autumn_winter_month_count"
+				},
+				{
+					"metric": "ndc_vaccine_nhsuk_flu_vaccination_booking_autumn_winter_month_count",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_vaccine_nhsuk_flu_vaccination_booking_autumn_winter_month_count/",
+					"sink_file": "ndc_vaccine_nhsuk_flu_vaccination_booking_autumn_winter_month_count.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_vaccine_nhsuk_flu_vaccination_booking_autumn_winter_month_count"
 				}
 					
 			]
@@ -855,6 +877,14 @@
 			{
 				"metric": "ndc_transactions_nhsuk_site_sections",
 				"sink_table": "ndc_transactions_nhsuk_site_sections"
+			},
+			{
+				"metric": "ndc_vaccine_nhsuk_covid_vaccination_booking_autumn_winter_month_count",
+				"sink_table": "ndc_vaccine_nhsuk_covid_vaccination_booking_autumn_winter_month_count"
+			},
+			{
+				"metric": "ndc_vaccine_nhsuk_flu_vaccination_booking_autumn_winter_month_count",
+				"sink_table": "ndc_vaccine_nhsuk_flu_vaccination_booking_autumn_winter_month_count"
 			}
 		]
 	}
