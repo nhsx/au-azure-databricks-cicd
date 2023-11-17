@@ -275,6 +275,11 @@
 						"id": "M264",
 						"full_name": "NHS.UK Vaccination Bookings Flu Autumn Winter",
 						"short_name": "ndc_vaccine_nhsuk_flu_vaccination_booking_autumn_winter_month_count"
+					},
+					{
+						"id": "M265",
+						"full_name": "All Actuals",
+						"short_name": "ndc_actuals_all"
 					}
 				]
 			}
@@ -293,7 +298,6 @@
 			"appended_path": "raw/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
 			"appended_file_daily": "national_digital_channels_historical_daily.parquet",
 			"appended_file_monthly": "national_digital_channels_historical_monthly.parquet",
-			"appended_file_daily_ods": "national_digital_channels_historical_daily_ods.parquet",
 			"appended_file_messages": "national_digital_channels_historical_messages.parquet",
 			"appended_file_forecasts": "national_digital_channels_historical_forecasts.parquet"
 		},
@@ -312,12 +316,6 @@
 			},
 			{
 				"source_path": "raw/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
-				"source_file": "national_digital_channels_historical_daily_ods.parquet",
-				"sink_path": "proc/sources/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
-				"sink_file": "national_digital_channels_historical_daily_ods.parquet"
-			},
-			{
-				"source_path": "raw/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
 				"source_file": "national_digital_channels_historical_messages.parquet",
 				"sink_path": "proc/sources/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
 				"sink_file": "national_digital_channels_historical_messages.parquet"
@@ -333,7 +331,6 @@
 			"source_path": "proc/sources/nhsdigital/sharepoint/excel/national_digital_channels/historical/",
 			"source_file_daily": "national_digital_channels_historical_daily.parquet",
 			"source_file_monthly": "national_digital_channels_historical_monthly.parquet",
-			"source_file_ods": "national_digital_channels_historical_daily_ods.parquet",
 			"source_file_messages": "national_digital_channels_historical_messages.parquet",
 			"source_file_forecasts": "national_digital_channels_historical_forecasts.parquet",
 			"reference_source_path": "proc/sources/ncdr_etp/adf_v2/table/ons_population_demography/historical/",
@@ -665,6 +662,12 @@
 					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_vaccine_nhsuk_flu_vaccination_booking_autumn_winter_month_count/",
 					"sink_file": "ndc_vaccine_nhsuk_flu_vaccination_booking_autumn_winter_month_count.csv",
 					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_vaccine_nhsuk_flu_vaccination_booking_autumn_winter_month_count"
+				},
+				{
+					"metric": "ndc_actuals_all",
+					"sink_path": "proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_actuals_all/",
+					"sink_file": "ndc_actuals_all.csv",
+					"databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_national_digital_channels/dbrks_ndc_actuals_all"
 				}
 					
 			]
@@ -885,6 +888,10 @@
 			{
 				"metric": "ndc_vaccine_nhsuk_flu_vaccination_booking_autumn_winter_month_count",
 				"sink_table": "ndc_vaccine_nhsuk_flu_vaccination_booking_autumn_winter_month_count"
+			},
+			{
+				"metric": "ndc_actuals_all",
+				"sink_table": "ndc_actuals_all"
 			}
 		]
 	}
