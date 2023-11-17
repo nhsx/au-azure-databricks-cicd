@@ -66,7 +66,6 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 source_path = config_JSON['pipeline']['project']['source_path']
 source_file = config_JSON['pipeline']['project']["source_file_monthly"]
-source_file_2 = config_JSON['pipeline']['project']["source_file_ods"]
 sink_path = config_JSON['pipeline']['project']['databricks'][28]['sink_path']
 sink_file = config_JSON['pipeline']['project']['databricks'][28]['sink_file'] 
 table_name = config_JSON['pipeline']["staging"][28]['sink_table']
@@ -78,11 +77,6 @@ table_name = config_JSON['pipeline']["staging"][28]['sink_table']
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
-
-# Ingestion of numerator data (Daily)
-# ---------------------------------------------------------------------------------------------------
-file_1 = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file_2)
-df_econsult = pd.read_parquet(io.BytesIO(file_1), engine="pyarrow")
 
 # COMMAND ----------
 
