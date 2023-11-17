@@ -65,19 +65,13 @@ config_JSON = json.loads(io.BytesIO(config_JSON).read())
 #Get parameters from JSON config
 file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 source_path = config_JSON['pipeline']['project']['source_path']
-#source_file = config_JSON['pipeline']['project']["source_file_forecasts"]
-source_file_daily = 'national_digital_channels_historical_daily.parquet'
-source_file_monthly = 'national_digital_channels_historical_monthly.parquet'
-source_file_messages = 'national_digital_channels_historical_messages.parquet'
+source_file_daily = config_JSON['pipeline']['project']["source_file_daily"]
+source_file_monthly = config_JSON['pipeline']['project']["source_file_monthly"]
+source_file_messages = config_JSON['pipeline']['project']["source_file_messages"]
+sink_path = config_JSON['pipeline']['project']['databricks'][54]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][54]['sink_file']  
+table_name = config_JSON['pipeline']["staging"][54]['sink_table']
 
-#sink_path = config_JSON['pipeline']['project']['databricks'][48]['sink_path']
-sink_path = 'proc/projects/nhsx_slt_analytics/national_digital_channels/ndc_actuals_all/'
-
-#sink_file = config_JSON['pipeline']['project']['databricks'][48]['sink_file']  
-sink_file = 'ndc_actuals_all.csv'
-
-#table_name = config_JSON['pipeline']["staging"][48]['sink_table']
-table_name = 'ndc_actuals_all'
 
 # COMMAND ----------
 
