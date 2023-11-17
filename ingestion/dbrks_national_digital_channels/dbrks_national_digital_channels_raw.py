@@ -75,7 +75,7 @@ new_source_path = config_JSON['pipeline']['raw']['source_path']
 appended_path = config_JSON['pipeline']['raw']['appended_path']
 appended_daily_file = config_JSON['pipeline']['raw']['appended_file_daily']
 appended_monthly_file = config_JSON['pipeline']['raw']['appended_file_monthly']
-appended_ods_file = config_JSON['pipeline']['raw']['appended_file_daily_ods']
+#appended_ods_file = config_JSON['pipeline']['raw']['appended_file_daily_ods']
 appended_messages_file = config_JSON['pipeline']['raw']['appended_file_messages']
 appended_forecasts_file = config_JSON['pipeline']['raw']['appended_file_forecasts']
 
@@ -147,22 +147,6 @@ current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.BytesIO()
 forecasts_raw_df.to_parquet(file_contents, engine="pyarrow")
 datalake_upload(file_contents, CONNECTION_STRING, file_system, appended_path+current_date_path, appended_forecasts_file)
-
-# COMMAND ----------
-
-# Pull ODS dataset
-# ----------------------------------------
-new_data_ods = pd.read_excel(io.BytesIO(new_dataset), sheet_name = 'econsult', engine='openpyxl')
-new_data_ods = new_data_ods.loc[:, ~new_data_ods.columns.str.contains('^Unnamed')]
-new_data_ods['day'] = pd.to_datetime(new_data_ods['day'])
-new_data_ods_df = new_data_ods.copy()
-
-# Upload merged data to datalake
-# -------------------------------------------
-current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
-file_contents = io.BytesIO()
-new_data_ods_df.to_parquet(file_contents, engine="pyarrow")
-datalake_upload(file_contents, CONNECTION_STRING, file_system, appended_path+current_date_path, appended_ods_file)
 
 # COMMAND ----------
 
