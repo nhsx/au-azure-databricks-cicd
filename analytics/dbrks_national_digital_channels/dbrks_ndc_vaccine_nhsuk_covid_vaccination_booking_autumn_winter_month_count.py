@@ -84,7 +84,7 @@ df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 # ---------------------------------------------------------------------------------------------------
 df = df[['Daily', 'covid_winter']]
 df = df.resample('M', on='Daily').sum().reset_index()
-df = df.rename(columns = {'Daily':'Date', 'dose_3':'NHS.UK Vaccination Bookings Covid Autumn Winter'})
+df = df.rename(columns = {'Daily':'Date', 'covid_winter':'NHS.UK Vaccination Bookings Covid Autumn Winter'})
 df.index.name = "Unique ID"
 df_processed = df.copy()
 
