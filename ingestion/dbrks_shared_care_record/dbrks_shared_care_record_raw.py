@@ -343,6 +343,11 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, "proc/projects/nh
 
 # COMMAND ----------
 
+#drop partner type from other dataframe
+df_dict['other'].drop(columns=('Partner Type'), inplace = True)
+
+# COMMAND ----------
+
 #Pull historical files
 #------------------------------------
 
