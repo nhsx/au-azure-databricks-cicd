@@ -8,15 +8,15 @@
 # -------------------------------------------------------------------------
 
 """
-FILE:           dbrks_ndc_transaction_nhsapp_organ_donation_registration_month_count.py
+FILE:           dbrks_ndc_vaccine_nhsuk_flu_vaccination_booking_autumn_winter_month_count.py
 DESCRIPTION:
-                Databricks notebook with processing code for the NHSX Analyticus unit metric M267:	NHS.UK Vaccination Bookings 3rd dose
+                Databricks notebook with processing code for the NHSX Analyticus unit metric Mxxx:	NHS.UK Flu Vaccination Autumn Winter
 USAGE:
                 ...
-CONTRIBUTORS:   Oli Jones, Kabir Khan
+CONTRIBUTORS:   Oli Jones, Kabir Khan, Chris Todd
 CONTACT:        data@nhsx.nhs.uk
-CREATED:        25th Aug 2022
-VERSION:        0.0.2
+CREATED:        21nd Nov 2023
+VERSION:        0.0.1
 """
 
 # COMMAND ----------
