@@ -224,6 +224,9 @@ for filename in directory:
             },
             inplace=True,
         )
+        try: xls_file[key].rename(columns={list(xls_file[key])[6]:'Partner Type'}, inplace= True)
+        except: pass
+
         xls_file[key].insert(1, "ICB ODS code", ICB_code, False)
         xls_file[key].insert(3, "ICS Name (if applicable)", ICB_name, False)
         xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"Connected": 1, "Not Connected": 0, "Please select": 0}).fillna(0).astype(int)     
@@ -238,7 +241,8 @@ df_dict['icb'] = df_dict['icb'][['For Month', 'ICB ODS code', 'ICB Name (if appl
 
 #Remove any non-required columns from organisation dataframes, skipping ICB
 for i in list(df_dict.keys())[1:]:
-  df_dict[i] = df_dict[i][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', f'ODS {i} Code', f'{i} Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
+    if i == 'other': df_dict[i] = df_dict[i][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', f'ODS {i} Code', f'{i} Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?', 'Partner Type']]
+    else:  df_dict[i] = df_dict[i][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', f'ODS {i} Code', f'{i} Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
 
 
 # COMMAND ----------
