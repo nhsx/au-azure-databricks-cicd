@@ -168,7 +168,7 @@ for filename in directory:
         xls_file[key].drop(list(xls_file[key].filter(regex="Unnamed:")), axis=1, inplace=True)
         #remove empty rows if column 1 is empty
         xls_file[key] = xls_file[key].loc[~xls_file[key]["For Month\nsee guidance Ref 2"].isnull()]
-        #rename columns based on order
+        #rename columns based on order they appear in
         xls_file[key].rename(
             columns={
                 list(xls_file[key])[0]: "For Month",
@@ -176,7 +176,7 @@ for filename in directory:
                 list(xls_file[key])[2]: "ICB Name (if applicable)",
                 list(xls_file[key])[3]: "ShCR Programme Name",
                 list(xls_file[key])[4]: "Name of ShCR System",
-                ###Gap in columns
+                ###Gap in used columns
                 list(xls_file[key])[8]: "Care Providers",
                 list(xls_file[key])[9]: "Access to Advanced (EoL) Care Plans",
                 list(xls_file[key])[10]: "Number of users with access to the ShCR",
@@ -189,9 +189,8 @@ for filename in directory:
         )
         
         # get excel file metadata
-        ICB_code = xls_file[key]["ICB ODS code"].unique()[0]  # grab ICB code to add in to the other sheets
-
-        ICB_name = xls_file[key]["ICB Name (if applicable)"].unique()[0]  # grab ICB name for all sheets
+        ICB_code = xls_file[key]["ICB ODS code"].unique()[0]  # grab ICB code to add in to the other sheets in next section
+        ICB_name = xls_file[key]["ICB Name (if applicable)"].unique()[0]  # grab ICB name to add in to the other sheets in next section
           
         #For numeric fields, fill in blanks with zeros. Replace any non numeric entries with zero.
         xls_file[key]["Number of users with access to the ShCR"] = pd.to_numeric(xls_file[key]["Number of users with access to the ShCR"], errors='coerce').fillna(0).astype(int)
@@ -210,9 +209,10 @@ for filename in directory:
       sheet_name = [sheet for sheet in sheets if sheet.startswith(org_dict[i])]
       xls_file = pd.read_excel(io.BytesIO(file), sheet_name=sheet_name, engine="openpyxl")
       for key in xls_file:
+          
         xls_file[key].drop(list(xls_file[key].filter(regex="Unnamed:")), axis=1, inplace=True)
-
         xls_file[key] = xls_file[key].loc[~xls_file[key]["For Month"].isnull()]
+
         xls_file[key].rename(
             columns={
                 list(xls_file[key])[0]: "For Month",
@@ -224,26 +224,31 @@ for filename in directory:
             },
             inplace=True,
         )
+        #have to use error handling for this one, as column only exists on certain templates
         try: xls_file[key].rename(columns={list(xls_file[key])[6]:'Partner Type'}, inplace= True)
         except: pass
 
+        #add info about the ICB each partner is connected to
         xls_file[key].insert(1, "ICB ODS code", ICB_code, False)
         xls_file[key].insert(3, "ICS Name (if applicable)", ICB_name, False)
+
+        #convert text responses to binary response
         xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"Connected": 1, "Not Connected": 0, "Please select": 0}).fillna(0).astype(int)     
         xls_file[key]["Partner Organisation plans to be connected by March 2023?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0).astype(int)
           
         # append results to relevant dataframe in df_dict
         df_dict[i] = df_dict[i].append(xls_file[key].iloc[:, 0:9], ignore_index=True)
 
-    
-#Remove any non-required columns from ICB dataframe
-df_dict['icb'] = df_dict['icb'][['For Month', 'ICB ODS code', 'ICB Name (if applicable)', 'ShCR Programme Name', 'Name of ShCR System', "Care Providers", 'Access to Advanced (EoL) Care Plans', 'Number of users with access to the ShCR', 'Number of ShCR views in the past month', 'Number of unique user ShCR views in the past month', 'Completed by (email)', 'Date completed']]
-
-#Remove any non-required columns from organisation dataframes, skipping ICB
-for i in list(df_dict.keys())[1:]:
-    if i == 'other': df_dict[i] = df_dict[i][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', f'ODS {i} Code', f'{i} Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?', 'Partner Type']]
+#Remove any non-required columns from  dataframes
+for i in list(df_dict.keys()):
+    if i == 'icb': df_dict[i] = df_dict[i][['For Month', 'ICB ODS code', 'ICB Name (if applicable)', 'ShCR Programme Name', 'Name of ShCR System', "Care Providers", 'Access to Advanced (EoL) Care Plans', 'Number of users with access to the ShCR', 'Number of ShCR views in the past month', 'Number of unique user ShCR views in the past month', 'Completed by (email)', 'Date completed']]
+    elif i == 'other': df_dict[i] = df_dict[i][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', f'ODS {i} Code', f'{i} Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?', 'Partner Type']]
     else:  df_dict[i] = df_dict[i][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', f'ODS {i} Code', f'{i} Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
 
+
+# COMMAND ----------
+
+df_dict['other']
 
 # COMMAND ----------
 
@@ -343,7 +348,7 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, "proc/projects/nh
 
 # COMMAND ----------
 
-#drop partner type from other dataframe
+#drop partner type from other dataframe once it has been included in output summary
 df_dict['other'].drop(columns=('Partner Type'), inplace = True)
 
 # COMMAND ----------
@@ -424,7 +429,7 @@ for file in historic_file_list:
 for i in df_dict.keys():
   print(i)
   dates_in_historic = historic_df_dict[i]["For Month"].unique().tolist()
-  #not sure why [0] index is needed below
+  #takes the first date in the new data (will only be one) and checks if it exists in historic data
   dates_in_new = df_dict[i]["For Month"].unique().tolist()[0]
   if dates_in_new in dates_in_historic:
     print(f'{i} Data already exists in historical data')
