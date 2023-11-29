@@ -88,7 +88,6 @@ dscr_source_path = dscr_config_JSON['pipeline']['raw']['snapshot_source_path']
 dscr_source_file = dscr_config_JSON['pipeline']['raw']['appended_file']
 dscr_reference_path = dscr_config_JSON['pipeline']['project']['reference_source_path']
 dscr_reference_file = dscr_config_JSON['pipeline']['project']['reference_source_file']
-dscr_file_system = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONTAINER_NAME")
 dscr_sink_path = dscr_config_JSON['pipeline']['project']['databricks'][1]['sink_path']
 dscr_sink_file = dscr_config_JSON['pipeline']['project']['databricks'][1]['sink_file']
 reference_path = dscr_config_JSON['pipeline']['project']['reference_source_path']
@@ -104,37 +103,34 @@ file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolde
 df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 
-latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, dscr_source_path)
-file_name_list = datalake_listContents(CONNECTION_STRING, file_system, dscr_source_path+latestFolder)
-file_name_list = [file for file in file_name_list if '.csv' in file]
-for new_source_file in file_name_list:
-  new_dataset = datalake_download(CONNECTION_STRING, file_system, dscr_source_path+latestFolder, new_source_file)
-  new_dataframe = pd.read_csv(io.BytesIO(new_dataset), encoding = "ISO-8859-1")
-
 # COMMAND ----------
 
 # dscr data Processing
 # -------------------------------------------------------------------------
-dscr_latestFolder = datalake_latestFolder(CONNECTION_STRING, dscr_file_system, dscr_source_path)
-ref_latestFolder = datalake_latestFolder(CONNECTION_STRING, dscr_file_system, reference_path)
+dscr_latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, dscr_source_path)
+ref_latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, reference_path)
 
 dscr_file = datalake_latestFolder(CONNECTION_STRING, file_system, dscr_source_path)
-file_name_list = datalake_listContents(CONNECTION_STRING, file_system, dscr_source_path+latestFolder)
+file_name_list = datalake_listContents(CONNECTION_STRING, file_system, dscr_source_path+dscr_latestFolder)
+
 file_name_list = [file for file in file_name_list if '.csv' in file]
 for new_source_file in file_name_list:
-  new_dataset = datalake_download(CONNECTION_STRING, file_system, dscr_source_path+latestFolder, new_source_file)
+  new_dataset = datalake_download(CONNECTION_STRING, file_system, dscr_source_path+dscr_latestFolder, new_source_file)
   new_dataframe = pd.read_csv(io.BytesIO(new_dataset), encoding = "ISO-8859-1")
 
-ref_file = datalake_download(CONNECTION_STRING, dscr_file_system, reference_path+ref_latestFolder, reference_file)
+ref_file = datalake_download(CONNECTION_STRING, file_system, reference_path+ref_latestFolder, reference_file)
 df_ref = pd.read_parquet(io.BytesIO(ref_file), engine='pyarrow')
+
 
 # COMMAND ----------
 
 #get CCG ONS code and CQC-location-id
 df_CCG = new_dataframe[['Location ID', 'Location ONSPD CCG Code']]
 df_CCG = df_CCG.rename(columns={'Location ID': 'Location CQC ID ', 'Location ONSPD CCG Code':'CCG_ONS_Code'})
-df_CCG = df_CCG.merge(df_ref, on='CCG_ONS_Code', how='left')
-#df_CCG
+df_CCG = df_CCG.merge(df_ref, how='left', left_on='CCG_ONS_Code', right_on='CCG21CD')
+df_CCG = df_CCG.drop('CCG_ONS_Code_x', axis=1)
+df_CCG = df_CCG.rename(columns={'CCG_ONS_Code_y': 'CCG_ONS_Code'})
+
 
 # COMMAND ----------
 
