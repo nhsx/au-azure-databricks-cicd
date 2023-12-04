@@ -71,6 +71,14 @@ pir_config_JSON = json.loads(io.BytesIO(pir_config_JSON).read())
 
 # COMMAND ----------
 
+# Load Home Care Service User config file
+# -------------------------------------------------------------------------
+hcsu_file_name_config = "config_home_care_user_service.json"
+hcsu_config_JSON = datalake_download(CONNECTION_STRING, file_system_config, file_path_config, hcsu_file_name_config)
+hcsu_config_JSON = json.loads(io.BytesIO(hcsu_config_JSON).read())
+
+# COMMAND ----------
+
 #Get parameters from JSON config
 # -------------------------------------------------------------------------
 source_path = config_JSON['pipeline']['project']['source_path']
@@ -86,6 +94,13 @@ table_name = config_JSON['pipeline']["staging"][0]['sink_table']
 # -------------------------------------------------------------------------
 pir_source_path = pir_config_JSON['pipeline']['project']['source_path']
 pir_source_file = pir_config_JSON['pipeline']['project']['source_file']
+
+# COMMAND ----------
+
+#Get parameters from hcsu JSON config
+# -------------------------------------------------------------------------
+hcsu_source_path = hcsu_config_JSON['pipeline']['proc']['sink_path']
+hcsu_source_file = hcsu_config_JSON['pipeline']['proc']['sink_file']
 
 # COMMAND ----------
 
@@ -108,6 +123,14 @@ df_ref = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 df_ref_1 = df_ref[['CCG_ONS_Code','CCG_ODS_Code','CCG_Name', 'CCG21CD','ICB_ONS_Code','ICB_Code','ICB_Name','Region_Code','Region_Name','Last_Refreshed']]
 df_ref_2 = df_ref_1[~df_ref_1.duplicated(['CCG_ONS_Code', 'CCG_ODS_Code','CCG_Name', 'CCG21CD', 'ICB_ONS_Code','ICB_Code','ICB_Name','Region_Code','Region_Name','Last_Refreshed'])].reset_index(drop = True)
 
+
+# COMMAND ----------
+
+# HCSU Data Processing 
+# -------------------------------------------------------------------------
+latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, hcsu_source_path)
+file = datalake_download(CONNECTION_STRING, file_system, hcsu_source_path+latestFolder, hcsu_source_file)
+df_hcsu= pd.read_parquet(io.BytesIO(file), engine="pyarrow")
 
 # COMMAND ----------
 
@@ -205,6 +228,39 @@ aux.iloc[-20:,];
 
 # COMMAND ----------
 
+from pandas.tseries.offsets import DateOffset
+
+# COMMAND ----------
+
+#rename is domcare to community or residential and put in pir_type column
+df_hcsu['PIR type'] = df_hcsu['IsDomcare'].replace(1, 'Community')
+df_hcsu['PIR type'] = df_hcsu['PIR type'].replace(0, 'Residential')
+
+#subtract one month from the month_year so that we join it to the previous months cqc data
+df_hcsu['month_year'] = df_hcsu['Date'] - DateOffset(months=1)
+
+#format the date to match the cqc data
+df_hcsu['month_year'] = df_hcsu['month_year'].dt.strftime('%m-%Y')
+
+#reformat the serviceuser count to int
+df_hcsu['ServiceUserCount'] = df_hcsu['ServiceUserCount'].astype(int)
+
+#drop unnecessary columns for merging
+df_hcsu = df_hcsu[['CqcId', 'ServiceUserCount', 'PIR type', 'month_year']]
+
+# COMMAND ----------
+
+#rename location id column to cqcid to merge with hcsu data
+df_tab01_sampler = df_tab01_sampler.rename(columns = {'Location_Id':'CqcId'})
+
+#format the date to datetime
+df_tab01_sampler['month_year'] = pd.to_datetime(df_tab01_sampler['month_year']).dt.strftime('%m-%Y')
+
+df_tab01_capacity_tracker = df_hcsu.merge(df_tab01_sampler, on = ['CqcId', 'month_year', 'PIR type'])
+df_tab01_capacity_tracker
+
+# COMMAND ----------
+
 df_tab01_sampler_agg = df_tab01_sampler.groupby(["month_year",
                                                  "PIR type",
                                                  "Location_Primary_Inspection_Category",
@@ -212,8 +268,8 @@ df_tab01_sampler_agg = df_tab01_sampler.groupby(["month_year",
                                                  "CCG_ONS_Code","Location_ONSPD_CCG_Name",
                                                  "ICB_ONS_Code","ICB_Name","Is_Domant",
                                                  "Region_Code","Region_Name"]).agg(PIR_YES=("Use a Digital Social Care Record system?", lambda x: (x=="Yes").sum()),
-                                                                                   PIR_NO=("Use a Digital Social Care Record system?", lambda x: (x=="No").sum()),
-                                                                                   PIR_COUNT=("Use a Digital Social Care Record system?", "count")) # done dif from yes and no but should add up. Change to Yes+No if better
+                                                 PIR_NO=("Use a Digital Social Care Record system?", lambda x: (x=="No").sum()),
+                                                 PIR_COUNT=("Use a Digital Social Care Record system?", "count")) # done dif from yes and no but should add up. Change to Yes+No if better
 
 df_tab01_sampler_agg = df_tab01_sampler_agg.reset_index()
 
