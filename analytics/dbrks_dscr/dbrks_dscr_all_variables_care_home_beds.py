@@ -214,8 +214,8 @@ display(df_join_keep)
 
 # Filtering for domcare
 
-df_hcsu = df_hcsu.loc[(df_hcsu['IsActive'] == 1) & (df_hcsu['IsDomcare'] == 1)]
-print("Lenth of DF after filtering only for IsActive - 1 and IsDomcare - 1:", len(df_hcsu))
+df_hcsu = df_hcsu.loc[(df_hcsu['IsActive'] == 1)]
+print("Lenth of DF after filtering only for IsActive - 1", len(df_hcsu))
 
 # COMMAND ----------
 
@@ -292,6 +292,14 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current
 # Write metrics to database
 # -------------------------------------------------------------------------
 write_to_sql(df_tab02_patch, table_name, "overwrite")
+
+# COMMAND ----------
+
+table_name
+
+# COMMAND ----------
+
+df_tab02_patch.columns
 
 # COMMAND ----------
 
