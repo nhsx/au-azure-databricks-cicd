@@ -279,7 +279,8 @@ df_hcsu['ServiceUserCount'] = df_hcsu['ServiceUserCount'].astype(int)
 #drop unnecessary columns for merging
 df_hcsu = df_hcsu[['CqcId', 'ServiceUserCount', 'PIR type', 'month_year']]
 
-
+#rename service user count column
+df_hcsu = df_hcsu.rename(columns = {'ServiceUserCount':'NumberOfPeopleServed'})
 
 # COMMAND ----------
 
