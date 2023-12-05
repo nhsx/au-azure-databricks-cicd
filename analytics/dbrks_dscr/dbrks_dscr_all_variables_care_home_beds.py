@@ -225,6 +225,19 @@ df_hcsu['join_date'] = df_hcsu['join_date'].dt.strftime('%Y-%m')
 df_join_keep['join_date'] = df_join_keep['monthly_date'].dt.strftime('%Y-%m')
 df_merged_hcsu_df_join_keep = pd.merge(df_join_keep, df_hcsu, on=['Location_Id', 'join_date'] ,how="left")
 
+display(df_merged_hcsu_df_join_keep)
+
+
+# COMMAND ----------
+
+# Adding Community_Service_Count and Resident_count columns
+
+df_merged_hcsu_df_join_keep['IsDomcare'] = df_merged_hcsu_df_join_keep['IsDomcare'].replace(np.nan, 0)
+df_merged_hcsu_df_join_keep['ServiceUserCount'] = df_merged_hcsu_df_join_keep['ServiceUserCount'].replace(np.nan, 0)
+df_merged_hcsu_df_join_keep['Community_Service_Count'] = np.where(df_merged_hcsu_df_join_keep['IsDomcare'] == 1, df_merged_hcsu_df_join_keep['ServiceUserCount'], 0)
+df_merged_hcsu_df_join_keep['Resident_Count'] = np.where(df_merged_hcsu_df_join_keep['IsDomcare'] == 0, df_merged_hcsu_df_join_keep['ServiceUserCount'], 0)
+
+display(df_merged_hcsu_df_join_keep[df_merged_hcsu_df_join_keep['Resident_Count'] != 0])
 
 # COMMAND ----------
 
