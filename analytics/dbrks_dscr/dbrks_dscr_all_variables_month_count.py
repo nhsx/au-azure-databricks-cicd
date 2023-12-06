@@ -229,6 +229,47 @@ aux.iloc[-20:,];
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC ## Merge Capacity Tracker Data 
+# MAGIC Get Number of Users for domiciliary and residential care and join on CQC ID, PIR Type and month-year
+
+# COMMAND ----------
+
+from pandas.tseries.offsets import DateOffset
+
+#rename is domcare to community or residential and put in pir_type column
+df_hcsu['PIR type'] = df_hcsu['IsDomcare'].replace(1, 'Community')
+
+df_hcsu['PIR type'] = df_hcsu['PIR type'].replace(0, 'Residential')
+
+#subtract one month from the month_year so that we join it to the previous months cqc data
+df_hcsu['month_year'] = df_hcsu['Date'] + DateOffset(months=1)
+
+#format the date to match the cqc data
+df_hcsu['month_year'] = df_hcsu['month_year'].dt.strftime('%m-%Y')
+
+#reformat the serviceuser count to int
+df_hcsu['ServiceUserCount'] = df_hcsu['ServiceUserCount'].astype(int)
+
+#drop unnecessary columns for merging
+df_hcsu = df_hcsu[['CqcId', 'ServiceUserCount', 'PIR type', 'month_year']]
+
+#rename service user count column
+df_hcsu = df_hcsu.rename(columns = {'ServiceUserCount':'NumberOfPeopleServed'})
+
+# COMMAND ----------
+
+#rename location id column to cqcid to merge with hcsu data
+df_tab01_sampler = df_tab01_sampler.rename(columns = {'Location_Id':'CqcId'})
+
+#format the date to datetime
+df_tab01_sampler['month_year'] = pd.to_datetime(df_tab01_sampler['month_year']).dt.strftime('%m-%Y')
+
+df_tab01_sampler = df_tab01_sampler.merge(df_hcsu, on = ['CqcId', 'month_year', 'PIR type'], how = 'left')
+df_tab01_sampler
+
+# COMMAND ----------
+
 df_tab01_sampler_agg = df_tab01_sampler.groupby(["month_year",
                                                  "PIR type",
                                                  "Location_Primary_Inspection_Category",
@@ -253,50 +294,6 @@ df_tab01_sampler_agg["date_ran"] = datetime.now().strftime('%d-%m-%Y')
 
 # COMMAND ----------
 
-# MAGIC %md
-# MAGIC
-# MAGIC ### Tab02 - "patch" - TBA
-# MAGIC
-# MAGIC Of the sort : df_join.merge(df_pir,how="left",on="location_id")
-
-# COMMAND ----------
-
-from pandas.tseries.offsets import DateOffset
-
-#rename is domcare to community or residential and put in pir_type column
-df_hcsu['PIR type'] = df_hcsu['IsDomcare'].replace(1, 'Community')
-df_hcsu['PIR type'] = df_hcsu['PIR type'].replace(0, 'Residential')
-
-#subtract one month from the month_year so that we join it to the previous months cqc data
-df_hcsu['month_year'] = df_hcsu['Date'] + DateOffset(months=1)
-
-#format the date to match the cqc data
-df_hcsu['month_year'] = df_hcsu['month_year'].dt.strftime('%m-%Y')
-
-#reformat the serviceuser count to int
-df_hcsu['ServiceUserCount'] = df_hcsu['ServiceUserCount'].astype(int)
-
-#drop unnecessary columns for merging
-df_hcsu = df_hcsu[['CqcId', 'ServiceUserCount', 'PIR type', 'month_year']]
-
-#rename service user count column
-df_hcsu = df_hcsu.rename(columns = {'ServiceUserCount':'NumberOfPeopleServed'})
-
-# COMMAND ----------
-
-# COMMAND ----------
-
-#rename location id column to cqcid to merge with hcsu data
-df_tab01_sampler = df_tab01_sampler.rename(columns = {'Location_Id':'CqcId'})
-
-#format the date to datetime
-df_tab01_sampler['month_year'] = pd.to_datetime(df_tab01_sampler['month_year']).dt.strftime('%m-%Y')
-
-df_tab01_capacity_tracker = df_tab01_sampler.merge(df_hcsu, on = ['CqcId', 'month_year', 'PIR type'], how = 'left')
-df_tab01_capacity_tracker
-
-# COMMAND ----------
-
 # Upload processed data to datalake
 # -------------------------------------------------------------------------
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
@@ -309,7 +306,3 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current
 # Write metrics to database
 # -------------------------------------------------------------------------
 write_to_sql(df_tab01_sampler_agg, table_name, "overwrite")
-
-# COMMAND ----------
-
-
