@@ -255,7 +255,7 @@ df_hcsu['ServiceUserCount'] = df_hcsu['ServiceUserCount'].astype(int)
 df_hcsu = df_hcsu[['CqcId', 'ServiceUserCount', 'PIR type', 'month_year']]
 
 #rename service user count column
-df_hcsu = df_hcsu.rename(columns = {'ServiceUserCount':'NumberOfPeopleServed'})
+df_hcsu = df_hcsu.rename(columns = {'ServiceUserCount':'Number_Of_People_Served'})
 
 # COMMAND ----------
 
@@ -275,7 +275,7 @@ df_tab01_sampler_agg = df_tab01_sampler.groupby(["month_year",
                                                  "Location_Primary_Inspection_Category",
                                                  "Location_Local_Authority",
                                                  "CCG_ONS_Code","Location_ONSPD_CCG_Name",
-                                                 "ICB_ONS_Code","ICB_Name","Is_Domant",
+                                                 "ICB_ONS_Code","ICB_Name","Is_Domant", "Number_Of_People_Served",
                                                  "Region_Code","Region_Name"]).agg(PIR_YES=("Use a Digital Social Care Record system?", lambda x: (x=="Yes").sum()),
                                                                                    PIR_NO=("Use a Digital Social Care Record system?", lambda x: (x=="No").sum()),
                                                                                    PIR_COUNT=("Use a Digital Social Care Record system?", "count")) # done dif from yes and no but should add up. Change to Yes+No if better
@@ -290,7 +290,7 @@ df_tab01_sampler_agg['PIR_PERCENTAGE']=df_tab01_sampler_agg['PIR_YES']/(df_tab01
 # Add run date
 # ---------------------------------------------------------------------
 df_tab01_sampler_agg["date_ran"] = datetime.now().strftime('%d-%m-%Y') 
-
+display(df_tab01_sampler_agg)
 
 # COMMAND ----------
 
