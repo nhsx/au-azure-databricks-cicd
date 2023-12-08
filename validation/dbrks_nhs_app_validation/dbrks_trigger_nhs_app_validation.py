@@ -192,7 +192,11 @@ df2 = ge.from_pandas(val_df2) # Create great expectations dataframe from pandas 
 
 #test that no single day is zero for each column
 
-for column in df2.columns[1:len(new_dataframe.columns)]:
+#columns to ignore - can be added to
+ignore_list = ['ODWithdrawals', 'Date']
+column_list = [column for column in df2.columns if column not in ignore_list]
+
+for column in column_list:
   info = "Checing no daily totals are zero for "+column
   expect = df2.expect_column_values_to_not_be_null(column =[column])
   test_result(expect, info)
