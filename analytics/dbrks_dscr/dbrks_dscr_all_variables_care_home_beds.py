@@ -218,7 +218,7 @@ display(df_join_keep)
 # COMMAND ----------
 
 # Filtering for domcare
-
+df_hcsu = df_hcsu.loc[(df_hcsu['IsActive'] == 1) & (df_hcsu['IsDomcare'] == 1)]
 df_hcsu = df_hcsu.loc[(df_hcsu['IsActive'] == 1)]
 print("Lenth of DF after filtering only for IsActive - 1", len(df_hcsu))
 
@@ -237,12 +237,12 @@ display(df_merged_hcsu_df_join_keep)
 
 # Adding Community_Service_Count and Resident_count columns
 
-df_merged_hcsu_df_join_keep['IsDomcare'] = df_merged_hcsu_df_join_keep['IsDomcare'].replace(np.nan, 0)
-df_merged_hcsu_df_join_keep['ServiceUserCount'] = df_merged_hcsu_df_join_keep['ServiceUserCount'].replace(np.nan, 0)
-df_merged_hcsu_df_join_keep['Community_Service_Count'] = np.where(df_merged_hcsu_df_join_keep['IsDomcare'] == 1, df_merged_hcsu_df_join_keep['ServiceUserCount'], 0)
-df_merged_hcsu_df_join_keep['Resident_Count'] = np.where(df_merged_hcsu_df_join_keep['IsDomcare'] == 0, df_merged_hcsu_df_join_keep['ServiceUserCount'], 0)
+#df_merged_hcsu_df_join_keep['IsDomcare'] = df_merged_hcsu_df_join_keep['IsDomcare'].replace(np.nan, 0)
+#df_merged_hcsu_df_join_keep['ServiceUserCount'] = df_merged_hcsu_df_join_keep['ServiceUserCount'].replace(np.nan, 0)
+#df_merged_hcsu_df_join_keep['Community_Service_Count'] = np.where(df_merged_hcsu_df_join_keep['IsDomcare'] == 1, df_merged_hcsu_df_join_keep['ServiceUserCount'], 0)
+#df_merged_hcsu_df_join_keep['Resident_Count'] = np.where(df_merged_hcsu_df_join_keep['IsDomcare'] == 0, df_merged_hcsu_df_join_keep['ServiceUserCount'], 0)
 
-display(df_merged_hcsu_df_join_keep[df_merged_hcsu_df_join_keep['Resident_Count'] != 0])
+#display(df_merged_hcsu_df_join_keep[df_merged_hcsu_df_join_keep['Resident_Count'] != 0])
 
 # COMMAND ----------
 
