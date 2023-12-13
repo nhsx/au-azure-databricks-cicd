@@ -106,10 +106,10 @@ hcsu_source_file = hcsu_config_JSON['pipeline']['proc']['sink_file']
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
-df_1 = df[['Location ID', 'Dormant (Y/N)','Care home?', 'Care homes beds', 'Location Inspection Directorate','Location Primary Inspection Category','Location Local Authority','Location ONSPD CCG Code','Location ONSPD CCG','Provider ID','Provider Inspection Directorate','Provider Primary Inspection Category','Provider Postal Code','run_date']]
+df_1 = df[['Location ID', 'Dormant (Y/N)','Care home?', 'Care homes beds', 'Location Inspection Directorate','Location Primary Inspection Category','Location Local Authority','Location ONSPD CCG Code','Location ONSPD CCG','Provider ID','Provider Inspection Directorate','Provider Primary Inspection Category','Provider Postal Code', 'Location HSCA start date','run_date']]
 
 df_2 = df_1.drop_duplicates()
-df_3 = df_2.rename(columns = {'Location ID':'Location_Id','Dormant (Y/N)':'Is_Domant','Care home?':'Is_Care_Home', 'Care homes beds':'Care_Home_Beds', 'Location Inspection Directorate':'Location_Inspection_Directorate','Location Primary Inspection Category':'Location_Primary_Inspection_Category','Location Local Authority':'Location_Local_Authority','Location ONSPD CCG Code':'CCG_ONS_Code','Location ONSPD CCG':'Location_ONSPD_CCG_Name','Provider ID':'Provider_ID','Provider Inspection Directorate':'Provider_Inspection_Directorate','Provider Primary Inspection Category':'Provider_Primary_Inspection_Category','Provider Postal Code':'Provider_Postal_Code','run_date':'monthly_date'})
+df_3 = df_2.rename(columns = {'Location ID':'Location_Id','Dormant (Y/N)':'Is_Domant','Care home?':'Is_Care_Home', 'Care homes beds':'Care_Home_Beds', 'Location Inspection Directorate':'Location_Inspection_Directorate','Location Primary Inspection Category':'Location_Primary_Inspection_Category','Location Local Authority':'Location_Local_Authority','Location ONSPD CCG Code':'CCG_ONS_Code','Location ONSPD CCG':'Location_ONSPD_CCG_Name','Provider ID':'Provider_ID','Provider Inspection Directorate':'Provider_Inspection_Directorate','Provider Primary Inspection Category':'Provider_Primary_Inspection_Category','Provider Postal Code':'Provider_Postal_Code','Location HSCA start date':'Location_HSCA_Start_Date','run_date':'monthly_date'})
 
 
 # ref data Processing
@@ -125,6 +125,10 @@ df_ref_2 = df_ref_1[~df_ref_1.duplicated(['CCG_ONS_Code', 'CCG_ODS_Code','CCG_Na
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, hcsu_source_path)
 file = datalake_download(CONNECTION_STRING, file_system, hcsu_source_path+latestFolder, hcsu_source_file)
 df_hcsu= pd.read_parquet(io.BytesIO(file), engine="pyarrow")
+
+# COMMAND ----------
+
+display(df_3)
 
 # COMMAND ----------
 
@@ -201,9 +205,10 @@ df_join_keep = df_join[df_join["Last_Refreshed"]==max(df_join["Last_Refreshed"])
                         "CCG_ONS_Code_y", "Location_ONSPD_CCG_Name",
                         "ICB_ONS_Code","ICB_Name",
                         "Region_Code","Region_Name",
-                        "Provider_ID", "monthly_date", 'Is_Care_Home', 'Care_Home_Beds', 'Is_Domant']].copy()   
+                        "Provider_ID", "monthly_date", 'Is_Care_Home', 'Care_Home_Beds', 'Is_Domant', 'Location_HSCA_Start_Date']].copy()   
 
 df_join_keep = df_join_keep.rename(columns = {'CCG_ONS_Code_y':'CCG_ONS_Code'})
+df_join_keep['Location_HSCA_Start_Date'] = pd.to_datetime(df_join_keep['Location_HSCA_Start_Date'])
 
 
 # COMMAND ----------
@@ -282,10 +287,6 @@ df_tab02_patch = df_merged_hcsu_df_join_keep.merge(df_pir_keep_unit2, how ='left
 # ---------------------------------------------------------------------
 df_tab02_patch["run_date"] = df_join_keep["monthly_date"]
 
-
-# COMMAND ----------
-
-display(df_tab02_patch)
 
 # COMMAND ----------
 
