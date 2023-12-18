@@ -94,6 +94,7 @@ table_name = config_JSON['pipeline']["staging"][1]['sink_table']
 pir_source_path = pir_config_JSON['pipeline']['project']['source_path']
 pir_source_file = pir_config_JSON['pipeline']['project']['source_file']
 
+
 #Get parameters from hcsu JSON config
 # -------------------------------------------------------------------------
 hcsu_source_path = hcsu_config_JSON['pipeline']['proc']['sink_path']
@@ -125,10 +126,6 @@ df_ref_2 = df_ref_1[~df_ref_1.duplicated(['CCG_ONS_Code', 'CCG_ODS_Code','CCG_Na
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, hcsu_source_path)
 file = datalake_download(CONNECTION_STRING, file_system, hcsu_source_path+latestFolder, hcsu_source_file)
 df_hcsu= pd.read_parquet(io.BytesIO(file), engine="pyarrow")
-
-# COMMAND ----------
-
-display(df_3)
 
 # COMMAND ----------
 
@@ -213,40 +210,77 @@ df_join_keep['Location_HSCA_Start_Date'] = pd.to_datetime(df_join_keep['Location
 
 # COMMAND ----------
 
-display(df_join_keep)
+# For Community_Service_Count and Resident_Count, there should on one per location id i.e. these column must be on same row
 
 # COMMAND ----------
 
-# Filtering for domcare
-df_hcsu = df_hcsu.loc[(df_hcsu['IsActive'] == 1) & (df_hcsu['IsDomcare'] == 1)]
-df_hcsu = df_hcsu.loc[(df_hcsu['IsActive'] == 1)]
-print("Lenth of DF after filtering only for IsActive - 1", len(df_hcsu))
+# Merging data from Home Care Service User File where IsDomcare = 1 in order to create Community_Service_Count
 
-# COMMAND ----------
+df_hcsu_com = df_hcsu.loc[(df_hcsu['IsActive'] == 1) & (df_hcsu['IsDomcare'] == 1)] # Only need IsDomecare = 1 for community service
 
-# Merging data from Home Care Service User File
-df_hcsu['join_date'] = df_hcsu['Date'] + np.timedelta64(1, 'M')
-df_hcsu['join_date'] = df_hcsu['join_date'].dt.strftime('%Y-%m')
+df_hcsu_com['join_date'] = df_hcsu_com['Date'] + np.timedelta64(1, 'M')
+df_hcsu_com['join_date'] = df_hcsu_com['join_date'].dt.strftime('%Y-%m')
 df_join_keep['join_date'] = df_join_keep['monthly_date'].dt.strftime('%Y-%m')
-df_merged_hcsu_df_join_keep = pd.merge(df_join_keep, df_hcsu, on=['Location_Id', 'join_date'] ,how="left")
 
-display(df_merged_hcsu_df_join_keep)
+df_merged_hcsu_df_join_keep = pd.merge(df_join_keep, df_hcsu_com, on=['Location_Id', 'join_date'] ,how="left")
+
+df_merged_hcsu_df_join_keep['IsDomcare'] = df_merged_hcsu_df_join_keep['IsDomcare'].replace(np.nan, 0)
+df_merged_hcsu_df_join_keep['ServiceUserCount'] = df_merged_hcsu_df_join_keep['ServiceUserCount'].replace(np.nan, 0)
+
+df_merged_hcsu_df_join_keep['Community_Service_Count'] = np.where(df_merged_hcsu_df_join_keep['IsDomcare'] == 1, df_merged_hcsu_df_join_keep['ServiceUserCount'], 0)
+
+
+# COMMAND ----------
+
+# Get a subset of data for use to setup resident count
+df_sub = df_merged_hcsu_df_join_keep[['Location_Id', 'join_date']]
 
 
 # COMMAND ----------
 
-# Adding Community_Service_Count and Resident_count columns
+# Merging data from Home Care Service User File for IsDomcare = 0 in order to create Resident_count columns
 
-#df_merged_hcsu_df_join_keep['IsDomcare'] = df_merged_hcsu_df_join_keep['IsDomcare'].replace(np.nan, 0)
-#df_merged_hcsu_df_join_keep['ServiceUserCount'] = df_merged_hcsu_df_join_keep['ServiceUserCount'].replace(np.nan, 0)
-#df_merged_hcsu_df_join_keep['Community_Service_Count'] = np.where(df_merged_hcsu_df_join_keep['IsDomcare'] == 1, df_merged_hcsu_df_join_keep['ServiceUserCount'], 0)
-#df_merged_hcsu_df_join_keep['Resident_Count'] = np.where(df_merged_hcsu_df_join_keep['IsDomcare'] == 0, df_merged_hcsu_df_join_keep['ServiceUserCount'], 0)
+df_hcsu_res = df_hcsu.loc[(df_hcsu['IsActive'] == 1) & (df_hcsu['IsDomcare'] == 0)]
 
-#display(df_merged_hcsu_df_join_keep[df_merged_hcsu_df_join_keep['Resident_Count'] != 0])
+df_hcsu_res.rename(columns={'Location_Id': 'cqc_id'}, inplace=True)
+
+df_hcsu_res['join_date'] = df_hcsu_res['Date'] + np.timedelta64(1, 'M')
+df_hcsu_res['join_date'] = df_hcsu_res['join_date'].dt.strftime('%Y-%m')
+
+df_res_count = pd.merge(df_sub, df_hcsu_res, how="left", left_on=['Location_Id', 'join_date'], right_on=['cqc_id', 'join_date'])
+
+df_res_count.drop(['Date','IsActive'], axis=1, inplace=True)
+
+# Creating Resident_Count column
+df_res_count['Resident_Count'] = np.where((df_res_count['IsDomcare'] == 0) & (df_res_count['cqc_id'] == df_res_count['Location_Id']), df_res_count['ServiceUserCount'], 0)
+
+df_res_final = df_res_count[['Location_Id', 'join_date', 'Resident_Count']]
+df_res_final.rename(columns={'Location_Id':'cqc_res_id', 'join_date':'res_join_date'}, inplace=True)
+
+
 
 # COMMAND ----------
 
-df_merged_hcsu_df_join_keep = df_merged_hcsu_df_join_keep.drop(['Date', 'IsActive', 'IsDomcare', 'join_date'], axis = 1)
+# Merging subset containing Community Count with sunset containing Resident count to get both column on one row
+
+df_merged_hcsu_df_join_keep = pd.merge(df_merged_hcsu_df_join_keep, df_res_final, how='inner', left_on=['Location_Id', 'join_date'], right_on=['cqc_res_id', 'res_join_date'])
+
+
+# COMMAND ----------
+
+df_merged_hcsu_df_join_keep.drop(['cqc_res_id', 'res_join_date'], axis=1, inplace=True)
+df_hcsu_sub = df_hcsu[['Location_Id', 'ServiceUserCount', 'IsDomcare', 'Date']]
+df_hcsu_sub.rename(columns={'Location_Id':'hc_location_id'}, inplace=True)
+
+df_merged_hcsu_df_join_keep.drop('ServiceUserCount', axis=1, inplace=True)
+
+df_hcsu_sub['join_date'] = df_hcsu_sub['Date'] + np.timedelta64(1, 'M')
+df_hcsu_sub['join_date'] = df_hcsu_sub['join_date'].dt.strftime('%Y-%m')
+
+df_merged_hcsu_df_join_keep = pd.merge(df_merged_hcsu_df_join_keep, df_hcsu_sub, how='left', left_on=['Location_Id', 'IsDomcare', 'join_date'], right_on=['hc_location_id', 'IsDomcare', 'join_date'])
+
+df_merged_hcsu_df_join_keep.drop('hc_location_id', axis=1, inplace=True)
+
 display(df_merged_hcsu_df_join_keep)
 
 # COMMAND ----------
@@ -290,10 +324,6 @@ df_tab02_patch["run_date"] = df_join_keep["monthly_date"]
 
 # COMMAND ----------
 
-sink_path
-
-# COMMAND ----------
-
 # Upload processed data to datalake
 # -------------------------------------------------------------------------
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
@@ -306,14 +336,6 @@ datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current
 # Write metrics to database
 # -------------------------------------------------------------------------
 write_to_sql(df_tab02_patch, table_name, "overwrite")
-
-# COMMAND ----------
-
-table_name
-
-# COMMAND ----------
-
-df_tab02_patch.columns
 
 # COMMAND ----------
 
