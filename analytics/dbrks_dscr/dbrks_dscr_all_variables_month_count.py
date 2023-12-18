@@ -276,7 +276,7 @@ df_tab01_sampler_agg = df_tab01_sampler.groupby(["CqcId",
                                                  "Location_Primary_Inspection_Category",
                                                  "Location_Local_Authority",
                                                  "CCG_ONS_Code","Location_ONSPD_CCG_Name",
-                                                 "ICB_ONS_Code","ICB_Name","Is_Domant", "Number_Of_People_Served",
+                                                 "ICB_ONS_Code","ICB_Name","Is_Domant", #"Number_Of_People_Served",
                                                  "Region_Code","Region_Name"]).agg(PIR_YES=("Use a Digital Social Care Record system?", lambda x: (x=="Yes").sum()),
                                                                                    PIR_NO=("Use a Digital Social Care Record system?", lambda x: (x=="No").sum()),
                                                                                    PIR_COUNT=("Use a Digital Social Care Record system?", "count")) # done dif from yes and no but should add up. Change to Yes+No if better
