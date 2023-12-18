@@ -265,12 +265,12 @@ df_tab01_sampler = df_tab01_sampler.rename(columns = {'Location_Id':'CqcId'})
 #format the date to datetime
 df_tab01_sampler['month_year'] = pd.to_datetime(df_tab01_sampler['month_year']).dt.strftime('%m-%Y')
 
-df_tab01_sampler = df_tab01_sampler.merge(df_hcsu, on = ['CqcId', 'month_year', 'PIR type'], how = 'left')
-display(df_tab01_sampler)
+#df_tab01_sampler = df_tab01_sampler.merge(df_hcsu, on = ['CqcId', 'month_year', 'PIR type'], how = 'left')
+#display(df_tab01_sampler)
 
 # COMMAND ----------
 
-df_tab01_sampler_agg = df_tab01_sampler.groupby(["CqcId",
+df_tab01_sampler_agg = df_tab01_sampler.groupby([
                                                 "month_year",
                                                  "PIR type",
                                                  "Location_Primary_Inspection_Category",
