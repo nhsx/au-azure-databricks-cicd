@@ -68,9 +68,9 @@ source_path = config_JSON['pipeline']['project']['source_path']
 source_file_daily = config_JSON['pipeline']['project']["source_file_daily"]
 source_file_monthly = config_JSON['pipeline']['project']["source_file_monthly"]
 source_file_messages = config_JSON['pipeline']['project']["source_file_messages"]
-sink_path = config_JSON['pipeline']['project']['databricks'][54]['sink_path']
-sink_file = config_JSON['pipeline']['project']['databricks'][54]['sink_file']  
-table_name = config_JSON['pipeline']["staging"][54]['sink_table']
+sink_path = config_JSON['pipeline']['project']['databricks'][2]['sink_path']
+sink_file = config_JSON['pipeline']['project']['databricks'][2]['sink_file']  
+table_name = config_JSON['pipeline']["staging"][2]['sink_table']
 
 
 # COMMAND ----------
