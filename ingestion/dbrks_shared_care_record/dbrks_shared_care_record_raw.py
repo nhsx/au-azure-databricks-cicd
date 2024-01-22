@@ -177,23 +177,26 @@ for filename in directory:
                 list(xls_file[key])[3]: "ShCR Programme Name",
                 list(xls_file[key])[4]: "Name of ShCR System",
                 ###Gap in used columns
-                list(xls_file[key])[8]: "Care Providers",
-                list(xls_file[key])[9]: "Access to Advanced (EoL) Care Plans",
-                list(xls_file[key])[10]: "Number of users with access to the ShCR",
-                list(xls_file[key])[11]: "Number of ShCR views in the past month",
-                list(xls_file[key])[12]: "Number of unique user ShCR views in the past month",
-                list(xls_file[key])[13]: "Completed by (email)",
-                list(xls_file[key])[14]: "Date completed",
+                list(xls_file[key])[5]: "Care Providers",
+                list(xls_file[key])[6]: "Access to Advanced (EoL) Care Plans",
+                #list(xls_file[key])[10]: "Number of users with access to the ShCR",
+                list(xls_file[key])[7]: "Number of ShCR views in the past month",
+                list(xls_file[key])[8]: "Number of unique user ShCR views in the past month",
+                list(xls_file[key])[9]: "Completed by (email)",
+                list(xls_file[key])[10]: "Date completed",
             },
             inplace=True,
         )
         
+        #users dropped this column from the template. Keeping in to prevent errors but setting to zero
+        xls_file[key]["Number of users with access to the ShCR"] = 0
+
         # get excel file metadata
         ICB_code = xls_file[key]["ICB ODS code"].unique()[0]  # grab ICB code to add in to the other sheets in next section
         ICB_name = xls_file[key]["ICB Name (if applicable)"].unique()[0]  # grab ICB name to add in to the other sheets in next section
           
         #For numeric fields, fill in blanks with zeros. Replace any non numeric entries with zero.
-        xls_file[key]["Number of users with access to the ShCR"] = pd.to_numeric(xls_file[key]["Number of users with access to the ShCR"], errors='coerce').fillna(0).astype(int)
+        #xls_file[key]["Number of users with access to the ShCR"] = pd.to_numeric(xls_file[key]["Number of users with access to the ShCR"], errors='coerce').fillna(0).astype(int)
         xls_file[key]["Number of ShCR views in the past month"] = pd.to_numeric(xls_file[key]["Number of ShCR views in the past month"], errors='coerce').fillna(0).astype(int)
         xls_file[key]["Number of unique user ShCR views in the past month"] = pd.to_numeric(xls_file[key]["Number of unique user ShCR views in the past month"], errors='coerce').fillna(0).astype(int)
         xls_file[key]["Care Providers"] = pd.to_numeric(xls_file[key]["Care Providers"], errors='coerce').fillna(0).astype(int)
@@ -235,6 +238,7 @@ for filename in directory:
         #convert text responses to binary response
         xls_file[key]["Partner Organisation connected to ShCR?"] = xls_file[key]["Partner Organisation connected to ShCR?"].map({"Connected": 1, "Not Connected": 0, "Please select": 0}).fillna(0).astype(int)     
         xls_file[key]["Partner Organisation plans to be connected by March 2023?"] = xls_file[key]["Partner Organisation plans to be connected by March 2023?"].map({"yes": 1, "no": 0, "Yes": 1, "No": 0}).fillna(0).astype(int)
+       
           
         # append results to relevant dataframe in df_dict
         df_dict[i] = df_dict[i].append(xls_file[key].iloc[:, 0:9], ignore_index=True)
@@ -245,10 +249,6 @@ for i in list(df_dict.keys()):
     elif i == 'other': df_dict[i] = df_dict[i][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', f'ODS {i} Code', f'{i} Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?', 'Partner Type']]
     else:  df_dict[i] = df_dict[i][['For Month', 'ICB ODS code', 'ICS Name (if applicable)', f'ODS {i} Code', f'{i} Name', 'Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']]
 
-
-# COMMAND ----------
-
-df_dict['other']
 
 # COMMAND ----------
 
