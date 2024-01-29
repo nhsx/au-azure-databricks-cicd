@@ -110,10 +110,10 @@ pir_source_file = pir_config_JSON['pipeline']['project']['source_file']
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 df = pd.read_parquet(io.BytesIO(file), engine="pyarrow")
-df_1 = df[['Location ID', 'Dormant (Y/N)','Care home?','Location Inspection Directorate','Location Primary Inspection Category','Location Local Authority','Location ONSPD CCG Code','Location ONSPD CCG','Provider ID','Provider Inspection Directorate','Provider Primary Inspection Category','Provider Postal Code', 'run_date']]
+df_1 = df[['Location ID', 'Dormant (Y/N)','Care home?','Location Inspection Directorate','Location Primary Inspection Category','Location Local Authority','Location ONSPD CCG Code','Location ONSPD CCG','Provider ID','Provider Inspection Directorate','Provider Primary Inspection Category','Provider Postal Code','Location HSCA start date','run_date']]
 #df_1['run_date'] = datetime.now().strftime('%d-%m-%Y')
 df_2 = df_1.drop_duplicates()
-df_3 = df_2.rename(columns = {'Location ID':'Location_Id','Dormant (Y/N)':'Is_Domant','Care home?':'Is_Care_Home','Location Inspection Directorate':'Location_Inspection_Directorate','Location Primary Inspection Category':'Location_Primary_Inspection_Category','Location Local Authority':'Location_Local_Authority','Location ONSPD CCG Code':'CCG_ONS_Code','Location ONSPD CCG':'Location_ONSPD_CCG_Name','Provider ID':'Provider_ID','Provider Inspection Directorate':'Provider_Inspection_Directorate','Provider Primary Inspection Category':'Provider_Primary_Inspection_Category','Provider Postal Code':'Provider_Postal_Code','run_date':'monthly_date'})
+df_3 = df_2.rename(columns = {'Location ID':'Location_Id','Dormant (Y/N)':'Is_Domant','Care home?':'Is_Care_Home','Location Inspection Directorate':'Location_Inspection_Directorate','Location Primary Inspection Category':'Location_Primary_Inspection_Category','Location Local Authority':'Location_Local_Authority','Location ONSPD CCG Code':'CCG_ONS_Code','Location ONSPD CCG':'Location_ONSPD_CCG_Name','Provider ID':'Provider_ID','Provider Inspection Directorate':'Provider_Inspection_Directorate','Provider Primary Inspection Category':'Provider_Primary_Inspection_Category','Provider Postal Code':'Provider_Postal_Code','Location HSCA start date':'Location_HSCA_Start_Date','run_date':'monthly_date'})
 
 
 # ref data Processing
@@ -185,18 +185,24 @@ df_pir_keep.rename(columns={"Location ID":"Location_Id"},inplace=True)
 
 # what to keep from enriched reference data (For Tab01) (that is useful for Tableau).
 df_join_keep = df_join[df_join["Last_Refreshed"]==max(df_join["Last_Refreshed"])][["Location_Id",
-                        "Location_Primary_Inspection_Category",
+                        "Location_Primary_Inspection_Category",                        
                         "Location_Local_Authority",
                         "CCG_ONS_Code_y","Location_ONSPD_CCG_Name",
                         "ICB_ONS_Code","ICB_Name",
                         "Region_Code","Region_Name",
+                        "Location_HSCA_Start_Date",
                         "Provider_ID", "monthly_date", "Is_Domant"]].copy()   
 
 # Left join reference info to PIR (as it's a sampler)
 df_join_keep = df_join_keep.rename(columns={'CCG_ONS_Code_y':'CCG_ONS_Code'})
+df_join_keep['Location_HSCA_Start_Date'] = pd.to_datetime(df_join_keep['Location_HSCA_Start_Date'])
 
 df_tab01_sampler = df_pir_keep.merge(df_join_keep, how ='left', on ="Location_Id")
 
+
+# COMMAND ----------
+
+display(df_join_keep)
 
 # COMMAND ----------
 
@@ -273,6 +279,7 @@ df_tab01_sampler['month_year'] = pd.to_datetime(df_tab01_sampler['month_year']).
 df_tab01_sampler_agg = df_tab01_sampler.groupby([
                                                 "month_year",
                                                  "PIR type",
+                                                 "Location_HSCA_Start_Date",
                                                  "Location_Primary_Inspection_Category",
                                                  "Location_Local_Authority",
                                                  "CCG_ONS_Code","Location_ONSPD_CCG_Name",
