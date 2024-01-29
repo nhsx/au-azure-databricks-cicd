@@ -185,18 +185,24 @@ df_pir_keep.rename(columns={"Location ID":"Location_Id"},inplace=True)
 
 # what to keep from enriched reference data (For Tab01) (that is useful for Tableau).
 df_join_keep = df_join[df_join["Last_Refreshed"]==max(df_join["Last_Refreshed"])][["Location_Id",
-                        "Location_Primary_Inspection_Category",
+                        "Location_Primary_Inspection_Category",                        
                         "Location_Local_Authority",
                         "CCG_ONS_Code_y","Location_ONSPD_CCG_Name",
                         "ICB_ONS_Code","ICB_Name",
                         "Region_Code","Region_Name",
+                        "Location_HSCA_Start_Date",
                         "Provider_ID", "monthly_date", "Is_Domant"]].copy()   
 
 # Left join reference info to PIR (as it's a sampler)
 df_join_keep = df_join_keep.rename(columns={'CCG_ONS_Code_y':'CCG_ONS_Code'})
+df_join_keep['Location_HSCA_Start_Date'] = pd.to_datetime(df_join_keep['Location_HSCA_Start_Date'])
 
 df_tab01_sampler = df_pir_keep.merge(df_join_keep, how ='left', on ="Location_Id")
 
+
+# COMMAND ----------
+
+display(df_join_keep)
 
 # COMMAND ----------
 
@@ -273,6 +279,7 @@ df_tab01_sampler['month_year'] = pd.to_datetime(df_tab01_sampler['month_year']).
 df_tab01_sampler_agg = df_tab01_sampler.groupby([
                                                 "month_year",
                                                  "PIR type",
+                                                 "Location_HSCA_Start_Date",
                                                  "Location_Primary_Inspection_Category",
                                                  "Location_Local_Authority",
                                                  "CCG_ONS_Code","Location_ONSPD_CCG_Name",
