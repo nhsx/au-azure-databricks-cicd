@@ -146,7 +146,7 @@ for folder in latest_folders:
   # Creation of final dataframe with all currently open NHS Trusts
   # -------------------------------------------------------------------------
   DSPT_ODS_selection_2 = DSPT_ODS[ 
-  (DSPT_ODS["Organisation_Code"].str.contains("RT4|RQF|RYT|0DH|0AD|0AP|0CC|0CG|0CH|0DG")==False)].reset_index(drop=True) #------ change exclusion codes for CCGs and CSUs through time. Please see SOP
+  (DSPT_ODS["Organisation_Code"].str.contains("RT4|RQF|RYT|0DH|0AD|0AP|0CC|0CG|0CH|0DG|RVY")==False)].reset_index(drop=True) #------ change exclusion codes for CCGs and CSUs through time. Please see SOP
   DSPT_ODS_selection_3 = DSPT_ODS_selection_2[DSPT_ODS_selection_2.ODS_Organisation_Type.isin(["NHS TRUST", "CARE TRUST"])].reset_index(drop=True)
 
   # Creation of final dataframe with all currently open NHS Trusts which meet or exceed the DSPT standard
