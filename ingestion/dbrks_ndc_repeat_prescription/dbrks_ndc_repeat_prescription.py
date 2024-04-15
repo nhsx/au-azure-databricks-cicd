@@ -109,7 +109,7 @@ if dates_in_new in dates_in_historical:
   print('Data already exists in historical data')
 else:
   historical_dataframe = new_dataframe
-  historical_dataframe = historical_dataframe.sort_values(by=['Date'])
+  historical_dataframe = historical_dataframe.sort_values(by=['date'])
   historical_dataframe = historical_dataframe.reset_index(drop=True)
 
 # COMMAND ----------
