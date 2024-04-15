@@ -1,0 +1,61 @@
+{
+	"metadata": {
+	    "products": [
+		{
+		    "product_name": "Natioanl Digitial Channels (NDC) Dashboard",
+		    "Granularity": "National",
+		    "topic": "National Digital Channels report",
+		    "metrics": [
+			{
+			    "id": "TBD",
+			    "full_name": "ndc repeat prescription",
+			    "short_name": "ndc_repeat_prescription"
+			}
+			
+		    ]
+		    
+		}
+	    ]
+	},
+	"pipeline": {
+	    "name": "trigger_ndc_repeat_prescription",
+	    "folder": "nhsx-au-analytics/sharepoint/ndc_repeat_prescription/",
+	    "ingestion": {
+		"source_path": "Shared Documents/nhsx_au_ingestion/ndc_repeat_prescription/",
+		"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_ndc_repeat_prescription/dbrks_ndc_repeat_prescription"
+	    },
+    
+	    "raw": {
+		"source_path": "land/sharepoint/Shared Documents/nhsx_au_ingestion/ndc_repeat_prescription/",
+		"appended_path": "raw/nhsx/sharepoint/csv/ndc_repeat_prescription/full/",
+		"appended_file": "ndc_repeat_prescription_historcal.csv"
+	    },
+	    "proc": {
+			    "source_path": "raw/nhsx/sharepoint/csv/ndc_repeat_prescription/full/",
+			    "source_file": "ndc_repeat_prescription_historcal.csv",
+			    "sink_path": "proc/sources/nhsx/sharepoint/csv/ndc_repeat_prescription/full/",
+			    "sink_file": "ndc_repeat_prescription_historcal.csv"
+	    },
+	    "project": {
+			    "source_path": "proc/sources/nhsx/sharepoint/csv/ndc_repeat_prescription/full/",
+			    "source_file": "ndc_repeat_prescription_historcal.csv",		           
+			    "databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_ndc_repeat_prescription_orchestrator",
+			    "databricks": [				
+				    {
+					    "metric": "ndc_repeat_prescription_count",
+					    "sink_path": "proc/projects/nhsx_slt_analytics/ndc_repeat_prescription/ndc_repeat_prescription_count/",
+					    "sink_file": "ndc_repeat_prescription_count.csv",
+					    "databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_ndc_repeat_prescription/dbrks_ndc_repeat_prescription_count"
+				    }
+		]
+	    },
+    
+	    "staging": [
+	    {
+		"metric": "ndc_repeat_prescription_count",
+		"sink_table": "ndc_repeat_prescription_count"
+	    }
+			]
+			
+	}
+    }
