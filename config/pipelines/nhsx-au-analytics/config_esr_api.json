@@ -19,7 +19,7 @@
 	    "name": "trigger_e_rs_api",
 	    "folder": "nhsx-au-analytics/sharepoint/e_rs_api/",
 	    "ingestion": {
-		"source_path": "Documents/nhsx_au_ingestion/e_rs_api/",
+		"source_path": "Shared Documents/nhsx_au_ingestion/e_rs_api/",
 		"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_e_rs_api/dbrks_e_rs_api_raw"
 	    },
     
