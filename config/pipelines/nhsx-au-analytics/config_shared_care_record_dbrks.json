@@ -33,7 +33,7 @@
 		"name": "trigger_shcr",
     	"folder": "nhsx-au-analytics/sharepoint/shared_care_record/",
 		"ingestion": {
-			"source_path": "Documents/nhsx_au_ingestion/shcr/",
+			"source_path": "Shared Documents/nhsx_au_ingestion/shcr/",
 			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_shared_care_record/dbrks_shared_care_record_raw"
 		},
 		"raw": {

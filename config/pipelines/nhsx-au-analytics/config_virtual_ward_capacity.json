@@ -21,7 +21,7 @@
 	    "name": "trigger_virtual_ward_capacity",
 	    "folder": "nhsx-au-analytics/sharepoint/virtual_ward_capacity/",
 	    "ingestion": {
-		"source_path": "Documents/nhsx_au_ingestion/virtual_ward_capacity/",
+		"source_path": "Shared Documents/nhsx_au_ingestion/virtual_ward_capacity/",
 		"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_virtual_ward_capacity/dbrks_virtual_ward_capacity_raw"
 	    },
     

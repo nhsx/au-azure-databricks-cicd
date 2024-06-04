@@ -19,7 +19,7 @@
 		"name": "trigger_pharmacy_assurance",
 		"folder": "nhsx-au-analytics/nhsx/pharmacy_assurance/",
 		"ingestion": {
-			"source_path": "Documents/nhsx_au_ingestion/pharmacy_assurance/",
+			"source_path": "Shared Documents/nhsx_au_ingestion/pharmacy_assurance/",
 			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_pharmacy_assurance/dbrks_pharmacy_assurance_raw"
 		},
 		"raw": {
