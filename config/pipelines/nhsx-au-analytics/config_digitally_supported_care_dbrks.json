@@ -19,7 +19,7 @@
 		"name": "trigger_digitally_supported_care",
 		"folder": "nhsx-au-analytics/nhsx/digitally_supported_care/",
 		"ingestion": {
-			"source_path": "Shared Documents/nhsx_au_ingestion/digitally_supported_care/",
+			"source_path": "Documents/nhsx_au_ingestion/digitally_supported_care/",
 			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_digital_care/dbrks_digitally_supported_care_raw"
 		},
 		"raw": {

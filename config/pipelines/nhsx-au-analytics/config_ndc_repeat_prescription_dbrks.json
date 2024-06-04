@@ -21,7 +21,7 @@
 	    "name": "trigger_ndc_repeat_prescription",
 	    "folder": "nhsx-au-analytics/sharepoint/ndc_repeat_prescription/",
 	    "ingestion": {
-		"source_path": "Shared Documents/nhsx_au_ingestion/ndc_repeat_prescription/",
+		"source_path": "Documents/nhsx_au_ingestion/ndc_repeat_prescription/",
 		"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_ndc_repeat_prescription/dbrks_ndc_repeat_prescription"
 	    },
     

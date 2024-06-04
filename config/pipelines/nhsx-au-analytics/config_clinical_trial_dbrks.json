@@ -26,7 +26,7 @@
 	    "name": "trigger_clinical_trial",
 	    "folder": "nhsx-au-analytics/sharepoint/clinical_trial/",
 	    "ingestion": {
-		"source_path": "Shared Documents/nhsx_au_ingestion/clinical_trial/",
+		"source_path": "Documents/nhsx_au_ingestion/clinical_trial/",
 		"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_clinical_trial/dbrks_clinical_trial_raw"
 	    },
     

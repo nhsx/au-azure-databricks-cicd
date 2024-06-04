@@ -21,7 +21,7 @@
 	    "name": "trigger_epr_total_expenditure",
 	    "folder": "nhsx-au-analytics/sharepoint/epr_total_expenditure/",
 	    "ingestion": {
-		"source_path": "Shared Documents/nhsx_au_ingestion/epr_total_expenditure/",
+		"source_path": "Documents/nhsx_au_ingestion/epr_total_expenditure/",
 		"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_epr_total_expenditure/dbrks_epr_total_expenditure_raw"
 	    },
     

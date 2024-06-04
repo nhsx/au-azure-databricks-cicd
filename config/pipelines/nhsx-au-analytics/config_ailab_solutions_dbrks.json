@@ -19,7 +19,7 @@
 		"name": "trigger_ailab_solutions",
 		"folder": "nhsx-au-analytics/nhsengland/ailab_solutions/",
 		"ingestion": {
-			"source_path": "Shared Documents/nhsx_au_ingestion/ailab_solutions/",
+			"source_path": "Documents/nhsx_au_ingestion/ailab_solutions/",
 			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_ailab/dbrks_ailab_solutions_raw"
 		},
 		"raw": {
