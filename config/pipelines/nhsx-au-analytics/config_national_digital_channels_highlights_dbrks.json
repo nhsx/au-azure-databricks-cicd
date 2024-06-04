@@ -19,7 +19,7 @@
 		"name": "trigger_national_digital_channels_highlights",
 		"folder": "nhsx-au-analytics/nhsdigital/national_digital_channels/",
 		"ingestion": {
-			"source_path": "Shared Documents/nhsx_au_ingestion/national_digital_channels/",
+			"source_path": "Documents/nhsx_au_ingestion/national_digital_channels/",
 			"logic_app_url": "https://prod-01.uksouth.logic.azure.com:443/workflows/c27ffc275044425097b94b69c6792d77/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=dVUKugfOw1WJj8a_zZmkohGQH_TtvTt937zY6DqhsAY",
 			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_national_digital_channels/dbrks_national_digital_channels_highlights_raw"
 		},
