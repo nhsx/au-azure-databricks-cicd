@@ -23,9 +23,7 @@ VERSION:        0.0.2
 
 # COMMAND ----------
 
-# Install libs
-# -------------------------------------------------------------------------
-%pip install geojson==2.5.* tabulate requests pandas pathlib azure-storage-file-datalake  beautifulsoup4 numpy urllib3 lxml dateparser regex openpyxl==3.1.0  pyarrow==5.0.*
+# MAGIC %pip install geojson==2.5.* tabulate requests pandas pathlib azure-storage-file-datalake  beautifulsoup4 numpy urllib3 lxml dateparser regex openpyxl==3.1.0  pyarrow==5.0.*
 
 # COMMAND ----------
 
@@ -476,6 +474,14 @@ historic_df_dict['icb'][icb_numeric_columns] = historic_df_dict['icb'][icb_numer
 part_numeric_columns = ['Partner Organisation connected to ShCR?', 'Partner Organisation plans to be connected by March 2023?']
 for i in list(df_dict.keys())[1:]:
   historic_df_dict[i][part_numeric_columns] = historic_df_dict[i][part_numeric_columns].apply(pd.to_numeric)
+
+# COMMAND ----------
+
+# Add a flag to show the latest submission for each ICB
+df_partners_icb_data_month_count = historic_df_dict['icb']
+df_partners_icb_data_month_count['month_for'] = pd.to_datetime(df_partners_icb_data_month_count['For Month'])
+df_partners_icb_data_month_count['LatestSubmission_Flg'] = (df_partners_icb_data_month_count.groupby('ICB ODS code')['month_for'] .transform('max') == df_partners_icb_data_month_count['month_for']).astype(int)
+del df_partners_icb_data_month_count['month_for']
 
 # COMMAND ----------
 
