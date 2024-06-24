@@ -1,0 +1,63 @@
+{
+	"metadata": {
+	    "products": [
+		{
+		    "product_name": "Connecting_Care_Dashboard",
+		    "Granularity": "ICB",
+		    "topic": "Golive_Supplier_Website",
+		    "metrics": [
+			{
+			    "id": "",
+			    "full_name": "Connecting_Care,golive ,Supplier,Website",
+			    "short_name": "connecting_care_golive_supplier_website"
+			}
+		    ]
+		}
+	    ]
+	},
+	"pipeline": {
+	    "name": "trigger_connecting_care_golive_supplier_website",
+	    "folder": "nhsx-au-analytics/sharepoint/connecting_care_golive_supplier_website/",
+	    "ingestion": {
+		"source_path": "Shared Documents/nhsx_au_ingestion/connecting_care_golive_supplier_website/",
+		"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_connecting_care_golive_supplier_website/dbrks_connecting_care_golive_supplier_website_raw"
+	    },
+    
+	    "raw": {
+		"source_path": "land/sharepoint/Shared Documents/nhsx_au_ingestion/connecting_care_golive_supplier_website/",
+		"appended_path": "raw/nhsx/sharepoint/csv/connecting_care_golive_supplier_website/full/",
+		"appended_file": "connecting_care_golive_supplier_website.csv"
+	    },
+	    "proc": {
+			    "source_path": "raw/nhsx/sharepoint/csv/connecting_care_golive_supplier_website/full/",
+			    "source_file": "connecting_care_golive_supplier_website.csv",
+			    "sink_path": "proc/sources/nhsx/sharepoint/csv/connecting_care_golive_supplier_website/full/",
+			    "sink_file": "connecting_care_golive_supplier_website.csv"
+	    },
+	    "project": {
+			    "source_path": "proc/sources/nhsx/sharepoint/csv/connecting_care_golive_supplier_website/full/",
+			    "source_file": "connecting_care_golive_supplier_website.csv",		
+			    "databricks_orchestrator_notebook": "/databricks/au-azure-databricks-cicd/orchestration/dbrks_connecting_care_golive_supplier_website_orchestrator",
+			    "databricks": [				
+				    {
+					    "metric": "connecting_care_golive_supplier_website_snapshot",
+					    "sink_path": "proc/projects/nhsx_slt_analytics/connecting_care_golive_supplier_website/connecting_care_golive_supplier_website_snapshot/",
+					    "sink_file": "connecting_care_golive_supplier_website_snapshot.csv",
+					    "databricks_notebook": "/databricks/au-azure-databricks-cicd/analytics/dbrks_connecting_care_golive_supplier_website/dbrks_connecting_care_golive_supplier_website_snapshot"
+				    }
+		    		
+				
+		]
+	    },
+    
+	    "staging": [
+	    {
+		"metric": "connecting_care_golive_supplier_website_snapshot",
+		"sink_table": "connecting_care_golive_supplier_website_snapshot"
+	    }		
+		
+	]
+    }
+    }
+    
+    
