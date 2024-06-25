@@ -10,7 +10,7 @@
 """
 FILE:           dbrks_connecting_care_golive_website.py
 DESCRIPTION:
-                Databricks notebook for oading connecting care data for go live and websites
+                Databricks notebook for oading connecting care data for go live and websites, input is expected to be excel file
               
 USAGE:
                 ...
