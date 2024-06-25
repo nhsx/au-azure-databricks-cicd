@@ -1,0 +1,45 @@
+{
+	"metadata": {
+		"products": [
+			{
+				"product_name": "Connecting Care",
+				"granularity": "",
+				"topic": "Connecting care golive website",
+				"metrics": [
+					{
+						"id": "",
+						"full_name": "Connecting care golive website",
+						"short_name": "Connecting care golive website"
+					}	
+				]
+			}
+		]
+	},
+	"pipeline": {
+		"name": "trigger_Connecting_care_golive_website",
+		"folder": "direct_load/",
+		"ingestion": {
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/direct-load/dbrks_Connecting_care_golive_website"
+		},
+		"raw": {
+			"snapshot_source_path": "land/nhsengland/manual_upload/timestamp/excel/connecting_care_golive_supplier_website/"
+		},
+		"proc": {
+			"sink_path": "proc/sources/connecting_care_golive_supplier_website/manual_upload/historical/",
+			"sink_file": "connecting_care_golive_supplier_website.csv"
+		},
+		"staging": [	
+			{
+				"metric": "Connecting care golive website",
+				"sink_table": "connecting_care_golive_supplier_website"
+			}
+           
+		],
+		"validation": [
+			{
+				"initial_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_connecting_care_golive_supplier_website/dbrks_connecting_care_golive_supplier_website",
+				"final_validation": "/databricks/au-azure-databricks-cicd/validation/dbrks_count_rows_in_table"
+		}
+		]
+	}
+}
