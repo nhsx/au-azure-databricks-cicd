@@ -53,6 +53,7 @@ from dateutil.relativedelta import relativedelta
 # !env from databricks secrets
 CONNECTION_STRING = dbutils.secrets.get(scope='AzureDataLake', key="DATALAKE_CONNECTION_STRING")
 
+
 # COMMAND ----------
 
 # MAGIC %run /Shared/databricks/au-azure-databricks-cicd/functions/dbrks_helper_functions
@@ -94,8 +95,13 @@ file_name_list = datalake_listContents(CONNECTION_STRING, file_system, new_sourc
 file_name_list = [file for file in file_name_list if '.xlsx' in file]
 for new_source_file in file_name_list:
   new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, new_source_file)
-  new_dataframe = pd.read_excel(io.BytesIO(new_dataset), sheet_name = "Summary", header = 0, engine='openpyxl') 
+  new_dataframe = pd.read_excel(io.BytesIO(new_dataset), sheet_name = "Sheet1", header = 0, engine='openpyxl') 
   
+
+# COMMAND ----------
+
+new_dataframe["Go Live Date"] = pd.to_datetime(new_dataframe["Go Live Date"])
+
 
 # COMMAND ----------
 
@@ -103,12 +109,13 @@ for new_source_file in file_name_list:
 # -----------------------------------------------------------------------
 current_date_path = datetime.now().strftime('%Y-%m-%d') + '/'
 file_contents = io.BytesIO()
-df_processed.to_csv(file_contents)
+new_dataframe.to_csv(file_contents)
 datalake_upload(file_contents, CONNECTION_STRING, file_system, sink_path+current_date_path, sink_file)
 
 # COMMAND ----------
 
 # Write metrics to database
 # -------------------------------------------------------------------------
-write_to_sql(df_processed, table_name, "overwrite")
+pd.DataFrame.iteritems = pd.DataFrame.items
+write_to_sql(new_dataframe, table_name, "overwrite")
 

@@ -31,7 +31,7 @@
 		"staging": [	
 			{
 				"metric": "Connecting care golive website",
-				"sink_table": "connecting_care_golive_supplier_website"
+				"sink_table": "shcr_connecting_care_golive_supplier_website"
 			}
            
 		],
