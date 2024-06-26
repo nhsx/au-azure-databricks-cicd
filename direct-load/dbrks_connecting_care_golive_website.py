@@ -100,7 +100,11 @@ for new_source_file in file_name_list:
 
 # COMMAND ----------
 
-new_dataframe["Go Live Date"] = pd.to_datetime(new_dataframe["Go Live Date"])
+print(new_dataframe.columns)
+
+# COMMAND ----------
+
+new_dataframe["GO_Live_Date"] = pd.to_datetime(new_dataframe["GO_Live_Date"])
 
 
 # COMMAND ----------
