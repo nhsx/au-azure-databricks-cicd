@@ -19,11 +19,11 @@
 		"name": "trigger_Connecting_care_golive_website",
 		"folder": "direct_load/",
 		"ingestion": {
-			"source_path": "Shared Documents/nhsx_au_ingestion/connecting_care_golive_website/",
+			"source_path": "Shared Documents/nhsx_au_ingestion/connecting_care_golive_supplier_website/",
 			"databricks_notebook": "/databricks/au-azure-databricks-cicd/direct-load/dbrks_connecting_care_golive_website"
 		},
 		"raw": {
-			"snapshot_source_path": "land/sharepoint/Shared Documents/nhsx_au_ingestion/connecting_care_golive_website/"
+			"snapshot_source_path": "land/sharepoint/Shared Documents/nhsx_au_ingestion/connecting_care_golive_supplier_website/"
 			
 		},
 		"proc": {
