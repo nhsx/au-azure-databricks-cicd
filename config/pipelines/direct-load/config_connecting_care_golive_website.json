@@ -19,10 +19,12 @@
 		"name": "trigger_Connecting_care_golive_website",
 		"folder": "direct_load/",
 		"ingestion": {
-			"databricks_notebook": "/databricks/au-azure-databricks-cicd/direct-load/dbrks_Connecting_care_golive_website"
+			"source_path": "Shared Documents/nhsx_au_ingestion/Connecting_care_golive_website/",
+			"databricks_notebook": "/databricks/au-azure-databricks-cicd/ingestion/dbrks_shared_care_record/dbrks_shared_care_record_raw"
 		},
 		"raw": {
-			"snapshot_source_path": "land/nhsengland/manual_upload/timestamp/excel/connecting_care_golive_supplier_website/"
+			"snapshot_source_path": "land/sharepoint/Shared Documents/nhsx_au_ingestion/Connecting_care_golive_website/",
+			"sink_path": "raw/sharepoint/timestamp/parquet/shcr/snapshot/"
 		},
 		"proc": {
 			"sink_path": "proc/sources/connecting_care_golive_supplier_website/manual_upload/historical/",
