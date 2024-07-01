@@ -89,14 +89,14 @@ print(table_name)
 # Pull new dataset
 # -------------------------
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, new_source_path)
-print(new_source_path)
-print(latestFolder)
 file_name_list = datalake_listContents(CONNECTION_STRING, file_system, new_source_path+latestFolder)
 file_name_list = [file for file in file_name_list if '.xlsx' in file]
 for new_source_file in file_name_list:
   new_dataset = datalake_download(CONNECTION_STRING, file_system, new_source_path+latestFolder, new_source_file)
   new_dataframe = pd.read_excel(io.BytesIO(new_dataset), sheet_name = "Sheet1", header = 0, engine='openpyxl') 
   
+print(new_source_path)
+print(latestFolder)
 
 # COMMAND ----------
 
