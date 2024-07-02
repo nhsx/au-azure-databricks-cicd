@@ -100,12 +100,8 @@ print(latestFolder)
 
 # COMMAND ----------
 
-print(new_dataframe.columns)
-
-# COMMAND ----------
-
-new_dataframe["GO_Live_Date"] = pd.to_datetime(new_dataframe["GO_Live_Date"])
-
+new_dataframe["Go ive Date"] = pd.to_datetime(new_dataframe["Go Live Date"])
+new_dataframe.drop(columns = ["Go Live Date"], inplace = True)
 
 # COMMAND ----------
 
