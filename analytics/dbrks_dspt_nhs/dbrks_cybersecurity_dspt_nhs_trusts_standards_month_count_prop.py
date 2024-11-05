@@ -85,8 +85,8 @@ ODS_code_df = pd.read_parquet(io.BytesIO(reference_file), engine="pyarrow")
 
 # Make all ODS codes in DSPT dataframe capital
 # -------------------------------------------------------------------------
+DSPT_df.columns = DSPT_df.columns.str.strip()
 DSPT_df['Code'] = DSPT_df['Code'].str.upper()
-
 # Make ODS dataframe open and close dates datetime
 # -------------------------------------------------------------------------
 ODS_code_df['Close_Date'] = pd.to_datetime(ODS_code_df['Close_Date'], infer_datetime_format=True)
@@ -113,6 +113,7 @@ DSPT_ODS_selection_3 = DSPT_ODS_selection_2[DSPT_ODS_selection_2.Sector.isin(["N
 
 # Creation of final dataframe with all currently open NHS Trusts which meet or exceed the DSPT standard
 # --------------------------------------------------------------------------------------------------------
+DSPT_ODS_selection_3.columns = DSPT_ODS_selection_3.columns.str.strip()
 DSPT_ODS_selection_3 = DSPT_ODS_selection_3.rename(columns = {"Status":"Latest Status"})
 
 DSPT_ODS_selection_4 = DSPT_ODS_selection_3[DSPT_ODS_selection_3["Latest Status"].isin(["21/22 Standards Met", 

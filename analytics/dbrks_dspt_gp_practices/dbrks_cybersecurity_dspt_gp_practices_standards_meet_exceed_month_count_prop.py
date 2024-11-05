@@ -79,6 +79,7 @@ table_name = config_JSON['pipeline']["staging"][0]['sink_table']
 latestFolder = datalake_latestFolder(CONNECTION_STRING, file_system, source_path)
 file = datalake_download(CONNECTION_STRING, file_system, source_path+latestFolder, source_file)
 df = pd.read_csv(io.BytesIO(file))
+df.columns = df.columns.str.strip()
 df_1 = df[["Code", "Status"]]
 df_1 = df_1.rename(columns = {'Status': 'Latest Status'})
 

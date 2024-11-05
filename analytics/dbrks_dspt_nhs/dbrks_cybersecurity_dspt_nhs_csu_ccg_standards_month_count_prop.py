@@ -86,6 +86,7 @@ ODS_code_df = pd.read_parquet(io.BytesIO(reference_file), engine="pyarrow")
 
 # Make all ODS codes in DSPT dataframe capital
 # -------------------------------------------------------------------------
+DSPT_df.columns = DSPT_df.columns.str.strip()
 DSPT_df['Code'] = DSPT_df['Code'].str.upper()
 
 # Make ODS dataframe open and close dates datetime

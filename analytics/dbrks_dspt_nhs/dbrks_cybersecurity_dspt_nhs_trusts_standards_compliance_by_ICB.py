@@ -136,6 +136,7 @@ for folder in latest_folders:
 
   # Make all ODS codes in DSPT dataframe capital
   # -------------------------------------------------------------------------
+  DSPT_df.columns = DSPT_df.columns.str.strip()
   DSPT_df['Code'] = DSPT_df['Code'].str.upper()
   DSPT_df = DSPT_df.rename(columns = {'Code': 'Organisation_Code'})
 
@@ -151,9 +152,9 @@ for folder in latest_folders:
 
   # Creation of final dataframe with all currently open NHS Trusts which meet or exceed the DSPT standard
   # --------------------------------------------------------------------------------------------------------
+  DSPT_ODS_selection_3.columns = DSPT_ODS_selection_3.columns.str.strip()
   DSPT_ODS_selection_3 = DSPT_ODS_selection_3.rename(columns = {"Status":"Latest Status"})
-
-
+  
   # Processing - Generating final dataframe for staging to SQL database
   # -------------------------------------------------------------------------
   # Generating Total_no_trusts
@@ -177,9 +178,20 @@ for folder in latest_folders:
                         "22/23 Standards Met", 
                         "22/23 Standards Not Met",
                         'Not Published']
-  
+
 #if the date is not within the financial year remove outdated statuses from the list
-  max_date = pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m')
+# Replace 'null' strings with actual NaN values
+  DSPT_ODS_selection_3['Date Of Publication'] = DSPT_ODS_selection_3['Date Of Publication'].replace('null', np.nan)
+
+  # Convert 'Date Of Publication' to datetime, ignoring errors
+  DSPT_ODS_selection_3['Date Of Publication'] = pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'], errors='coerce')
+
+  # Get the maximum date
+  max_date_pub = DSPT_ODS_selection_3['Date Of Publication'].max()
+  max_date = max_date_pub.strftime('%Y-%m-%d') if pd.notnull(max_date_pub) else '1900-01-01'
+ 
+  #max_date = pd.to_datetime(DSPT_ODS_selection_3['Date Of Publication'].max()).strftime('%Y-%m-%m')
+
   if max_date > '2021-07-01':
     list_of_statuses1 = list_of_statuses1[4:]   
   elif max_date > '2022-07-01':
